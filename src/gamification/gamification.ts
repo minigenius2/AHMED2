@@ -70,7 +70,7 @@ export function newGamificationState(): GamificationState {
   return { xp: 0, xpByDate: {}, coinsSpent: 0, badges: [], streak: { current: 0, best: 0 } };
 }
 
-/** المستوى n محتاج 100 × n × (n+1) / 2 نقطة: 0، 100، 300، 600، 1000، ... */
+/** المستوى n محتاج 150 × (n−1) × n / 2 نقطة: 0، 150، 450، 900، 1500، ... (12 مستوى ≈ ترم كامل لطالب متفوق) */
 export function levelForXp(xp: number): { level: number; title: string; xpIntoLevel: number; xpForNext: number } {
   let level = 1;
   while (xp >= threshold(level + 1)) level++;
@@ -79,7 +79,7 @@ export function levelForXp(xp: number): { level: number; title: string; xpIntoLe
 }
 
 function threshold(level: number): number {
-  return (100 * (level - 1) * level) / 2;
+  return (150 * (level - 1) * level) / 2;
 }
 
 /** كل 10 نقاط = عملة — هتتصرف بعدين في متجر الأفاتار والثيمات. */

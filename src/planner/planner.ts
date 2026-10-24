@@ -29,9 +29,16 @@ export interface PlanOptions {
   revisionWeeks: number;
   /** اختبار تراكمي كل كام أسبوع دراسة (2 = كل أسبوعين، 4 = كل شهر) */
   periodicEveryWeeks: number;
+  /**
+   * إزاي نستخدم schoolWeek (رقم التقييم الأسبوعي في كتاب التقييمات):
+   * - spread: أسابيع المدرسة بتتوزع بالتساوي على أسابيع الشرح المتاحة، والأسابيع الزيادة تبقى مراجعة وتعويض في النص
+   *   (المدرسة نفسها بتاخد أسابيع للتقييمات الشهرية والإجازات).
+   * - exact: أسبوع المدرسة رقم n = أسبوع الشرح رقم n بالظبط.
+   */
+  schoolWeekMode: "spread" | "exact";
 }
 
-export const DEFAULT_PLAN_OPTIONS: PlanOptions = { revisionWeeks: 2, periodicEveryWeeks: 4 };
+export const DEFAULT_PLAN_OPTIONS: PlanOptions = { revisionWeeks: 2, periodicEveryWeeks: 4, schoolWeekMode: "spread" };
 
 export type WeekKind = "teaching" | "catch_up" | "holiday" | "revision";
 
@@ -81,8 +88,9 @@ export interface StudyPlan {
 export function buildStudyPlan(
   curriculum: Curriculum,
   calendar: TermCalendar,
-  options: PlanOptions = DEFAULT_PLAN_OPTIONS,
+  overrides: Partial<PlanOptions> = {},
 ): StudyPlan {
+  const options: PlanOptions = { ...DEFAULT_PLAN_OPTIONS, ...overrides };
   if (calendar.endDate < calendar.startDate) throw new Error("Term end date is before start date");
   const lessons = listLessons(curriculum);
   const weeks = enumerateWeeks(calendar);
@@ -94,7 +102,7 @@ export function buildStudyPlan(
   const teachingWeeks = weeks.filter((w) => w.kind === "teaching");
   if (teachingWeeks.length === 0) throw new Error("No teaching weeks available in this calendar");
 
-  const assignment = assignLessonsToWeeks(lessons, teachingWeeks);
+  const assignment = assignLessonsToWeeks(lessons, teachingWeeks, options.schoolWeekMode);
   const lessonWeek: Record<string, number> = {};
   lessons.forEach((lesson, i) => {
     const week = teachingWeeks[assignment[i] as number] as PlanWeek;
@@ -168,8 +176,18 @@ function enumerateWeeks(calendar: TermCalendar): PlanWeek[] {
  * - الدروس اللي ليها schoolWeek بتتحط في أسبوعها عشان الطالب يفضل ماشي مع المدرسة.
  * - الباقي بيتوزع بالتناسب على الأسابيع اللي بعد آخر درس مثبّت، حسب عدد الحلقات وعدد أيام المذاكرة.
  */
-function assignLessonsToWeeks(lessons: ReturnType<typeof listLessons>, teachingWeeks: PlanWeek[]): number[] {
+function assignLessonsToWeeks(
+  lessons: ReturnType<typeof listLessons>,
+  teachingWeeks: PlanWeek[],
+  mode: PlanOptions["schoolWeekMode"],
+): number[] {
   const last = teachingWeeks.length - 1;
+  if (mode === "spread" && lessons.every((l) => l.schoolWeek !== undefined)) {
+    // كل الدروس ليها أسبوع مدرسة: نوزع أسابيع المدرسة بالتساوي على أسابيع الشرح، مع الحفاظ على ترتيبها
+    const schoolWeeks = Math.max(...lessons.map((l) => l.schoolWeek!));
+    const slots = teachingWeeks.length;
+    return lessons.map((l) => Math.min(last, Math.floor(((l.schoolWeek! - 1) * slots) / schoolWeeks)));
+  }
   const result: number[] = [];
   let floor = 0;
   let i = 0;
