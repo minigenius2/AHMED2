@@ -6,8 +6,13 @@ const DAY = "2026-09-20";
 const right = (quiz: Quiz) => answerAll(quiz, () => true);
 const wrong = (quiz: Quiz) => answerAll(quiz, () => false);
 
+/** يخلّص كل حصص الشرح في الدرس (الدرس في الـ fixture حصتين) */
+function learn(j: StudentJourney, lessonId: string, day = DAY) {
+  while (j.lesson(lessonId).status === "learning") j.completeLearning(lessonId, day);
+}
+
 function passLesson(j: StudentJourney, lessonId: string, day = DAY) {
-  j.completeLearning(lessonId, day);
+  learn(j, lessonId, day);
   j.submit(j.createQuiz({ type: "homework", lessonId, remediation: false }), right(j.createQuiz({ type: "homework", lessonId, remediation: false })), day);
   const quiz = j.createQuiz({ type: "quiz", lessonId, tier: "basic" });
   return j.submit(quiz, right(quiz), day);
@@ -26,13 +31,16 @@ function takePeriodic(j: StudentJourney, periodIndex: number, pass: boolean, day
 describe("StudentJourney — lesson flow", () => {
   it("starts with only the first lesson open", () => {
     const j = startTiny();
-    expect(j.availableActions()).toEqual([{ type: "learn", lessonId: "u1-l1", remediation: false }]);
+    expect(j.availableActions()).toEqual([{ type: "learn", lessonId: "u1-l1", remediation: false, session: 1, sessions: 2 }]);
     expect(j.lesson("u1-l2").status).toBe("locked");
   });
 
   it("goes learn → homework → basic quiz and refuses shortcuts", () => {
     const j = startTiny();
     expect(() => j.createQuiz({ type: "quiz", lessonId: "u1-l1", tier: "basic" })).toThrow();
+    j.completeLearning("u1-l1", DAY);
+    expect(j.lesson("u1-l1").status).toBe("learning");
+    expect(j.availableActions()).toEqual([{ type: "learn", lessonId: "u1-l1", remediation: false, session: 2, sessions: 2 }]);
     j.completeLearning("u1-l1", DAY);
     expect(j.lesson("u1-l1").status).toBe("homework");
     expect(() => j.createQuiz({ type: "quiz", lessonId: "u1-l1", tier: "basic" })).toThrow();
@@ -87,7 +95,7 @@ describe("StudentJourney — lesson flow", () => {
 
   it("sends the student back to review after two basic failures, then alerts the parent on the third", () => {
     const j = startTiny();
-    j.completeLearning("u1-l1", DAY);
+    learn(j, "u1-l1");
     doHomework(j, "u1-l1");
     for (let i = 0; i < 2; i++) {
       const quiz = j.createQuiz({ type: "quiz", lessonId: "u1-l1", tier: "basic" });
@@ -96,9 +104,9 @@ describe("StudentJourney — lesson flow", () => {
     const lesson = j.lesson("u1-l1");
     expect(lesson.status).toBe("learning");
     expect(lesson.remediationObjectiveIds?.length).toBeGreaterThan(0);
-    expect(j.availableActions()).toContainEqual({ type: "learn", lessonId: "u1-l1", remediation: true });
+    expect(j.availableActions()).toContainEqual({ type: "learn", lessonId: "u1-l1", remediation: true, session: 1, sessions: 1 });
 
-    j.completeLearning("u1-l1", DAY);
+    j.completeLearning("u1-l1", DAY); // المراجعة العلاجية حصة واحدة بس
     const homework = j.createQuiz({ type: "homework", lessonId: "u1-l1", remediation: true });
     const focus = new Set(lesson.remediationObjectiveIds);
     expect(homework.items.filter((i) => focus.has(i.objectiveId)).length).toBeGreaterThanOrEqual(homework.items.length / 2);

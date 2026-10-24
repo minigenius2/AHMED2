@@ -39,6 +39,7 @@ import type {
   StudentProfile,
   StudentState,
   SubmissionOutcome,
+  TeacherQuestion,
   TestRecord,
 } from "./types";
 
@@ -59,6 +60,7 @@ function newLessonProgress(lessonId: string): LessonProgress {
     lessonId,
     status: "locked",
     learningSessions: 0,
+    sessionsDone: 0,
     tiers: {
       basic: { attempts: 0, bestScore: 0, passed: false },
       standard: { attempts: 0, bestScore: 0, passed: false },
@@ -96,6 +98,7 @@ export class StudentJourney {
   private readonly lessonObjectives: Map<string, string[]>;
   private readonly lessonTitles: Map<string, string>;
   private readonly lessonUnit: Map<string, string>;
+  private readonly lessonSessions: Map<string, number>;
 
   constructor(
     readonly curriculum: Curriculum,
@@ -108,6 +111,7 @@ export class StudentJourney {
     this.lessonObjectives = new Map(lessons.map((l) => [l.id, l.objectives.map((o) => o.id)]));
     this.lessonTitles = new Map(lessons.map((l) => [l.id, l.title]));
     this.lessonUnit = new Map(lessons.map((l) => [l.id, l.unitId]));
+    this.lessonSessions = new Map(lessons.map((l) => [l.id, Math.max(1, l.sessions)]));
   }
 
   static start(
@@ -175,7 +179,10 @@ export class StudentJourney {
     for (const lessonId of this.plan.lessonOrder) {
       const p = this.lesson(lessonId);
       const remediation = p.remediationObjectiveIds !== undefined;
-      if (p.status === "learning") actions.push({ type: "learn", lessonId, remediation });
+      if (p.status === "learning") {
+        const sessions = remediation ? 1 : this.lessonSessions.get(lessonId) ?? 1;
+        actions.push({ type: "learn", lessonId, remediation, session: Math.min(sessions, (p.sessionsDone ?? 0) + 1), sessions });
+      }
       else if (p.status === "homework") actions.push({ type: "homework", lessonId, remediation });
       else if (p.status === "quiz") actions.push({ type: "quiz", lessonId, tier: "basic" });
       else if (p.status === "passed") {
@@ -223,20 +230,45 @@ export class StudentJourney {
 
   // ---------------------------------------------------------------- الشرح والتلخيص
 
-  /** الطالب خلّص حلقة الشرح (أو المراجعة العلاجية) — يروح على الواجب. */
+  /**
+   * الطالب خلّص حصة شرح. الدرس ممكن يبقى أكتر من حصة (حلقة 1 من 2...)، وبعد آخر حصة يروح على الواجب.
+   * حصة المراجعة العلاجية حصة واحدة بس.
+   */
   completeLearning(lessonId: string, today: ISODate): JourneyEvent[] {
-    this.assertAvailable({ type: "learn", lessonId, remediation: false });
+    this.assertAvailable({ type: "learn", lessonId, remediation: false, session: 1, sessions: 1 });
     const p = this.lesson(lessonId);
-    p.status = "homework";
+    const remediation = p.remediationObjectiveIds !== undefined;
+    const sessions = remediation ? 1 : this.lessonSessions.get(lessonId) ?? 1;
+    p.sessionsDone = (p.sessionsDone ?? 0) + 1;
     p.learningSessions++;
     const events: JourneyEvent[] = [];
-    if (p.learningSessions === 1) {
-      events.push(...this.awardXp(today, XP_RULES.lessonLearned));
+    if (!remediation) events.push(...this.awardXp(today, XP_RULES.lessonLearned));
+    const title = this.lessonTitle(lessonId);
+    if (p.sessionsDone >= sessions) {
+      p.status = "homework";
+      p.sessionsDone = 0;
+      events.push({ date: today, type: "lesson_learned", lessonId, message: remediation ? `خلّص مراجعة درس ${title}` : `خلّص شرح درس ${title}` });
+    } else {
+      events.push({ date: today, type: "lesson_learned", lessonId, message: `خلّص الحصة ${p.sessionsDone} من ${sessions} في درس ${title}` });
     }
-    events.push({ date: today, type: "lesson_learned", lessonId, message: `خلّص شرح درس ${this.lessonTitle(lessonId)}` });
     this.s.gamification = recordActivity(this.s.gamification, today);
     events.push(...this.checkStreakBadge(today));
     return this.commit(events);
+  }
+
+  // ---------------------------------------------------------------- اسأل المعلم
+
+  /** كام سؤال فاضل للطفل النهارده */
+  teacherQuestionsLeft(today: ISODate): number {
+    const used = (this.s.teacherQuestions ?? []).filter((q) => q.date === today).length;
+    return Math.max(0, this.config.askTeacher.dailyLimit - used);
+  }
+
+  recordTeacherQuestion(entry: TeacherQuestion): void {
+    if (this.teacherQuestionsLeft(entry.date) <= 0) throw new Error("Daily ask-the-teacher limit reached");
+    if (this.lesson(entry.lessonId).status === "locked") throw new Error(`Lesson is still locked: ${entry.lessonId}`);
+    (this.s.teacherQuestions ??= []).push(entry);
+    this.s.gamification = recordActivity(this.s.gamification, entry.date);
   }
 
   viewUnitSummary(unitId: string, today: ISODate): UnitSummary {
@@ -450,6 +482,7 @@ export class StudentJourney {
       p.totalBasicFails++;
       if (p.consecutiveBasicFails >= this.config.retry.remediationAfterFails) {
         p.status = "learning";
+        p.sessionsDone = 0;
         p.remediationObjectiveIds = this.weakObjectivesFrom(result, lessonId);
         events.push({ date: today, type: "remediation_required", lessonId, message: `رجع يراجع درس ${title} مع واجب علاجي على نقط الضعف` });
       }
@@ -571,6 +604,7 @@ export class StudentJourney {
       const p = this.lesson(lessonId);
       if (p.status === "locked" && this.canUnlock(i)) {
         p.status = "learning";
+        p.sessionsDone = 0;
         p.unlockedOn = today;
         events.push({ date: today, type: "lesson_unlocked", lessonId, message: `اتفتح درس ${this.lessonTitle(lessonId)} 🔓` });
       }

@@ -1,0 +1,388 @@
+// سيناريو الحصة التفاعلية — Chapter 1, Lesson 1: Let's Find Living Organisms (حصتين).
+// ده الدرس المرجعي اللي باقي الدروس هتتكتب على شكله بعد ما نجربه.
+// قاعدة الكتابة: كلام المعلم عامية مصرية قصيرة (جملتين تلاتة في الكارت)، والمصطلح والتعريف بالإنجليزي زي الامتحان.
+import type { LessonScript } from "../../../teaching/script-types";
+
+const O1 = "ch1-l1-o1";
+const O2 = "ch1-l1-o2";
+const O3 = "ch1-l1-o3";
+const O4 = "ch1-l1-o4";
+
+export const ch1l1Script: LessonScript = {
+  lessonId: "ch1-l1",
+  sessions: [
+    {
+      title: "إيه اللي حي وإيه اللي مش حي؟",
+      steps: [
+        {
+          kind: "hook",
+          say: "أهلًا يا بطل! أنا أستاذ نبيه 🦉 تعالى نتفرج على الجنينة دي: فيها ولاد بيلعبوا، وكلب، وشجرة، وحجارة، ومية. تفتكر مين فيهم عايش ومين مش عايش؟ النهارده هنعرف إزاي نفرّق بينهم.",
+          illustration: { emoji: "🌳🐕🪨💧", prompt: "A sunny Egyptian garden with two children playing, a dog, a tree, rocks and a small pond, children's book style" },
+        },
+        {
+          kind: "recall",
+          say: "قبل ما نبدأ، سؤالين سريعين من اللي فات:",
+          count: 2,
+        },
+        {
+          kind: "explain",
+          objectiveId: O1,
+          title: "حي ولا مش حي؟",
+          say: "كل حاجة حوالينا يا إما كائن حي، يا إما شيء غير حي. الإنسان والحيوان والنبات دول كائنات حية، وبالإنجليزي اسمهم living organisms. أما الهوا والمية والصخور فدي أشياء غير حية، اسمها non-living things.",
+          english: { text: "Humans, animals and plants are living organisms. Air, water and rocks are non-living things.", keywords: ["living organisms", "non-living things"] },
+          illustration: { emoji: "🧒🐸🌻 | 💨💧🪨", prompt: "Two groups: a child, a frog and a sunflower on one side; wind, water and rocks on the other" },
+        },
+        {
+          kind: "explain",
+          objectiveId: O1,
+          title: "إزاي أعرف إن الحاجة حية؟",
+          say: "الكائن الحي بيعمل تلات حاجات: بياكل، وبيكبر، وبيتنفس. إنت بتفطر الصبح، وطولك بيزيد كل سنة، وبتتنفس دلوقتي وإنت بتسمعني. يبقى إنت كائن حي! الحجر بقى لا بياكل ولا بيكبر ولا بيتنفس.",
+          english: { text: "Living organisms feed, grow and breathe.", keywords: ["feed", "grow", "breathe"] },
+          illustration: { emoji: "🥕🌱😮‍💨", prompt: "Three icons: a rabbit eating a carrot (feeding), a seedling growing (growth), a boy breathing (breathing)" },
+        },
+        {
+          kind: "check",
+          objectiveId: O1,
+          ask: "الحجر اللي في الجنينة… كائن حي ولا شيء غير حي؟",
+          illustration: { emoji: "🪨", prompt: "A grey rock in a garden" },
+          choices: [
+            { text: "شيء غير حي", correct: true, feedback: "برافو عليك! 👏 الحجر مابياكلش ولا بيكبر ولا بيتنفس، يبقى non-living thing." },
+            { text: "كائن حي", feedback: "لأ يا بطل، فكّر تاني 🤔" },
+          ],
+          reteach: "خلينا نجرب سوا: لو حطينا الحجر جنب الأكل، هياكل؟ لأ. لو استنيناه سنة، هيكبر؟ لأ. بيتنفس؟ لأ. يبقى الحجر مش بيعمل ولا حاجة من التلاتة، يعني شيء غير حي.",
+        },
+        {
+          kind: "explain",
+          objectiveId: O1,
+          title: "التعريف اللي هيجيلك في الامتحان",
+          say: "خلي بالك من الجملة دي، لأنها بتيجي في الامتحان كتير. قولها معايا بالإنجليزي:",
+          english: { text: "Living organisms: everything that can feed, grow and breathe, such as humans, animals and plants.", keywords: ["feed", "grow", "breathe"] },
+          illustration: { emoji: "📝", prompt: "A notebook page with a highlighted definition" },
+        },
+        {
+          kind: "activity",
+          objectiveId: O1,
+          say: "يلا نلعب! حط كل حاجة في المجموعة بتاعتها: كائن حي ولا شيء غير حي.",
+          groups: ["Living organisms", "Non-living things"],
+          groupsAr: ["كائنات حية", "أشياء غير حية"],
+          items: [
+            { text: "Dog", emoji: "🐕", group: "Living organisms" },
+            { text: "Rock", emoji: "🪨", group: "Non-living things" },
+            { text: "Cactus", emoji: "🌵", group: "Living organisms" },
+            { text: "Water", emoji: "💧", group: "Non-living things" },
+            { text: "Frog", emoji: "🐸", group: "Living organisms" },
+            { text: "Air", emoji: "💨", group: "Non-living things" },
+            { text: "Sunflower", emoji: "🌻", group: "Living organisms" },
+          ],
+        },
+        {
+          kind: "explain",
+          objectiveId: O2,
+          title: "كل كائن حي ليه بيت",
+          say: "الكائنات الحية مش عايشة كلها في نفس المكان. كل كائن بيدور على مكان فيه اللي هو محتاجه. المكان اللي الكائن الحي بيعيش فيه اسمه habitat، يعني الموطن.",
+          english: { text: "Habitat: the place where the living organism lives.", keywords: ["Habitat"] },
+          illustration: { emoji: "🐜🪨", prompt: "Ants walking into the cool shade under a big stone" },
+        },
+        {
+          kind: "check",
+          objectiveId: O2,
+          ask: "لو أنا نملة صغيرة، أعيش فين؟",
+          illustration: { emoji: "🐜", prompt: "A small ant deciding where to go: hot sand in the sun or under a stone" },
+          choices: [
+            { text: "تحت الحجر 🪨", correct: true, feedback: "صح! تحت الحجر المكان بارد وفيه رطوبة، فده الـ habitat المناسب للنملة 🐜" },
+            { text: "في نص الرملة السخنة في الشمس 🌞", feedback: "هممم… فكّر معايا تاني 🤔" },
+          ],
+          reteach: "الشمس في الضهر بتبقى نار، والرملة بتسخن جدًا. النملة صغيرة ومحتاجة مكان بارد وفيه شوية مية. تحت الحجر بقى؟ ضل وبرودة ورطوبة. يبقى النملة هتختار فين؟",
+        },
+        {
+          kind: "explain",
+          objectiveId: O2,
+          title: "ليه كل مكان فيه كائنات مختلفة؟",
+          say: "عشان كل كائن حي بيعيش في المكان اللي فيه احتياجاته: المية، والأكل، والمأوى اللي يستخبى فيه. السمكة محتاجة مية، فمش هتلاقيها في الصحرا. وده سؤال علل مشهور جدًا.",
+          english: {
+            text: "The kinds of living organisms differ from one habitat to another because they live in habitats that meet their needs, such as water, food and shelter.",
+            keywords: ["water", "food", "shelter"],
+          },
+          illustration: { emoji: "🐟💧 | 🏜️", prompt: "A fish happy in water next to an empty dry desert" },
+        },
+        {
+          kind: "check",
+          objectiveId: O2,
+          ask: "ليه مش هنلاقي سمكة عايشة في الصحرا؟",
+          illustration: { emoji: "🐟🏜️", prompt: "A fish out of place in a desert" },
+          choices: [
+            { text: "عشان الصحرا مفيهاش المية اللي السمكة محتاجاها", correct: true, feedback: "بالظبط! 💯 كل كائن بيعيش في habitat فيه احتياجاته." },
+            { text: "عشان السمكة بتحب الشمس", feedback: "مش ده السبب، خلينا نفكر سوا 🤔" },
+            { text: "عشان الصحرا كبيرة أوي", feedback: "مش ده السبب، خلينا نفكر سوا 🤔" },
+          ],
+          reteach: "افتكر التلات حاجات اللي أي كائن حي محتاجهم: مية وأكل ومأوى. السمكة لازم تعيش جوه المية. الصحرا فيها مية؟ تقريبًا لأ. يبقى الصحرا مش habitat مناسب للسمكة.",
+        },
+        {
+          kind: "vocab",
+          say: "يلا نحفظ كلمات النهارده. اسمع الكلمة وقولها بصوت عالي:",
+          words: [
+            { en: "living organisms", ar: "الكائنات الحية" },
+            { en: "non-living things", ar: "الأشياء غير الحية" },
+            { en: "feeding", ar: "التغذية" },
+            { en: "breathing", ar: "التنفس" },
+            { en: "habitat", ar: "موطن" },
+            { en: "shelter", ar: "مأوى" },
+          ],
+        },
+        {
+          kind: "exam_tip",
+          objectiveId: O1,
+          style: "scientific_term",
+          say: "لو جالك السؤال ده، اكتب التعريف كامل، وماتنساش التلات كلمات: feed و grow و breathe.",
+          question: "What is meant by living organisms?",
+          modelAnswer: { text: "Everything that can feed, grow and breathe, such as humans, animals and plants.", keywords: ["feed", "grow", "breathe"] },
+        },
+        {
+          kind: "exam_tip",
+          objectiveId: O2,
+          style: "give_reason",
+          say: "سؤال علل ده بيتكرر كتير. الإجابة لازم يبقى فيها: needs وبعدها water و food و shelter.",
+          question: "Give a reason: The kinds of living organisms differ from one habitat to another.",
+          modelAnswer: {
+            text: "Because living organisms live in habitats that meet their needs, such as water, food and shelter.",
+            keywords: ["needs", "water", "food", "shelter"],
+          },
+        },
+        {
+          kind: "summary",
+          say: "شاطر جدًا! 🌟 دي خلاصة الحصة:",
+          points: [
+            "الكائنات الحية (الإنسان والحيوان والنبات) بتتغذى وبتكبر وبتتنفس — Living organisms feed, grow and breathe.",
+            "الهوا والمية والصخور أشياء غير حية — non-living things.",
+            "Habitat = المكان اللي الكائن الحي بيعيش فيه.",
+            "كل habitat فيه كائنات مختلفة، لأن كل كائن بيعيش في المكان اللي فيه المية والأكل والمأوى اللي محتاجهم.",
+          ],
+        },
+      ],
+    },
+    {
+      title: "نلاقي الكائنات الحية فين؟",
+      steps: [
+        {
+          kind: "hook",
+          say: "تعالى نبقى مستكشفين النهارده 🔍 لو عايز تلاقي جرادة، أو نملة، أو سحلية… هتدور عليهم فين؟ كل واحد فيهم بيحب مكان مختلف، ونعرف ليه.",
+          illustration: { emoji: "🔍🦗🐜🦎", prompt: "A child explorer with goggles and a magnifying glass searching a garden" },
+        },
+        {
+          kind: "recall",
+          say: "نسخّن بسؤالين من الحصة اللي فاتت:",
+          count: 2,
+        },
+        {
+          kind: "explain",
+          objectiveId: O3,
+          title: "جنب الحشائش والشجر",
+          say: "في كائنات بتحب تعيش جنب الحشائش والشجر، زي العصافير والجراد. ليه؟ عشان هناك الأكل موجود، وكمان سهل يستخبوا في الحشيش وبين الورق.",
+          english: { text: "Near grass or trees: places with food and places easy to hide in, such as sparrows and grasshoppers.", keywords: ["food", "hide"] },
+          illustration: { emoji: "🌳🐦🦗", prompt: "A sparrow on a tree branch and a grasshopper hiding in green grass" },
+        },
+        {
+          kind: "check",
+          objectiveId: O3,
+          ask: "الجرادة بتحب تعيش فين غالبًا؟",
+          illustration: { emoji: "🦗", prompt: "A grasshopper" },
+          choices: [
+            { text: "جنب الحشائش والشجر 🌿", correct: true, feedback: "صح! 🌿 هناك بتلاقي أكلها وبتعرف تستخبى." },
+            { text: "جوه المية 💧", feedback: "لأ يا بطل، خلينا نفكر تاني 🤔" },
+            { text: "فوق صخرة سخنة في الضهر 🌞", feedback: "لأ يا بطل، خلينا نفكر تاني 🤔" },
+          ],
+          reteach: "الجرادة بتاكل الزرع الأخضر. يبقى هتعيش فين؟ في المكان اللي فيه زرع كتير تاكل منه، وتعرف تستخبى فيه من اللي عايز ياكلها… يعني جنب الحشائش والشجر.",
+        },
+        {
+          kind: "explain",
+          objectiveId: O3,
+          title: "تحت الحجارة وفي ظل الصخور",
+          say: "وفي كائنات تانية زي النمل بتحب تعيش تحت الحجارة، أو في ظل الصخور، أو تحت الأرض. ليه؟ عشان الأماكن دي رطبة وفيها مية، وكمان باردة وبعيدة عن الشمس.",
+          english: { text: "Under stones, in the shade of rocks or under the ground: damp places with water and cool places away from the sun, such as ants.", keywords: ["damp", "cool"] },
+          illustration: { emoji: "🪨🐜💧", prompt: "Cross-section of the ground under a big stone with ants in damp cool soil" },
+        },
+        {
+          kind: "check",
+          objectiveId: O3,
+          ask: "ليه النمل بيحب يعيش تحت الحجارة؟",
+          illustration: { emoji: "🐜🪨", prompt: "Ants under a stone" },
+          choices: [
+            { text: "عشان المكان رطب وبارد وبعيد عن الشمس", correct: true, feedback: "ممتاز! 👏 دي بالظبط إجابة سؤال علل: damp و cool." },
+            { text: "عشان المكان حر وناشف", feedback: "بالعكس، فكّر تاني 🤔" },
+            { text: "عشان فيه شمس كتير", feedback: "بالعكس، فكّر تاني 🤔" },
+          ],
+          reteach: "جرب تحط إيدك على الأرض في الشمس، وبعدين على الأرض اللي تحت حجر: اللي تحت الحجر هتلاقيها أبرد وفيها شوية رطوبة. النمل بيحب كده: مكان بارد (cool) ورطب (damp).",
+        },
+        {
+          kind: "explain",
+          objectiveId: O3,
+          title: "وفي الصحرا؟",
+          say: "في الصحرا الشمس جامدة جدًا في النهار. عشان كده كائنات زي السحلية بتعيش في ظل الصخور أو تحت الأرض، عشان تبعد عن حرارة الشمس الشديدة.",
+          english: { text: "Some living organisms live in the shade of rocks or under the ground to avoid the intense heat of the Sun in the desert during the day.", keywords: ["avoid", "intense heat"] },
+          illustration: { emoji: "🏜️🦎🪨", prompt: "A lizard resting in the shade of a rock in a hot desert" },
+        },
+        {
+          kind: "explain",
+          objectiveId: O4,
+          title: "إزاي تستكشف زي العلماء",
+          say: "عشان تعرف الكائنات الحية بتعيش فين، امشي على تلات خطوات: أولًا خمّن الأماكن (Guess)، ثانيًا دوّر فيها بهدوء (Search)، ثالثًا سجّل اسم الكائن ونوع المكان اللي لقيته فيه (Record). وأهم حاجة: ماتلمسش أي كائن غير ومعاك المدرس أو حد كبير.",
+          english: { text: "Steps for exploring habitats: 1) Guess 2) Search 3) Record.", keywords: ["Guess", "Search", "Record"] },
+          illustration: { emoji: "🤔➡️🔍➡️📝", prompt: "Three steps: a child thinking, a child searching with a magnifying glass, a child writing on a clipboard" },
+        },
+        {
+          kind: "check",
+          objectiveId: O4,
+          ask: "إنت عايز تعرف العقرب بيعيش فين. أول خطوة تعملها إيه؟",
+          illustration: { emoji: "🦂", prompt: "A scorpion near stones" },
+          choices: [
+            { text: "أخمّن الأماكن اللي ممكن يعيش فيها (Guess)", correct: true, feedback: "شاطر! 🤔 الأول نخمّن، وبعدين ندوّر، وبعدين نسجّل." },
+            { text: "أسجّل اسمه في الكراسة (Record)", feedback: "دي آخر خطوة، مش الأولى 🙂" },
+            { text: "أمسكه بإيدي", feedback: "لأ لأ! ده خطر ⚠️ ماتلمسش أي كائن غير ومعاك حد كبير." },
+          ],
+          reteach: "فكّر فيها زي المحقق: الأول بيفكر الحاجة ممكن تكون استخبت فين (Guess)، وبعدين يروح يدوّر (Search)، ولما يلاقيها يكتب اللي لقاه (Record).",
+        },
+        {
+          kind: "activity",
+          objectiveId: O3,
+          say: "يلا يا مستكشف! حط كل كائن في المكان اللي بيحب يعيش فيه.",
+          groups: ["Near grass or trees", "Under stones / shade of rocks"],
+          groupsAr: ["جنب الحشائش والشجر", "تحت الحجارة / في ظل الصخور"],
+          items: [
+            { text: "Sparrow", emoji: "🐦", group: "Near grass or trees" },
+            { text: "Ant", emoji: "🐜", group: "Under stones / shade of rocks" },
+            { text: "Grasshopper", emoji: "🦗", group: "Near grass or trees" },
+            { text: "Scorpion", emoji: "🦂", group: "Under stones / shade of rocks" },
+            { text: "Lizard", emoji: "🦎", group: "Under stones / shade of rocks" },
+          ],
+          tryAtHome: "مع بابا أو ماما: ارفعوا حجر صغير في الجنينة أو جنب أصيص زرع، وبصوا تحته من غير ما تلمسوا حاجة. اكتب في كراستك اسم الكائن اللي شفته ونوع المكان.",
+        },
+        {
+          kind: "vocab",
+          say: "كلمات الحصة دي. اسمعها وقولها معايا:",
+          words: [
+            { en: "damp", ar: "رطب" },
+            { en: "shade", ar: "ظل" },
+            { en: "avoid", ar: "يتجنب" },
+            { en: "guess", ar: "تخمين" },
+            { en: "record", ar: "تسجيل" },
+            { en: "gaps", ar: "فجوات" },
+          ],
+        },
+        {
+          kind: "exam_tip",
+          objectiveId: O3,
+          style: "give_reason",
+          say: "في علل دي، لازم تكتب الكلمتين: damp و cool.",
+          question: "Give a reason: Ants live under stones.",
+          modelAnswer: { text: "Because they are damp places with water and cool places away from the sun.", keywords: ["damp", "cool"] },
+        },
+        {
+          kind: "exam_tip",
+          objectiveId: O4,
+          style: "order",
+          say: "لو طلب منك ترتب خطوات الاستكشاف، افتكر: نخمّن، ندوّر، نسجّل.",
+          question: "Mention the steps for exploring the habitats of living organisms, in order.",
+          modelAnswer: { text: "1) Guess 2) Search 3) Record.", keywords: ["Guess", "Search", "Record"] },
+        },
+        {
+          kind: "summary",
+          say: "عاش يا مستكشف! 🔍 دي خلاصة الحصة:",
+          points: [
+            "جنب الحشائش والشجر: فيه أكل وسهل الاستخباء — زي العصافير والجراد.",
+            "تحت الحجارة وفي ظل الصخور وتحت الأرض: أماكن رطبة (damp) وباردة (cool) — زي النمل.",
+            "في الصحرا: كائنات بتعيش في ظل الصخور أو تحت الأرض عشان تتجنب حرارة الشمس الشديدة.",
+            "خطوات الاستكشاف: Guess ← Search ← Record، ومن غير ما نلمس الكائنات.",
+          ],
+        },
+      ],
+    },
+  ],
+  alternatives: {
+    [O1]: [
+      {
+        kind: "explain",
+        objectiveId: O1,
+        title: "تجربة البذرة والحصوة",
+        say: "تعالى نعمل تجربة في خيالنا: معانا بذرة فول، ومعانا حصوة صغيرة شبهها. حطينا الاتنين في طين وسقيناهم كام يوم. البذرة طلّعت نبتة خضرا وكبرت، والحصوة فضلت زي ما هي. البذرة حية لأنها بتكبر وبتتغذى وبتتنفس، والحصوة مش حية.",
+        english: { text: "Living organisms feed, grow and breathe.", keywords: ["feed", "grow", "breathe"] },
+        illustration: { emoji: "🌱 | 🪨", prompt: "A bean seed sprouting in soil next to a pebble that stays the same" },
+      },
+      {
+        kind: "check",
+        objectiveId: O1,
+        ask: "العربية اللعبة اللي بتمشي بالبطارية… كائن حي؟",
+        illustration: { emoji: "🚗🔋", prompt: "A battery toy car" },
+        choices: [
+          { text: "لأ، عشان مابتاكلش ولا بتكبر ولا بتتنفس", correct: true, feedback: "صح! 👏 الحركة لوحدها مش كفاية. لازم الكائن الحي يتغذى ويكبر ويتنفس." },
+          { text: "أيوه، عشان بتتحرك", feedback: "هي بتتحرك فعلًا، بس فكّر في التلات حاجات 🤔" },
+        ],
+        reteach: "اسأل نفسك تلات أسئلة: بتاكل؟ بتكبر؟ بتتنفس؟ العربية اللعبة: لا بتاكل، ولا بتكبر، ولا بتتنفس. يبقى مش كائن حي حتى لو بتتحرك.",
+      },
+    ],
+    [O2]: [
+      {
+        kind: "explain",
+        objectiveId: O2,
+        title: "زي بيتك بالظبط",
+        say: "إنت ليك بيت: فيه أكل في التلاجة، ومية في الحنفية، وسرير تنام عليه ويحميك. الكائنات الحية كمان ليها \"بيت\" فيه الأكل والمية والمأوى. البيت ده اسمه habitat. وعشان كل كائن محتاج حاجات مختلفة، كل بيت فيه كائنات مختلفة.",
+        english: { text: "Habitat: the place where the living organism lives.", keywords: ["Habitat"] },
+        illustration: { emoji: "🏠 = 🐜🪨", prompt: "A child's house compared to an ant's home under a stone" },
+      },
+      {
+        kind: "check",
+        objectiveId: O2,
+        ask: "الـ habitat بتاع السمكة فين؟",
+        illustration: { emoji: "🐟", prompt: "A fish" },
+        choices: [
+          { text: "في المية 💧", correct: true, feedback: "صح! 🐟 المية فيها كل اللي السمكة محتاجاه." },
+          { text: "في الصحرا 🏜️", feedback: "لأ، الصحرا مفيهاش مية للسمكة 🤔" },
+          { text: "فوق الشجر 🌳", feedback: "لأ يا بطل، فكّر تاني 🤔" },
+        ],
+        reteach: "الـ habitat هو البيت اللي فيه احتياجات الكائن. السمكة أهم حاجة محتاجاها إيه؟ المية. يبقى بيتها فين؟",
+      },
+    ],
+    [O3]: [
+      {
+        kind: "explain",
+        objectiveId: O3,
+        title: "يوم صيف حر",
+        say: "في يوم صيف حر جدًا، لما الشمس تبقى نار، إنت بتقف فين؟ في الضل طبعًا! النمل والسحالي نفس الكلام: بيحبوا تحت الحجارة وفي ظل الصخور عشان المكان بارد ورطب. أما العصافير والجراد فبيحبوا الحشائش والشجر عشان الأكل والاستخباء.",
+        english: { text: "Under stones and in the shade of rocks: damp and cool places. Near grass or trees: food and places to hide.", keywords: ["damp", "cool", "food", "hide"] },
+        illustration: { emoji: "🌞➡️🌳😎", prompt: "A child escaping the summer sun into the shade of a tree, next to a lizard in the shade of a rock" },
+      },
+      {
+        kind: "check",
+        objectiveId: O3,
+        ask: "في الضهر في الصحرا، السحلية هتكون فين غالبًا؟",
+        illustration: { emoji: "🦎🏜️", prompt: "A lizard in the desert at noon" },
+        choices: [
+          { text: "في ظل صخرة أو تحت الأرض", correct: true, feedback: "برافو! 🦎 بتبعد عن حرارة الشمس الشديدة." },
+          { text: "فوق الرملة في الشمس", feedback: "في الضهر؟ الرملة نار! فكّر تاني 🤔" },
+        ],
+        reteach: "في الضهر الشمس بتبقى أجمد حاجة، والرملة بتسخن جدًا. السحلية زيك بالظبط في يوم الحر: بتدور على ضل. يبقى هتكون في ظل صخرة أو تحت الأرض.",
+      },
+    ],
+    [O4]: [
+      {
+        kind: "explain",
+        objectiveId: O4,
+        title: "زي المحقق",
+        say: "المحقق لما يدور على حاجة ضايعة بيعمل إيه؟ الأول بيفكر ممكن تكون فين (Guess). بعدين بيروح يدور في الأماكن دي بهدوء (Search). ولما يلاقيها بيكتب هو لقاها فين (Record). وإحنا كمان كده مع الكائنات الحية، ومن غير ما نلمسها.",
+        english: { text: "Steps for exploring habitats: 1) Guess 2) Search 3) Record.", keywords: ["Guess", "Search", "Record"] },
+        illustration: { emoji: "🕵️🔍📝", prompt: "A child detective thinking, searching and writing notes" },
+      },
+      {
+        kind: "check",
+        objectiveId: O4,
+        ask: "لقيت عنكبوت بين الحجارة. هتكتب إيه في كراستك؟",
+        illustration: { emoji: "🕷️📝", prompt: "A spider between rocks and a notebook" },
+        choices: [
+          { text: "اسم الكائن ونوع المكان: عنكبوت — بين الحجارة", correct: true, feedback: "ممتاز! 📝 ده بالظبط اللي بنسجّله." },
+          { text: "لون الكراسة بتاعتي", feedback: "لأ 😄 بنسجّل حاجة عن الكائن نفسه." },
+          { text: "مش لازم أكتب حاجة", feedback: "لأ، التسجيل خطوة مهمة جدًا 📝" },
+        ],
+        reteach: "خطوة Record معناها نكتب حاجتين: اسم الكائن اللي لقيناه، ونوع المكان اللي لقيناه فيه. زي: عنكبوت — بين الحجارة.",
+      },
+    ],
+  },
+};

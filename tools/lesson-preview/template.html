@@ -1,0 +1,896 @@
+<title>__TITLE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbf7ef; --surface: #ffffff; --surface-2: #f2ecdf; --ink: #1f2a37; --ink-2: #5d6774; --line: #e5ddcb;
+    --leaf: #1f8a57; --leaf-ink: #ffffff; --leaf-soft: #dcf1e5;
+    --sun: #e09b00; --sun-soft: #fff0c7;
+    --coral: #cf4a35; --coral-soft: #fde2dc;
+    --sky: #2370c9; --sky-soft: #e0ecfa;
+    --mark: #ffe17a; --mark-ink: #1f2a37;
+    --fab: #2370c9; --fab-ink: #ffffff;
+    --shadow: 0 6px 18px rgba(70, 52, 12, .08);
+    --radius: 22px;
+    --font: "Baloo Bhaijaan 2", "Segoe UI", Tahoma, system-ui, sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10151c; --surface: #19212b; --surface-2: #222c38; --ink: #eef2f6; --ink-2: #a7b1be; --line: #2d3947;
+      --leaf: #3cc483; --leaf-ink: #04261a; --leaf-soft: #17392a;
+      --sun: #ffc53d; --sun-soft: #3a3014;
+      --coral: #ff7f69; --coral-soft: #3f201a;
+      --sky: #6aabff; --sky-soft: #1a2d45;
+      --mark: #6d5b10; --mark-ink: #fff6d2;
+      --fab: #8cc0ff; --fab-ink: #0a1a2e;
+      --shadow: 0 6px 18px rgba(0, 0, 0, .25);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10151c; --surface: #19212b; --surface-2: #222c38; --ink: #eef2f6; --ink-2: #a7b1be; --line: #2d3947;
+    --leaf: #3cc483; --leaf-ink: #04261a; --leaf-soft: #17392a;
+    --sun: #ffc53d; --sun-soft: #3a3014;
+    --coral: #ff7f69; --coral-soft: #3f201a;
+    --sky: #6aabff; --sky-soft: #1a2d45;
+    --mark: #6d5b10; --mark-ink: #fff6d2;
+    --fab: #8cc0ff; --fab-ink: #0a1a2e;
+    --shadow: 0 6px 18px rgba(0, 0, 0, .25);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 18px; line-height: 1.7; -webkit-text-size-adjust: 100%; }
+  button { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+  button:focus-visible, textarea:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+
+  #app {
+    min-height: 100dvh; max-width: 600px; margin: 0 auto; display: flex; flex-direction: column;
+    padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right));
+  }
+
+  /* الهيدر */
+  .top { position: sticky; top: 0; z-index: 10; background: var(--bg); display: flex; align-items: center; gap: 10px; padding: max(10px, env(safe-area-inset-top)) 0 8px; }
+  .top-title { flex: 1; min-width: 0; line-height: 1.35; }
+  .top-title #topTitle { font-weight: 800; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .muted { color: var(--ink-2); font-size: 14px; }
+  #topSub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .icon-btn { flex: none; width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); font-size: 20px; cursor: pointer; display: grid; place-items: center; }
+  .icon-btn:disabled { opacity: .4; cursor: default; }
+  .xp { flex: none; background: var(--sun-soft); border-radius: 999px; padding: 4px 12px; font-weight: 800; font-size: 16px; white-space: nowrap; }
+  .progress { height: 8px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+  .progress > div { height: 100%; width: 0; background: var(--leaf); border-radius: 999px; transition: width .3s ease; }
+
+  main { flex: 1; padding: 6px 0 150px; }
+
+  /* المعلم */
+  .teacher { display: flex; gap: 10px; align-items: flex-start; margin: 14px 0; }
+  .avatar { flex: none; width: 50px; height: 50px; border-radius: 50%; background: var(--sun-soft); display: grid; place-items: center; font-size: 28px; }
+  #app.talking .avatar.live { animation: talk .9s ease-in-out infinite; }
+  @keyframes talk { 50% { transform: scale(1.08) rotate(-4deg); } }
+  .bubble { flex: 1; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); border-start-start-radius: 6px; padding: 10px 16px 12px; box-shadow: var(--shadow); }
+  .who { font-size: 13px; color: var(--ink-2); font-weight: 800; }
+  .bubble p { margin: 0; font-size: 19px; }
+
+  .illus { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin: 10px 0 4px; }
+  .blob { font-size: clamp(34px, 10vw, 54px); line-height: 1.35; background: var(--leaf-soft); border-radius: 28px; padding: 8px 20px; }
+  .sep { width: 2px; align-self: stretch; background: var(--line); border-radius: 2px; }
+  .step-tag { display: inline-block; margin-top: 10px; background: var(--sky-soft); color: var(--sky); font-weight: 800; border-radius: 999px; padding: 2px 14px; font-size: 15px; }
+
+  .en-box { background: var(--surface); border: 2px dashed var(--leaf); border-radius: var(--radius); padding: 10px 16px 12px; margin: 12px 0; }
+  .en-label { font-size: 13px; color: var(--leaf); font-weight: 800; }
+  .en-box p { margin: 4px 0 10px; font-size: 19px; line-height: 1.55; font-weight: 600; text-align: left; }
+  mark { background: var(--mark); color: var(--mark-ink); border-radius: 6px; padding: 0 4px; }
+  .chip-btn { border: 1px solid var(--line); background: var(--surface-2); border-radius: 999px; padding: 4px 14px; min-height: 40px; font-size: 15px; cursor: pointer; }
+  .chip-btn.wide { display: block; width: 100%; margin-top: 12px; min-height: 48px; }
+
+  /* أسئلة الفهم */
+  .choices { display: grid; gap: 10px; margin: 12px 0; }
+  .choices.tf { grid-template-columns: 1fr 1fr; }
+  .choice { text-align: start; background: var(--surface); border: 2px solid var(--line); border-radius: 18px; padding: 10px 16px; min-height: 56px; font-size: 19px; cursor: pointer; transition: transform .1s ease; }
+  .choice.en { text-align: left; }
+  .choice:active:not(:disabled) { transform: scale(.98); }
+  .choice:disabled { cursor: default; }
+  .choice.right { border-color: var(--leaf); background: var(--leaf-soft); }
+  .choice.wrong { border-color: var(--coral); background: var(--coral-soft); opacity: .7; text-decoration: line-through; text-decoration-color: var(--coral); }
+  .fb { font-weight: 700; margin: 6px 0; }
+  .fb.good { color: var(--leaf); }
+  .fb.bad { color: var(--coral); }
+  .reteach { background: var(--sun-soft); border-radius: var(--radius); padding: 10px 16px 12px; margin: 10px 0; }
+  .reteach p { margin: 0; }
+  .hint { color: var(--ink-2); font-size: 15px; text-align: center; }
+
+  /* الكلمات */
+  .vocab-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .vocab { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 10px 8px; min-height: 84px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; box-shadow: var(--shadow); }
+  .v-en { font-size: 19px; font-weight: 800; color: var(--leaf); line-height: 1.3; }
+  .v-ar { color: var(--ink-2); font-size: 16px; }
+  .pulse { animation: pulse .5s ease; }
+  @keyframes pulse { 50% { transform: scale(1.06); } }
+
+  /* لعبة الترتيب */
+  .tray { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; min-height: 60px; padding: 10px; border: 2px dashed var(--line); border-radius: 18px; margin-top: 8px; }
+  .tray:empty::after { content: "خلصوا كلهم 🎉"; color: var(--ink-2); align-self: center; }
+  .token { display: inline-flex; gap: 6px; align-items: center; background: var(--surface); border: 2px solid var(--line); border-radius: 999px; padding: 4px 14px; min-height: 48px; font-size: 18px; cursor: pointer; transition: transform .15s ease; }
+  .token[aria-pressed="true"] { border-color: var(--sky); background: var(--sky-soft); transform: translateY(-3px); }
+  .zones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+  .zone { background: var(--surface-2); border: 2px solid var(--line); border-radius: 18px; padding: 10px 8px; min-height: 150px; display: flex; flex-direction: column; align-items: stretch; gap: 6px; cursor: pointer; text-align: center; }
+  .zone.armed { border-color: var(--sky); border-style: dashed; }
+  .zone-title { font-weight: 800; font-size: 15px; line-height: 1.35; }
+  .zone-ar { font-size: 13px; color: var(--ink-2); line-height: 1.35; }
+  .zone-items { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+  .placed { background: var(--leaf-soft); border-radius: 999px; padding: 2px 10px; font-size: 15px; }
+  .shake { animation: shake .35s ease; }
+  @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  .home-task { background: var(--sky-soft); border-radius: var(--radius); padding: 10px 16px 12px; margin-top: 12px; }
+
+  /* سؤال الامتحان */
+  .exam-card { background: var(--surface); border: 1px solid var(--line); border-top: 6px solid var(--sky); border-radius: var(--radius); padding: 10px 16px 12px; margin: 12px 0; box-shadow: var(--shadow); }
+  .exam-badge { font-size: 14px; font-weight: 800; color: var(--sky); }
+  .exam-q { margin: 4px 0 6px; font-size: 19px; font-weight: 700; line-height: 1.5; text-align: left; }
+  .reveal { width: 100%; min-height: 56px; border: 2px dashed var(--leaf); background: var(--leaf-soft); color: var(--ink); border-radius: 18px; font-weight: 700; cursor: pointer; }
+
+  .points { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 8px; }
+  .points li { background: var(--surface); border: 1px solid var(--line); border-inline-start: 5px solid var(--leaf); border-radius: 16px; padding: 8px 14px; }
+
+  /* الرئيسية */
+  .hero { text-align: center; padding: 12px 0 4px; }
+  .hero-owl { width: 92px; height: 92px; margin: 0 auto; border-radius: 50%; background: var(--sun-soft); display: grid; place-items: center; font-size: 54px; }
+  .hero h1 { font-size: 26px; line-height: 1.3; margin: 10px 0 0; }
+  .hero p { margin: 2px 0 0; color: var(--ink-2); }
+  .journey { display: grid; margin: 18px 0 6px; position: relative; }
+  .journey::before { content: ""; position: absolute; top: 15px; left: 10%; right: 10%; height: 3px; background: var(--line); }
+  .node { position: relative; text-align: center; font-size: 12.5px; line-height: 1.3; color: var(--ink-2); }
+  .dot { width: 32px; height: 32px; margin: 0 auto 4px; border-radius: 50%; background: var(--surface-2); border: 3px solid var(--line); display: grid; place-items: center; font-size: 14px; }
+  .node.done .dot { background: var(--leaf); border-color: var(--leaf); color: var(--leaf-ink); }
+  .node.now .dot { border-color: var(--leaf); background: var(--surface); }
+  .node.now { color: var(--ink); font-weight: 800; }
+  .cards { display: grid; gap: 10px; margin-top: 14px; }
+  .session-card { display: flex; gap: 14px; align-items: center; width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; min-height: 80px; text-align: start; cursor: pointer; box-shadow: var(--shadow); }
+  .session-card .num { flex: none; width: 48px; height: 48px; border-radius: 15px; background: var(--leaf); color: var(--leaf-ink); display: grid; place-items: center; font-weight: 800; font-size: 22px; }
+  .session-card.alt .num { background: var(--sun); color: #2b1d00; }
+  .session-card .t { font-weight: 800; font-size: 18px; line-height: 1.4; }
+  .done-badge { color: var(--leaf); font-weight: 800; }
+  .note { font-size: 14.5px; color: var(--ink-2); background: var(--surface-2); border-radius: 16px; padding: 10px 14px; margin-top: 14px; }
+
+  /* نهاية الحصة */
+  .finish { text-align: center; padding-top: 20px; }
+  .stars { font-size: 48px; letter-spacing: 6px; }
+  .finish h2 { margin: 6px 0 0; font-size: 26px; }
+  .finish .gain { display: inline-block; margin-top: 10px; background: var(--sun-soft); border-radius: 999px; padding: 4px 16px; font-weight: 800; }
+
+  /* الأزرار تحت */
+  .actions { position: sticky; bottom: 0; z-index: 10; display: flex; gap: 8px; align-items: center; background: linear-gradient(to top, var(--bg) 75%, transparent); padding: 14px 0 max(12px, env(safe-area-inset-bottom)); }
+  .btn { border: none; border-radius: 18px; min-height: 56px; padding: 0 16px; font-weight: 800; font-size: 18px; cursor: pointer; white-space: nowrap; }
+  .btn-primary { flex: 1; background: var(--leaf); color: var(--leaf-ink); box-shadow: 0 4px 0 rgba(0, 0, 0, .18); }
+  .btn-primary:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0, 0, 0, .18); }
+  .btn-primary:disabled { background: var(--surface-2); color: var(--ink-2); box-shadow: none; cursor: not-allowed; }
+  .btn-ghost { background: var(--surface); border: 1px solid var(--line); }
+
+  .ask-fab { position: fixed; z-index: 20; bottom: calc(86px + env(safe-area-inset-bottom)); left: max(16px, env(safe-area-inset-left), calc(50vw - 284px)); border: none; border-radius: 999px; background: var(--fab); color: var(--fab-ink); font-weight: 800; font-size: 16px; padding: 10px 18px; min-height: 48px; box-shadow: 0 6px 18px rgba(0, 0, 0, .22); cursor: pointer; }
+
+  .xp-pop { position: fixed; z-index: 30; top: 54px; font-weight: 800; color: var(--sun); font-size: 22px; pointer-events: none; animation: rise 1.1s ease forwards; }
+  @keyframes rise { from { opacity: 0; transform: translateY(16px); } 20% { opacity: 1; } to { opacity: 0; transform: translateY(-24px); } }
+
+  /* اسأل المعلم */
+  .sheet { position: fixed; inset: 0; z-index: 40; }
+  .sheet-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, .45); }
+  .sheet-panel { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; max-width: 600px; height: min(86dvh, 680px); background: var(--bg); border-radius: 24px 24px 0 0; display: flex; flex-direction: column; padding: 14px max(16px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+  .sheet-head { display: flex; align-items: center; gap: 10px; }
+  .sheet-head .t { flex: 1; font-weight: 800; line-height: 1.35; }
+  .chat { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 12px 0; }
+  .msg { max-width: 88%; padding: 8px 14px; border-radius: 18px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .msg.teacher-msg { align-self: flex-start; background: var(--surface); border: 1px solid var(--line); border-start-start-radius: 6px; }
+  .msg.child-msg { align-self: flex-end; background: var(--sky-soft); border-start-end-radius: 6px; }
+  .msg.thinking { color: var(--ink-2); }
+  .msg .say-btn { display: block; margin-top: 6px; }
+  .suggest { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ask-form { display: flex; gap: 8px; align-items: flex-end; }
+  .ask-form textarea { flex: 1; resize: none; font: inherit; font-size: 17px; line-height: 1.5; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 10px 12px; min-height: 52px; max-height: 120px; }
+  .ask-form .btn { min-height: 52px; flex: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div id="app" dir="rtl" lang="ar">
+  <header class="top">
+    <button class="icon-btn" id="homeBtn" aria-label="الصفحة الرئيسية">🏠</button>
+    <div class="top-title"><div id="topTitle"></div><div class="muted" id="topSub"></div></div>
+    <div class="xp" id="xpChip" aria-label="النقط">⭐ <span id="xpVal">0</span></div>
+    <button class="icon-btn" id="soundBtn" aria-label="الصوت شغال">🔊</button>
+  </header>
+  <div class="progress" aria-hidden="true"><div id="progressBar"></div></div>
+  <main id="screen" aria-live="polite"></main>
+  <footer class="actions" id="actions"></footer>
+  <button class="ask-fab" id="askBtn" hidden>🦉 اسأل المعلم</button>
+
+  <div class="sheet" id="sheet" hidden>
+    <div class="sheet-backdrop" id="sheetBackdrop"></div>
+    <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <div class="sheet-head">
+        <div class="avatar" aria-hidden="true">🦉</div>
+        <div class="t"><div id="sheetTitle">اسأل أستاذ نبيه</div><div class="muted" id="leftLine"></div></div>
+        <button class="icon-btn" id="sheetClose" aria-label="قفل">✕</button>
+      </div>
+      <div class="chat" id="chat"></div>
+      <form class="ask-form" id="askForm">
+        <textarea id="askInput" rows="1" maxlength="300" placeholder="اكتب سؤالك هنا…" aria-label="سؤالك"></textarea>
+        <button class="btn btn-primary" id="askSend" type="submit">اسأل</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script type="application/json" id="lesson-data">__DATA__</script>
+<script>
+(() => {
+  const DATA = JSON.parse(document.getElementById("lesson-data").textContent);
+  const S = DATA.script;
+  const T = DATA.tutor;
+  const TEACHER = "أستاذ نبيه";
+  const DAILY_LIMIT = 10;
+
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+  const app = $("#app"), screen = $("#screen"), actions = $("#actions");
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---------- تخزين بسيط (لو المتصفح مانعه، الصفحة بتشتغل عادي من غيره) ----------
+  const store = {
+    get(key, fallback) { try { const v = localStorage.getItem(`${DATA.lessonId}:${key}`); return v == null ? fallback : JSON.parse(v); } catch { return fallback; } },
+    set(key, value) { try { localStorage.setItem(`${DATA.lessonId}:${key}`, JSON.stringify(value)); } catch {} },
+  };
+  const state = { xp: store.get("xp", 0), done: store.get("done", []), sound: store.get("sound", true) };
+  /** الحصة اللي شغالة دلوقتي (null = الصفحة الرئيسية) */
+  let run = null;
+
+  // ---------- نصوص ----------
+  const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const LATIN_RUN = /[A-Za-z][A-Za-z0-9'’\-]*(?:[\s,:;()\-–\/]+[A-Za-z0-9][A-Za-z0-9'’\-]*)*/g;
+  /**
+   * أجزاء الإنجليزي جوه نص عربي. علامة آخر الجملة بتتحسب مع الإنجليزي لو هو جملة كاملة
+   * ("In the exam: Habitat: the place …lives.")، وبتفضل للعربي لو هو كلمة في جملة عربي ("يبقى non-living thing.").
+   */
+  function latinRuns(text) {
+    const runs = [];
+    for (const m of text.matchAll(LATIN_RUN)) {
+      let end = m.index + m[0].length;
+      if (/[.?!]/.test(text[end] || "") && /^[A-Z]/.test(m[0]) && m[0].split(/\s+/).length >= 3) end++;
+      runs.push({ start: m.index, end });
+    }
+    return runs;
+  }
+  /** نص عربي فيه كلمات إنجليزي: الإنجليزي بيتعزل عشان الترتيب مايتلخبطش */
+  function bidi(text) {
+    let out = "", last = 0;
+    for (const r of latinRuns(text)) {
+      out += esc(text.slice(last, r.start)) + `<bdi dir="ltr" lang="en">${esc(text.slice(r.start, r.end))}</bdi>`;
+      last = r.end;
+    }
+    return out + esc(text.slice(last));
+  }
+  /** جملة إنجليزي مع تعليم الكلمات المهمة اللي لازم تتكتب في الامتحان */
+  function highlight(text, keywords = []) {
+    if (!keywords.length) return esc(text);
+    const re = new RegExp(keywords.slice().sort((a, b) => b.length - a.length).map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "gi");
+    let out = "", last = 0;
+    for (const m of text.matchAll(re)) {
+      out += esc(text.slice(last, m.index)) + `<mark>${esc(m[0])}</mark>`;
+      last = m.index + m[0].length;
+    }
+    return out + esc(text.slice(last));
+  }
+  const shuffle = (arr) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+  // ---------- الصوت (صوت الجهاز الآلي — النسخة الحقيقية هيبقى فيها صوت مصري مسجّل) ----------
+  const hasTTS = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+  const voice = { ar: null, en: null, count: 0 };
+  function pickVoices() {
+    const vs = speechSynthesis.getVoices();
+    voice.count = vs.length;
+    voice.ar = vs.find((v) => /^ar[-_]EG/i.test(v.lang)) || vs.find((v) => /^ar/i.test(v.lang)) || null;
+    voice.en = vs.find((v) => /^en[-_]US/i.test(v.lang) && /google|samantha|natural|aria|jenny/i.test(v.name))
+      || vs.find((v) => /^en[-_]US/i.test(v.lang)) || vs.find((v) => /^en/i.test(v.lang)) || null;
+    if (!run) updateVoiceLine();
+  }
+  if (hasTTS) { pickVoices(); speechSynthesis.addEventListener?.("voiceschanged", pickVoices); }
+
+  let speechGen = 0, pending = 0;
+  const setTalking = (on) => app.classList.toggle("talking", on);
+  const cleanForSpeech = (t) => t.replace(/[\p{Extended_Pictographic}‍️]/gu, "").replace(/[←→|]/g, "، ").replace(/\s+/g, " ").trim();
+  function segments(text) {
+    const out = [];
+    let last = 0;
+    for (const r of latinRuns(text)) {
+      if (r.start > last) out.push({ lang: "ar", text: text.slice(last, r.start) });
+      out.push({ lang: "en", text: text.slice(r.start, r.end) });
+      last = r.end;
+    }
+    if (last < text.length) out.push({ lang: "ar", text: text.slice(last) });
+    return out
+      .flatMap((s) => (s.lang === "ar" ? s.text.split(/(?<=[.؟!:])\s+/).map((t) => ({ lang: "ar", text: t })) : [s]))
+      .filter((s) => /[\p{L}\p{N}]/u.test(s.text));
+  }
+  /** بيقرا النص: العربي بصوت عربي، والكلمات الإنجليزي بصوت إنجليزي. lang بيجبر لغة واحدة. */
+  function speak(text, { lang } = {}) {
+    if (!hasTTS || !state.sound || !text) return;
+    const clean = cleanForSpeech(text);
+    const parts = lang ? [{ lang, text: clean }] : segments(clean);
+    const gen = speechGen;
+    for (const p of parts) {
+      const u = new SpeechSynthesisUtterance(p.text);
+      const en = p.lang === "en";
+      u.lang = en ? (voice.en?.lang || "en-US") : (voice.ar?.lang || "ar-EG");
+      const v = en ? voice.en : voice.ar;
+      if (v) u.voice = v;
+      u.rate = en ? 0.88 : 0.95;
+      pending++;
+      setTalking(true);
+      u.onend = u.onerror = () => { if (gen !== speechGen) return; pending = Math.max(0, pending - 1); if (!pending) setTalking(false); };
+      speechSynthesis.speak(u);
+    }
+  }
+  function stopSpeech() {
+    speechGen++;
+    pending = 0;
+    setTalking(false);
+    if (hasTTS) speechSynthesis.cancel();
+  }
+
+  let audioCtx = null;
+  function tone(kind) {
+    if (!state.sound) return;
+    try {
+      audioCtx ??= new (window.AudioContext || window.webkitAudioContext)();
+      const notes = kind === "good" ? [660, 880] : kind === "win" ? [523, 659, 784, 1047] : [196];
+      notes.forEach((f, i) => {
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = kind === "bad" ? "triangle" : "sine";
+        o.frequency.value = f;
+        const t = audioCtx.currentTime + i * 0.11;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.16, t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.28);
+        o.connect(g).connect(audioCtx.destination);
+        o.start(t);
+        o.stop(t + 0.3);
+      });
+    } catch {}
+  }
+
+  function setSound(on) {
+    state.sound = on;
+    store.set("sound", on);
+    const b = $("#soundBtn");
+    b.textContent = on ? "🔊" : "🔇";
+    b.setAttribute("aria-label", on ? "الصوت شغال" : "الصوت مقفول");
+    if (!on) stopSpeech();
+  }
+
+  // ---------- XP ----------
+  function updateXP(gain) {
+    $("#xpVal").textContent = state.xp;
+    if (!gain) return;
+    const chip = $("#xpChip").getBoundingClientRect();
+    const pop = document.createElement("div");
+    pop.className = "xp-pop";
+    pop.textContent = `+${gain} ⭐`;
+    pop.style.left = `${chip.left}px`;
+    document.body.appendChild(pop);
+    setTimeout(() => pop.remove(), 1200);
+  }
+  function award(key, n) {
+    if (!run || run.awarded.has(key)) return;
+    run.awarded.add(key);
+    run.xp += n;
+    state.xp += n;
+    store.set("xp", state.xp);
+    updateXP(n);
+  }
+
+  // ---------- بناء الحصة ----------
+
+  function sessionSteps(n) {
+    const steps = [];
+    for (const st of S.sessions[n - 1].steps) {
+      if (st.kind !== "recall") { steps.push(st); continue; }
+      // زي المحرك: الحصة الأولى بتسترجع من الدرس اللي قبله، والباقي من حصص الدرس اللي خلصت (ولو مفيش، الخطوة بتتشال)
+      const items = shuffle((n === 1 ? DATA.recall.previous : DATA.recall.covered[n]) || []).slice(0, st.count);
+      items.forEach((item, k) => steps.push({ kind: "recall_q", say: k === 0 ? st.say : "وسؤال كمان:", item, k, of: items.length }));
+    }
+    return steps;
+  }
+
+  /** نفس منطق المحرك: الشرح البديل للجزئيات الضعيفة + نصايح الامتحان بتاعتها + خلاصة */
+  function remediationSteps(weak) {
+    const all = S.sessions.flatMap((s) => s.steps);
+    const steps = [{ kind: "hook", say: "تعالى نراجع سوا الحتت اللي كانت صعبة شوية، بس المرة دي هشرحهالك بطريقة تانية خالص 💪", illustration: { emoji: "🔁", prompt: "" } }];
+    for (const o of weak) {
+      steps.push(...(S.alternatives[o] || []));
+      steps.push(...all.filter((s) => s.kind === "exam_tip" && s.objectiveId === o));
+    }
+    steps.push({
+      kind: "summary",
+      say: "دي أهم حاجات لازم تفتكرها. يلا نجرب الواجب تاني 🚀",
+      points: all.filter((s) => s.kind === "explain" && weak.includes(s.objectiveId) && s.english).map((s) => s.english.text),
+    });
+    return steps;
+  }
+
+  // ---------- قطع الواجهة ----------
+  const teacher = (text, live = true) => `<div class="teacher"><div class="avatar${live ? " live" : ""}" aria-hidden="true">🦉</div><div class="bubble"><div class="who">${TEACHER}</div><p>${bidi(text)}</p></div></div>`;
+  function illus(ill) {
+    if (!ill) return "";
+    const parts = ill.emoji.split("|").map((s) => s.trim()).filter(Boolean);
+    return `<div class="illus" aria-hidden="true">${parts.map((p) => `<span class="blob">${esc(p)}</span>`).join('<span class="sep"></span>')}</div>`;
+  }
+  const englishBox = (line, label = "بالإنجليزي، زي ما هتكتبها في الامتحان") =>
+    `<div class="en-box"><div class="en-label">${label}</div><p dir="ltr" lang="en">${highlight(line.text, line.keywords)}</p><button class="chip-btn" data-say-en="${esc(line.text)}">🔊 اسمعها بالإنجليزي</button></div>`;
+
+  function setReady(ready = true) {
+    run.ready = ready;
+    const b = $("#nextBtn");
+    if (b) b.disabled = !ready;
+  }
+  function firstAttempt() {
+    if (run.attempted.has(run.i)) return false;
+    run.attempted.add(run.i);
+    run.checks.total++;
+    return true;
+  }
+  const nearest = (el) => el.scrollIntoView({ block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
+
+  const VIEWS = {
+    hook: (st) => ({ html: illus(st.illustration) + teacher(st.say), ready: true, narrate: () => speak(st.say) }),
+
+    explain: (st) => ({
+      html: `<span class="step-tag">${esc(st.title)}</span>` + illus(st.illustration) + teacher(st.say) + (st.english ? englishBox(st.english) : ""),
+      ready: true,
+      narrate: () => { speak(st.say); if (st.english) speak(st.english.text, { lang: "en" }); },
+    }),
+
+    check: (st) => ({
+      html: `<span class="step-tag">سؤال فهم 🤔</span>` + illus(st.illustration) + teacher(st.ask)
+        + `<div class="choices">${st.choices.map((c, i) => `<button class="choice" data-i="${i}">${bidi(c.text)}</button>`).join("")}</div>`
+        + `<div class="feedback"><div class="hint">اختار إجابة 👆</div></div>`,
+      ready: false,
+      narrate: () => speak(st.ask),
+      mount(root) {
+        const fb = $(".feedback", root);
+        let tries = 0, fresh = false;
+        $$(".choice", root).forEach((btn) => btn.addEventListener("click", () => {
+          const c = st.choices[+btn.dataset.i];
+          if (tries === 0) fresh = firstAttempt();
+          tries++;
+          stopSpeech();
+          if (c.correct) {
+            if (tries === 1 && fresh) run.checks.first++;
+            btn.classList.add("right");
+            $$(".choice", root).forEach((b) => (b.disabled = true));
+            fb.innerHTML = `<div class="fb good">${bidi(c.feedback)}</div>`;
+            award(`c${run.i}`, tries === 1 ? 10 : 5);
+            tone("good");
+            speak(c.feedback);
+            setReady(true);
+          } else {
+            btn.classList.add("wrong");
+            btn.disabled = true;
+            fb.innerHTML = `<div class="fb bad">${bidi(c.feedback)}</div>`
+              + `<div class="reteach"><div class="who">🦉 خليني أشرحهالك بطريقة تانية</div><p>${bidi(st.reteach)}</p></div>`
+              + `<div class="hint">يلا جرّب تاني 👆</div>`;
+            tone("bad");
+            speak(c.feedback);
+            speak(st.reteach);
+          }
+          nearest(fb);
+        }));
+      },
+    }),
+
+    recall_q: (st) => {
+      const it = st.item, tf = it.type === "true_false";
+      return {
+        html: (st.say ? teacher(st.say) : "")
+          + `<div class="exam-card"><div class="exam-badge">سؤال استرجاع ${st.k + 1} من ${st.of}</div><p class="exam-q" dir="ltr" lang="en">${esc(it.prompt)}</p><button class="chip-btn" data-say-en="${esc(it.prompt)}">🔊 اسمع السؤال</button></div>`
+          + `<div class="choices${tf ? " tf" : ""}" dir="ltr">${it.choices.map((c, i) => `<button class="choice en" data-i="${i}" lang="en">${tf ? (c === "True" ? "✓ True" : "✗ False") : esc(c)}</button>`).join("")}</div>`
+          + `<div class="feedback" dir="rtl"></div>`,
+        ready: false,
+        narrate: () => { if (st.say) speak(st.say); speak(it.prompt, { lang: "en" }); },
+        mount(root) {
+          const fb = $(".feedback", root);
+          $$(".choice", root).forEach((btn) => btn.addEventListener("click", () => {
+            const pick = it.choices[+btn.dataset.i];
+            const ok = pick === it.answerKey;
+            const fresh = firstAttempt();
+            stopSpeech();
+            $$(".choice", root).forEach((b) => { b.disabled = true; if (it.choices[+b.dataset.i] === it.answerKey) b.classList.add("right"); });
+            if (!ok) btn.classList.add("wrong");
+            if (ok && fresh) run.checks.first++;
+            const why = it.explanation ? `<p dir="auto">${bidi(it.explanation)}</p>` : "";
+            fb.innerHTML = ok
+              ? `<div class="fb good">صح! 👏 لسه فاكر.</div>${why}`
+              : `<div class="fb bad">الإجابة الصح: <bdi dir="ltr" lang="en">${esc(it.answerKey)}</bdi></div>${why}`;
+            if (ok) { award(`r${run.i}`, 5); tone("good"); speak("صح! لسه فاكر."); } else { tone("bad"); speak("مش مشكلة، الإجابة الصح:"); speak(it.answerKey, { lang: "en" }); }
+            setReady(true);
+            nearest(fb);
+          }));
+        },
+      };
+    },
+
+    vocab: (st) => ({
+      html: `<span class="step-tag">كلمات الحصة 📒</span>` + teacher(st.say)
+        + `<div class="vocab-grid">${st.words.map((w) => `<button class="vocab" data-say-en="${esc(w.en)}"><span class="v-en" dir="ltr" lang="en">${esc(w.en)}</span><span class="v-ar">${esc(w.ar)}</span></button>`).join("")}</div>`
+        + `<button class="chip-btn wide" data-say-all>🔊 اسمع الكلمات كلها</button>`,
+      ready: true,
+      narrate: () => speak(st.say),
+      mount(root) {
+        $("[data-say-all]", root).addEventListener("click", () => {
+          if (!state.sound) setSound(true);
+          stopSpeech();
+          for (const w of st.words) { speak(w.en, { lang: "en" }); speak(w.ar, { lang: "ar" }); }
+        });
+      },
+    }),
+
+    activity: (st) => ({
+      html: `<span class="step-tag">يلا نلعب 🎯</span>` + teacher(st.say)
+        + `<div class="hint">دوس على كارت، وبعدين دوس على المجموعة بتاعته</div>`
+        + `<div class="tray">${shuffle(st.items.map((it, i) => ({ ...it, i }))).map((it) => `<button class="token" data-i="${it.i}" aria-pressed="false"><span aria-hidden="true">${esc(it.emoji)}</span><bdi dir="ltr" lang="en">${esc(it.text)}</bdi></button>`).join("")}</div>`
+        + `<div class="zones">${st.groups.map((g, gi) => `<button class="zone" data-g="${gi}"><span class="zone-title" dir="ltr" lang="en">${esc(g)}</span>${st.groupsAr?.[gi] ? `<span class="zone-ar">${esc(st.groupsAr[gi])}</span>` : ""}<span class="zone-items"></span></button>`).join("")}</div>`
+        + `<div class="feedback"></div>`
+        + (st.tryAtHome ? `<div class="home-task" hidden><div class="who">🏡 جرّبها في البيت</div>${bidi(st.tryAtHome)}</div>` : ""),
+      ready: false,
+      narrate: () => speak(st.say),
+      mount(root) {
+        const fb = $(".feedback", root), tray = $(".tray", root);
+        let selected = null, placed = 0, mistakes = 0;
+        const fresh = firstAttempt();
+        const arm = (on) => $$(".zone", root).forEach((z) => z.classList.toggle("armed", on));
+        tray.addEventListener("click", (e) => {
+          const tok = e.target.closest(".token");
+          if (!tok) return;
+          $$(".token", root).forEach((t) => t.setAttribute("aria-pressed", "false"));
+          if (selected === tok) { selected = null; arm(false); return; }
+          selected = tok;
+          tok.setAttribute("aria-pressed", "true");
+          arm(true);
+          speak(st.items[+tok.dataset.i].text, { lang: "en" });
+        });
+        $$(".zone", root).forEach((zone) => zone.addEventListener("click", () => {
+          if (!selected) { fb.innerHTML = `<div class="hint">اختار كارت من فوق الأول 👆</div>`; return; }
+          const item = st.items[+selected.dataset.i];
+          if (st.groups[+zone.dataset.g] === item.group) {
+            $(".zone-items", zone).insertAdjacentHTML("beforeend", `<span class="placed">${esc(item.emoji)} <bdi dir="ltr" lang="en">${esc(item.text)}</bdi></span>`);
+            selected.remove();
+            selected = null;
+            arm(false);
+            placed++;
+            fb.innerHTML = "";
+            if (placed === st.items.length) {
+              if (fresh && mistakes === 0) run.checks.first++;
+              tone("win");
+              award(`a${run.i}`, mistakes === 0 ? 15 : 10);
+              fb.innerHTML = `<div class="fb good">👏 برافو! رتّبتهم كلهم صح.</div>`;
+              const home = $(".home-task", root);
+              if (home) home.hidden = false;
+              stopSpeech();
+              speak("برافو! رتّبتهم كلهم صح.");
+              if (st.tryAtHome) speak(st.tryAtHome);
+              setReady(true);
+              nearest(home || fb);
+            } else {
+              tone("good");
+            }
+          } else {
+            mistakes++;
+            tone("bad");
+            selected.classList.remove("shake");
+            void selected.offsetWidth;
+            selected.classList.add("shake");
+            fb.innerHTML = `<div class="fb bad">مش المجموعة دي 🤔 فكّر تاني وجرّب التانية.</div>`;
+          }
+        }));
+      },
+    }),
+
+    exam_tip: (st) => ({
+      html: `<div class="exam-card"><div class="exam-badge">📝 سؤال امتحان · ${esc(DATA.styleLabels[st.style] || "")}</div><p class="exam-q" dir="ltr" lang="en">${esc(st.question)}</p></div>`
+        + teacher(st.say)
+        + `<button class="reveal">👀 فكّر في الإجابة… وبعدين اكشفها</button>`
+        + `<div class="model" hidden>${englishBox(st.modelAnswer, "✍️ الإجابة النموذجية — اكتبها كده بالظبط")}</div>`,
+      ready: false,
+      narrate: () => { speak(st.question, { lang: "en" }); speak(st.say); },
+      mount(root) {
+        $(".reveal", root).addEventListener("click", (e) => {
+          e.currentTarget.hidden = true;
+          const model = $(".model", root);
+          model.hidden = false;
+          stopSpeech();
+          speak(st.modelAnswer.text, { lang: "en" });
+          award(`t${run.i}`, 5);
+          setReady(true);
+          nearest(model);
+        });
+      },
+    }),
+
+    summary: (st) => ({
+      html: `<div class="illus" aria-hidden="true"><span class="blob">🌟</span></div>` + teacher(st.say) + `<ul class="points">${st.points.map((p) => `<li>${bidi(p)}</li>`).join("")}</ul>`,
+      ready: true,
+      narrate: () => { speak(st.say); st.points.forEach((p) => speak(p)); },
+    }),
+  };
+
+  // ---------- الشاشات ----------
+  function setHeader(title, sub) {
+    $("#topTitle").textContent = title;
+    $("#topSub").textContent = sub;
+  }
+  const setProgress = (ratio) => ($("#progressBar").style.width = `${Math.round(ratio * 100)}%`);
+
+  function updateVoiceLine() {
+    const el = $("#voiceLine");
+    if (!el) return;
+    if (!hasTTS) el.textContent = "⚠️ المتصفح ده مابيقراش بالصوت — الكلام كله مكتوب قدامك.";
+    else if (voice.ar) el.textContent = `🔊 صوت المعلم: صوت الجهاز العربي (${voice.ar.lang}). ده صوت آلي مؤقت — النسخة الحقيقية هيبقى فيها صوت مصري.`;
+    else if (voice.count) el.textContent = "⚠️ الجهاز ده مفيهوش صوت عربي متسطّب — الإنجليزي هيتقري، والعربي هيفضل مكتوب.";
+    else el.textContent = "🔊 الصوت بيشتغل أول ما تبدأ الحصة (صوت آلي مؤقت).";
+  }
+
+  function renderHome() {
+    run = null;
+    stopSpeech();
+    setProgress(0);
+    setHeader(DATA.subjectLine, DATA.unitTitle);
+    const done = state.done;
+    const count = S.sessions.length;
+    const nextSession = S.sessions.findIndex((_, i) => !done.includes(i + 1)) + 1; // 0 = كل الحصص خلصت
+    const now = nextSession ? nextSession - 1 : count;
+    const nodes = [...S.sessions.map((_, i) => `الحصة ${i + 1}`), "الواجب", "الاختبار الأساسي", "الدرس الجاي"];
+    const journey = nodes.map((label, i) => {
+      const cls = i < count && done.includes(i + 1) ? "done" : i === now ? "now" : "";
+      const icon = cls === "done" ? "✓" : i === nodes.length - 1 ? "🔒" : i + 1;
+      return `<div class="node ${cls}"><div class="dot">${icon}</div>${label}</div>`;
+    }).join("");
+    const card = (n) => {
+      const sess = S.sessions[n - 1];
+      const mins = Math.max(8, Math.round(sess.steps.length * 0.75));
+      return `<button class="session-card" data-session="${n}"><span class="num">${n}</span><span><span class="t">${esc(sess.title)}</span><br><span class="muted">${done.includes(n) ? '<span class="done-badge">✓ خلصت</span> · ' : ""}حوالي ${mins} دقيقة</span></span></button>`;
+    };
+    screen.innerHTML = `
+      <section class="hero">
+        <div class="hero-owl" aria-hidden="true">🦉</div>
+        <h1 dir="ltr" lang="en">${esc(DATA.title)}</h1>
+        <p>${esc(DATA.titleAr)} — ${esc(DATA.lessonLabel)}</p>
+      </section>
+      <div class="journey" style="grid-template-columns: repeat(${nodes.length}, minmax(0, 1fr))" aria-label="مسار الدرس">${journey}</div>
+      <div class="cards">
+        ${S.sessions.map((_, i) => card(i + 1)).join("")}
+        <button class="session-card alt" data-remediation><span class="num">🔁</span><span><span class="t">شكل المراجعة لو الطفل غلط</span><br><span class="muted">شرح بطريقة تانية للجزئيات اللي غلط فيها بس — هنا مثال بجزئيتين من الدرس</span></span></button>
+      </div>
+      <p class="note">💡 في التطبيق الحقيقي: الحصص بتفتح واحدة ورا التانية، والواجب بعد آخر حصة، والمراجعة دي بتظهر بس لو الطفل وقع في الاختبار الأساسي مرتين ورا بعض. هنا كله مفتوح عشان تجرّب.</p>
+      <p class="note" id="voiceLine"></p>`;
+    updateVoiceLine();
+    $$("[data-session]", screen).forEach((b) => b.addEventListener("click", () => startRun("lesson", +b.dataset.session)));
+    $("[data-remediation]", screen).addEventListener("click", () => startRun("remediation"));
+    const first = nextSession || 1;
+    actions.innerHTML = `<button class="btn btn-primary" id="startBtn">${nextSession ? `▶️ ابدأ الحصة ${first}` : "🔁 عيد الحصة 1"}</button>`;
+    $("#startBtn").addEventListener("click", () => startRun("lesson", first));
+  }
+
+  function startRun(mode, n = 1) {
+    const steps = mode === "lesson" ? sessionSteps(n) : remediationSteps(DATA.demoWeak);
+    run = {
+      mode, n, steps, i: 0, ready: false, xp: 0, narrate: null,
+      title: mode === "lesson" ? S.sessions[n - 1].title : "مراجعة بطريقة تانية",
+      checks: { total: 0, first: 0 }, awarded: new Set(), attempted: new Set(),
+    };
+    showStep();
+  }
+
+  function showStep() {
+    stopSpeech();
+    const st = run.steps[run.i];
+    const view = VIEWS[st.kind](st);
+    screen.innerHTML = `<div class="step">${view.html}</div>`;
+    window.scrollTo({ top: 0 });
+    run.ready = !!view.ready;
+    run.narrate = view.narrate;
+    view.mount?.(screen.firstElementChild);
+    renderStepActions();
+    setHeader(run.title, `${run.mode === "lesson" ? `الحصة ${run.n} من ${S.sessions.length} · ` : ""}خطوة ${run.i + 1}/${run.steps.length}`);
+    setProgress((run.i + 1) / run.steps.length);
+    run.narrate?.();
+  }
+
+  function renderStepActions() {
+    const last = run.i === run.steps.length - 1;
+    actions.innerHTML = `
+      <button class="icon-btn" id="backBtn" aria-label="الخطوة اللي فاتت" ${run.i === 0 ? "disabled" : ""}>→</button>
+      <button class="btn btn-ghost" id="replayBtn" aria-label="اسمع تاني">🔁 اسمع</button>
+      <button class="btn btn-primary" id="nextBtn" ${run.ready ? "" : "disabled"}>${last ? "خلّصت ✅" : "التالي ←"}</button>`;
+    $("#backBtn").addEventListener("click", () => { if (run.i > 0) { run.i--; showStep(); } });
+    $("#replayBtn").addEventListener("click", () => { if (!state.sound) setSound(true); stopSpeech(); run.narrate?.(); });
+    $("#nextBtn").addEventListener("click", () => {
+      if (!run.ready) return;
+      if (last) finishRun();
+      else { run.i++; showStep(); }
+    });
+  }
+
+  function finishRun() {
+    stopSpeech();
+    const { total, first } = run.checks;
+    const ratio = total ? first / total : 1;
+    const stars = ratio >= 0.9 ? 3 : ratio >= 0.6 ? 2 : 1;
+    if (run.mode === "lesson") {
+      award("finish", 20);
+      if (!state.done.includes(run.n)) { state.done.push(run.n); store.set("done", state.done); }
+    }
+    const next = run.mode === "lesson" && run.n < S.sessions.length ? run.n + 1 : null;
+    let headline, line;
+    if (run.mode === "remediation") {
+      headline = "المراجعة خلصت 💪";
+      line = "دلوقتي الطفل بيرجع يحل الواجب تاني، والأسئلة بتركّز على الجزئيات اللي اتراجعت.";
+    } else if (next) {
+      headline = `عاش يا بطل! الحصة ${run.n} خلصت`;
+      line = `الحصة ${next} مستنياك: «${S.sessions[next - 1].title}»`;
+    } else {
+      headline = "عاش! الدرس كله خلص 🎉";
+      line = "كده الواجب اتفتح 📝 ولما يعدّي الاختبار الأساسي، الدرس الجاي يفتح.";
+    }
+    screen.innerHTML = `
+      <section class="finish">
+        <div class="stars" aria-label="${stars} من 3 نجوم">${"⭐".repeat(stars)}${"☆".repeat(3 - stars)}</div>
+        <h2>${esc(headline)}</h2>
+        <p>${esc(line)}</p>
+        <div class="gain">+${run.xp} نقطة ⭐</div>
+        ${total ? `<p class="muted">جاوب ${first} من ${total} صح من أول مرة</p>` : ""}
+      </section>`;
+    setHeader(run.title, "خلصت ✅");
+    setProgress(1);
+    actions.innerHTML = next
+      ? `<button class="btn btn-ghost" id="goHome">🏠</button><button class="btn btn-primary" id="goNext">ابدأ الحصة ${next} ←</button>`
+      : `<button class="btn btn-primary" id="goHome">🏠 الرجوع للدرس</button>`;
+    $("#goHome").addEventListener("click", renderHome);
+    $("#goNext")?.addEventListener("click", () => startRun("lesson", next));
+    tone("win");
+    speak(`${headline}. ${line}`);
+  }
+
+  // ---------- اسأل المعلم ----------
+  let sample = null, turns = [], askCtl = null, asking = false;
+  const today = () => new Date().toISOString().slice(0, 10);
+  const usedToday = () => store.get(`asked:${today()}`, 0);
+  const left = () => Math.max(0, DAILY_LIMIT - usedToday());
+  const useOne = () => { store.set(`asked:${today()}`, usedToday() + 1); updateLeft(); };
+  const updateLeft = () => ($("#leftLine").textContent = left() ? `باقي لك ${left()} من ${DAILY_LIMIT} أسئلة النهارده` : "خلصت أسئلة النهارده");
+  const HIDE = new Set(["not_granted", "sampling_disabled", "not_declared", "capability_disabled", "capability_removed"]);
+  const SUGGEST = DATA.suggestions;
+
+  function addMsg(who, text, extra = "") {
+    const div = document.createElement("div");
+    div.className = `msg ${who === "child" ? "child-msg" : "teacher-msg"} ${extra}`;
+    div.innerHTML = bidi(text);
+    $("#chat").appendChild(div);
+    div.scrollIntoView({ block: "end", behavior: reduceMotion ? "auto" : "smooth" });
+    return div;
+  }
+  function setMsg(div, text) {
+    div.classList.remove("thinking");
+    div.innerHTML = bidi(text);
+    const chat = $("#chat");
+    chat.scrollTop = chat.scrollHeight;
+  }
+  function whereNow() {
+    if (!run) return "The child is on the lesson's home screen.";
+    const st = run.steps[run.i];
+    const at = st.title || st.ask || st.question || st.say || "";
+    return `Where the child is right now: ${run.mode === "lesson" ? `session ${run.n} of ${S.sessions.length} ("${run.title}")` : "a remediation review"}, at this part: "${at.slice(0, 160)}".`;
+  }
+  function openSheet() {
+    stopSpeech();
+    $("#sheet").hidden = false;
+    if (!$("#chat").children.length) {
+      addMsg("teacher", "اسألني أي حاجة في الدرس ده وأنا أشرحهالك 😊");
+      const box = document.createElement("div");
+      box.className = "suggest";
+      box.innerHTML = SUGGEST.map((s) => `<button class="chip-btn" type="button">${bidi(s)}</button>`).join("");
+      $$("button", box).forEach((b, i) => b.addEventListener("click", () => ask(SUGGEST[i])));
+      $("#chat").appendChild(box);
+    }
+    updateLeft();
+    $("#sheetClose").focus();
+  }
+  function closeSheet() {
+    askCtl?.abort();
+    $("#sheet").hidden = true;
+    $("#askBtn").focus();
+  }
+  function setAsking(on) {
+    asking = on;
+    $("#askSend").disabled = on;
+    $("#askSend").textContent = on ? "…" : "اسأل";
+  }
+
+  async function ask(raw) {
+    if (asking) return;
+    const q = raw.trim().slice(0, 300);
+    if (!q) { addMsg("teacher", T.messages.empty); return; }
+    if (left() <= 0) { addMsg("teacher", T.messages.limitReached); return; }
+    $("#askInput").value = "";
+    $(".suggest")?.remove();
+    addMsg("child", q);
+    const bubble = addMsg("teacher", `${TEACHER} بيفكر… 🤔`, "thinking");
+    askCtl = new AbortController();
+    setAsking(true);
+    const instructions = `${T.rules}\n\n${T.context}\n\n${whereNow()}\n\nNow answer the child's next message as ${TEACHER}, in plain text only.`;
+    try {
+      const { text } = await sample([{ role: "user", content: instructions }, ...turns.slice(-8), { role: "user", content: q }], {
+        cache: false,
+        modelTier: "quick",
+        signal: askCtl.signal,
+        onText: ({ text }) => setMsg(bubble, text),
+      });
+      setMsg(bubble, text);
+      turns.push({ role: "user", content: q }, { role: "assistant", content: text });
+      useOne();
+      const say = document.createElement("button");
+      say.className = "chip-btn say-btn";
+      say.type = "button";
+      say.textContent = "🔊 اسمع الرد";
+      say.addEventListener("click", () => { if (!state.sound) setSound(true); stopSpeech(); speak(text); });
+      bubble.appendChild(say);
+      speak(text);
+    } catch (e) {
+      const code = e && e.code;
+      if (code === "cancelled") setMsg(bubble, e.text || "…");
+      else if (HIDE.has(code)) {
+        setMsg(bubble, "المعلم مش متاح في النسخة دي دلوقتي 🙏");
+        $("#askBtn").hidden = true;
+        $("#askForm").hidden = true;
+      } else if (code === "refused" || code === "empty_completion") { setMsg(bubble, T.messages.refused); useOne(); }
+      else setMsg(bubble, (e && e.text ? e.text + "\n\n" : "") + T.messages.busy);
+    } finally {
+      setAsking(false);
+    }
+  }
+
+  (async () => {
+    try { if (window.claude?.use) sample = await window.claude.use("sample"); } catch { sample = null; }
+    if (sample) $("#askBtn").hidden = false;
+  })();
+
+  $("#askBtn").addEventListener("click", openSheet);
+  $("#sheetClose").addEventListener("click", closeSheet);
+  $("#sheetBackdrop").addEventListener("click", closeSheet);
+  $("#askForm").addEventListener("submit", (e) => { e.preventDefault(); ask($("#askInput").value); });
+  $("#askInput").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(e.currentTarget.value); } });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#sheet").hidden) closeSheet(); });
+
+  // ---------- عام ----------
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-say-en]");
+    if (!b) return;
+    if (!state.sound) setSound(true);
+    stopSpeech();
+    speak(b.dataset.sayEn, { lang: "en" });
+    b.classList.remove("pulse");
+    void b.offsetWidth;
+    b.classList.add("pulse");
+  });
+  $("#homeBtn").addEventListener("click", renderHome);
+  $("#soundBtn").addEventListener("click", () => setSound(!state.sound));
+
+  setSound(state.sound);
+  updateXP(0);
+  renderHome();
+})();
+</script>

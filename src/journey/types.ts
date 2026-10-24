@@ -25,7 +25,10 @@ export interface LessonProgress {
   status: LessonStatus;
   unlockedOn?: ISODate;
   passedOn?: ISODate;
+  /** كل حصص الشرح اللي خلصها في الدرس (بما فيها المراجعة العلاجية) */
   learningSessions: number;
+  /** حصص الشرح اللي خلصها في المرة دي (الدرس ممكن يبقى حصتين أو تلاتة) */
+  sessionsDone: number;
   homeworkScore?: number;
   tiers: Record<Tier, TierRecord>;
   consecutiveBasicFails: number;
@@ -90,6 +93,14 @@ export interface StudentProfile {
   parent?: ParentContact;
 }
 
+/** سؤال سأله الطفل لـ "اسأل المعلم" — بيظهر لولي الأمر لأنه بيكشف الطفل مش فاهم إيه */
+export interface TeacherQuestion {
+  date: ISODate;
+  lessonId: string;
+  question: string;
+  answer: string;
+}
+
 export interface StudentState {
   version: 1;
   student: StudentProfile;
@@ -105,13 +116,14 @@ export interface StudentState {
   /** آخر مرة شاف فيها كل سؤال */
   seenAt: Record<string, ISODate>;
   quizCounter: number;
+  teacherQuestions?: TeacherQuestion[];
   gamification: GamificationState;
   events: JourneyEvent[];
 }
 
 /** الحاجات اللي الطالب يقدر يعملها دلوقتي — الواجهة بتعرضها كأزرار/مهام. */
 export type AvailableAction =
-  | { type: "learn"; lessonId: string; remediation: boolean }
+  | { type: "learn"; lessonId: string; remediation: boolean; session: number; sessions: number }
   | { type: "homework"; lessonId: string; remediation: boolean }
   | { type: "quiz"; lessonId: string; tier: Tier }
   | { type: "weekly_test"; weekNumber: number }

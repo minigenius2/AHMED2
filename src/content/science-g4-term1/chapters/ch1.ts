@@ -35,7 +35,7 @@ export const chapter1: Unit = {
       keyFacts: [
         "Living organisms (humans, animals and plants) feed, grow and breathe.",
         "Air, water and rocks are examples of non-living things: they do not feed, grow or breathe.",
-        "Habitat: the place where a living organism lives.",
+        "Habitat: the place where the living organism lives.",
         "Each habitat has different living organisms, because every organism lives where it finds its needs: water, food and shelter.",
         "Grass and trees give food and good hiding places, so sparrows and grasshoppers live there.",
         "Under stones, in the shade of rocks and under the ground it is damp and cool, so ants live there.",

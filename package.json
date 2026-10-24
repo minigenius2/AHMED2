@@ -7,12 +7,16 @@
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "simulate": "tsx examples/simulate-term.ts"
+    "simulate": "tsx examples/simulate-term.ts",
+    "preview:lesson": "tsx tools/lesson-preview/build.ts"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",
     "vitest": "^3.2.7"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.3.0"
   }
 }

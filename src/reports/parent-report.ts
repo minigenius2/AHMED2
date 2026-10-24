@@ -128,6 +128,12 @@ export function buildWeeklyReport(src: ReportSource, weekNumber: number, today: 
     if (weakLines.length) lines.push("📌 نقط محتاجة مراجعة:", ...weakLines);
   }
 
+  const asked = (src.state.teacherQuestions ?? []).filter((q) => q.date >= week.startDate && q.date <= week.endDate);
+  if (asked.length) {
+    const samples = asked.slice(-2).map((q) => `«${q.question.length > 60 ? `${q.question.slice(0, 60)}…` : q.question}»`);
+    lines.push("", `❓ سأل المعلم ${asked.length} ${asked.length === 1 ? "سؤال" : "أسئلة"} الأسبوع ده، زي: ${samples.join(" و ")}`);
+  }
+
   lines.push("", progressFooter(src, week.startDate, week.endDate));
   lines.push(`💡 ${result ? advice(result.score) : "يا ريت تشجعه يكمّل دروس الأسبوع عشان يلحق اختبار آخر الأسبوع."}`);
   return notification(src, "weekly_report", today, title, lines);
