@@ -68,6 +68,11 @@ export interface AssistantConfig {
   review: QuizConfig;
   /** امتحانات تجريبية في آخر المنهج بنفس شكل امتحان آخر الترم */
   finalMock: GradedQuizConfig;
+  /** زرار "اسأل المعلم" */
+  askTeacher: {
+    dailyLimit: number;
+    maxQuestionChars: number;
+  };
 }
 
 export const DEFAULT_CONFIG: AssistantConfig = {
@@ -83,4 +88,5 @@ export const DEFAULT_CONFIG: AssistantConfig = {
   periodicTest: { questionCount: 20, passThreshold: 0.65, difficulty: { min: 1, max: 5 }, recentWeight: 0.6 },
   review: { questionCount: 10, difficulty: { min: 1, max: 3 } },
   finalMock: { questionCount: 25, passThreshold: 0.65, difficulty: { min: 1, max: 5 } },
+  askTeacher: { dailyLimit: 10, maxQuestionChars: 300 },
 };

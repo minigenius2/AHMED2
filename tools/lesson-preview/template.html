@@ -1,0 +1,1798 @@
+<title>__TITLE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbf7ef; --surface: #ffffff; --surface-2: #f2ecdf; --ink: #1f2a37; --ink-2: #5d6774; --line: #e5ddcb;
+    --leaf: #1f8a57; --leaf-ink: #ffffff; --leaf-soft: #dcf1e5;
+    --sun: #e09b00; --sun-soft: #fff0c7;
+    --coral: #cf4a35; --coral-soft: #fde2dc;
+    --sky: #2370c9; --sky-soft: #e0ecfa;
+    --mark: #ffe17a; --mark-ink: #1f2a37;
+    --fab: #2370c9; --fab-ink: #ffffff;
+    --shadow: 0 6px 18px rgba(70, 52, 12, .08);
+    --radius: 22px;
+    --font: "Baloo Bhaijaan 2", "Segoe UI", Tahoma, system-ui, sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10151c; --surface: #19212b; --surface-2: #222c38; --ink: #eef2f6; --ink-2: #a7b1be; --line: #2d3947;
+      --leaf: #3cc483; --leaf-ink: #04261a; --leaf-soft: #17392a;
+      --sun: #ffc53d; --sun-soft: #3a3014;
+      --coral: #ff7f69; --coral-soft: #3f201a;
+      --sky: #6aabff; --sky-soft: #1a2d45;
+      --mark: #6d5b10; --mark-ink: #fff6d2;
+      --fab: #8cc0ff; --fab-ink: #0a1a2e;
+      --shadow: 0 6px 18px rgba(0, 0, 0, .25);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10151c; --surface: #19212b; --surface-2: #222c38; --ink: #eef2f6; --ink-2: #a7b1be; --line: #2d3947;
+    --leaf: #3cc483; --leaf-ink: #04261a; --leaf-soft: #17392a;
+    --sun: #ffc53d; --sun-soft: #3a3014;
+    --coral: #ff7f69; --coral-soft: #3f201a;
+    --sky: #6aabff; --sky-soft: #1a2d45;
+    --mark: #6d5b10; --mark-ink: #fff6d2;
+    --fab: #8cc0ff; --fab-ink: #0a1a2e;
+    --shadow: 0 6px 18px rgba(0, 0, 0, .25);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 18px; line-height: 1.7; -webkit-text-size-adjust: 100%; }
+  button { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+  button:focus-visible, textarea:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+
+  #app {
+    min-height: 100dvh; max-width: 600px; margin: 0 auto; display: flex; flex-direction: column;
+    padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right));
+  }
+
+  /* الهيدر */
+  .top { position: sticky; top: 0; z-index: 10; background: var(--bg); display: flex; align-items: center; gap: 10px; padding: max(10px, env(safe-area-inset-top)) 0 8px; }
+  .top-title { flex: 1; min-width: 0; line-height: 1.35; }
+  .top-title #topTitle { font-weight: 800; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .muted { color: var(--ink-2); font-size: 14px; }
+  #topSub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .icon-btn { flex: none; width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); font-size: 20px; cursor: pointer; display: grid; place-items: center; }
+  .icon-btn:disabled { opacity: .4; cursor: default; }
+  .xp { flex: none; background: var(--sun-soft); border-radius: 999px; padding: 4px 12px; font-weight: 800; font-size: 16px; white-space: nowrap; }
+  .voice-warning { display: flex; gap: 8px; align-items: center; margin: 8px 0 0; padding: 8px 12px; border-radius: 16px; background: var(--coral-soft); font-size: 15px; line-height: 1.5; }
+  .voice-warning .icon-btn { width: 36px; height: 36px; font-size: 16px; }
+  .progress { height: 8px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+  .progress > div { height: 100%; width: 0; background: var(--leaf); border-radius: 999px; transition: width .3s ease; }
+
+  main { flex: 1; padding: 6px 0 150px; }
+
+  /* المعلم */
+  .teacher { display: flex; gap: 10px; align-items: flex-start; margin: 14px 0; }
+  .avatar { flex: none; width: 50px; height: 50px; border-radius: 50%; background: var(--sun-soft); display: grid; place-items: center; font-size: 28px; }
+  #app.talking .avatar.live { animation: talk .9s ease-in-out infinite; }
+  @keyframes talk { 50% { transform: scale(1.08) rotate(-4deg); } }
+  .bubble { flex: 1; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); border-start-start-radius: 6px; padding: 10px 16px 12px; box-shadow: var(--shadow); }
+  .who { font-size: 13px; color: var(--ink-2); font-weight: 800; }
+  .bubble p { margin: 0; font-size: 19px; }
+
+  .illus { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin: 10px 0 4px; }
+  .blob { font-size: clamp(34px, 10vw, 54px); line-height: 1.35; background: var(--leaf-soft); border-radius: 28px; padding: 8px 20px; }
+  .sep { width: 2px; align-self: stretch; background: var(--line); border-radius: 2px; }
+  .step-tag { display: inline-block; margin-top: 10px; background: var(--sky-soft); color: var(--sky); font-weight: 800; border-radius: 999px; padding: 2px 14px; font-size: 15px; }
+
+  .en-box { background: var(--surface); border: 2px dashed var(--leaf); border-radius: var(--radius); padding: 10px 16px 12px; margin: 12px 0; }
+  .en-label { font-size: 13px; color: var(--leaf); font-weight: 800; }
+  .en-box p { margin: 4px 0 10px; font-size: 19px; line-height: 1.55; font-weight: 600; text-align: left; }
+  mark { background: var(--mark); color: var(--mark-ink); border-radius: 6px; padding: 0 4px; }
+  .chip-btn { border: 1px solid var(--line); background: var(--surface-2); border-radius: 999px; padding: 4px 14px; min-height: 40px; font-size: 15px; cursor: pointer; }
+  .chip-btn.wide { display: block; width: 100%; margin-top: 12px; min-height: 48px; }
+
+  /* أسئلة الفهم */
+  .choices { display: grid; gap: 10px; margin: 12px 0; }
+  .choices.tf { grid-template-columns: 1fr 1fr; }
+  .choice { text-align: start; background: var(--surface); border: 2px solid var(--line); border-radius: 18px; padding: 10px 16px; min-height: 56px; font-size: 19px; cursor: pointer; transition: transform .1s ease; }
+  .choice.en { text-align: left; }
+  .choice:active:not(:disabled) { transform: scale(.98); }
+  .choice:disabled { cursor: default; }
+  .choice.right { border-color: var(--leaf); background: var(--leaf-soft); }
+  .choice.wrong { border-color: var(--coral); background: var(--coral-soft); opacity: .7; text-decoration: line-through; text-decoration-color: var(--coral); }
+  .fb { font-weight: 700; margin: 6px 0; }
+  .fb.good { color: var(--leaf); }
+  .fb.bad { color: var(--coral); }
+  .reteach { background: var(--sun-soft); border-radius: var(--radius); padding: 10px 16px 12px; margin: 10px 0; }
+  .reteach p { margin: 0; }
+  .hint { color: var(--ink-2); font-size: 15px; text-align: center; }
+
+  /* الكلمات */
+  .vocab-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .vocab { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 10px 8px; min-height: 84px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; box-shadow: var(--shadow); }
+  .v-en { font-size: 19px; font-weight: 800; color: var(--leaf); line-height: 1.3; }
+  .v-ar { color: var(--ink-2); font-size: 16px; }
+  .pulse { animation: pulse .5s ease; }
+  @keyframes pulse { 50% { transform: scale(1.06); } }
+
+  /* لعبة الترتيب */
+  .tray { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; min-height: 60px; padding: 10px; border: 2px dashed var(--line); border-radius: 18px; margin-top: 8px; }
+  .tray:empty::after { content: "خلصوا كلهم 🎉"; color: var(--ink-2); align-self: center; }
+  .token { display: inline-flex; gap: 6px; align-items: center; background: var(--surface); border: 2px solid var(--line); border-radius: 999px; padding: 4px 14px; min-height: 48px; font-size: 18px; cursor: pointer; transition: transform .15s ease; }
+  .token[aria-pressed="true"] { border-color: var(--sky); background: var(--sky-soft); transform: translateY(-3px); }
+  .zones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+  .zone { background: var(--surface-2); border: 2px solid var(--line); border-radius: 18px; padding: 10px 8px; min-height: 150px; display: flex; flex-direction: column; align-items: stretch; gap: 6px; cursor: pointer; text-align: center; }
+  .zone.armed { border-color: var(--sky); border-style: dashed; }
+  .zone-title { font-weight: 800; font-size: 15px; line-height: 1.35; }
+  .zone-ar { font-size: 13px; color: var(--ink-2); line-height: 1.35; }
+  .zone-items { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+  .placed { background: var(--leaf-soft); border-radius: 999px; padding: 2px 10px; font-size: 15px; }
+  .shake { animation: shake .35s ease; }
+  @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  .home-task { background: var(--sky-soft); border-radius: var(--radius); padding: 10px 16px 12px; margin-top: 12px; }
+
+  /* كمّل الجملة */
+  .en-box.confirm { border-color: var(--sky); }
+  .en-box.confirm .en-label { color: var(--sky); }
+  .blank { display: inline-block; min-width: 4.5em; height: 1.1em; vertical-align: -0.15em; border-bottom: 3px solid var(--sky); margin: 0 3px; }
+  .word-bank { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 6px; }
+  .token.right { border-color: var(--leaf); background: var(--leaf-soft); }
+  .token.wrong { border-color: var(--coral); background: var(--coral-soft); opacity: .7; text-decoration: line-through; text-decoration-color: var(--coral); }
+  .peek { margin: 8px 0 0; font-weight: 600; text-align: left; }
+
+  /* سؤال الامتحان */
+  .exam-card { background: var(--surface); border: 1px solid var(--line); border-top: 6px solid var(--sky); border-radius: var(--radius); padding: 10px 16px 12px; margin: 12px 0; box-shadow: var(--shadow); }
+  .exam-badge { font-size: 14px; font-weight: 800; color: var(--sky); }
+  .exam-q { margin: 4px 0 6px; font-size: 19px; font-weight: 700; line-height: 1.5; text-align: left; }
+  .reveal { width: 100%; min-height: 56px; border: 2px dashed var(--leaf); background: var(--leaf-soft); color: var(--ink); border-radius: 18px; font-weight: 700; cursor: pointer; }
+
+  .points { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 8px; }
+  .points li { background: var(--surface); border: 1px solid var(--line); border-inline-start: 5px solid var(--leaf); border-radius: 16px; padding: 8px 14px; }
+
+  /* الرئيسية */
+  .hero { text-align: center; padding: 12px 0 4px; }
+  .hero-owl { width: 92px; height: 92px; margin: 0 auto; border-radius: 50%; background: var(--sun-soft); display: grid; place-items: center; font-size: 54px; }
+  .hero h1 { font-size: 26px; line-height: 1.3; margin: 10px 0 0; }
+  .hero p { margin: 2px 0 0; color: var(--ink-2); }
+  .journey { display: grid; margin: 18px 0 6px; position: relative; }
+  .journey::before { content: ""; position: absolute; top: 15px; left: 10%; right: 10%; height: 3px; background: var(--line); }
+  .node { position: relative; text-align: center; font-size: 12.5px; line-height: 1.3; color: var(--ink-2); }
+  .dot { width: 32px; height: 32px; margin: 0 auto 4px; border-radius: 50%; background: var(--surface-2); border: 3px solid var(--line); display: grid; place-items: center; font-size: 14px; }
+  .node.done .dot { background: var(--leaf); border-color: var(--leaf); color: var(--leaf-ink); }
+  .node.now .dot { border-color: var(--leaf); background: var(--surface); }
+  .node.now { color: var(--ink); font-weight: 800; }
+  .cards { display: grid; gap: 10px; margin-top: 14px; }
+  .session-card { display: flex; gap: 14px; align-items: center; width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; min-height: 80px; text-align: start; cursor: pointer; box-shadow: var(--shadow); }
+  .session-card .num { flex: none; width: 48px; height: 48px; border-radius: 15px; background: var(--leaf); color: var(--leaf-ink); display: grid; place-items: center; font-weight: 800; font-size: 22px; }
+  .session-card.alt .num { background: var(--sun); color: #2b1d00; }
+  .session-card .t { font-weight: 800; font-size: 18px; line-height: 1.4; }
+  .done-badge { color: var(--leaf); font-weight: 800; }
+  .note { font-size: 14.5px; color: var(--ink-2); background: var(--surface-2); border-radius: 16px; padding: 10px 14px; margin-top: 14px; }
+
+  /* نهاية الحصة */
+  .finish { text-align: center; padding-top: 20px; }
+  .stars { font-size: 48px; letter-spacing: 6px; }
+  .finish h2 { margin: 6px 0 0; font-size: 26px; }
+  .finish .gain { display: inline-block; margin-top: 10px; background: var(--sun-soft); border-radius: 999px; padding: 4px 16px; font-weight: 800; }
+
+  /* الأزرار تحت */
+  .actions { position: sticky; bottom: 0; z-index: 10; display: flex; gap: 8px; align-items: center; background: linear-gradient(to top, var(--bg) 75%, transparent); padding: 14px 0 max(12px, env(safe-area-inset-bottom)); }
+  .btn { border: none; border-radius: 18px; min-height: 56px; padding: 0 16px; font-weight: 800; font-size: 18px; cursor: pointer; white-space: nowrap; }
+  .btn-primary { flex: 1; background: var(--leaf); color: var(--leaf-ink); box-shadow: 0 4px 0 rgba(0, 0, 0, .18); }
+  .btn-primary:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0, 0, 0, .18); }
+  .btn-primary:disabled { background: var(--surface-2); color: var(--ink-2); box-shadow: none; cursor: not-allowed; }
+  .btn-ghost { background: var(--surface); border: 1px solid var(--line); }
+
+  .ask-fab { position: fixed; z-index: 20; bottom: calc(86px + env(safe-area-inset-bottom)); left: max(16px, env(safe-area-inset-left), calc(50vw - 284px)); border: none; border-radius: 999px; background: var(--fab); color: var(--fab-ink); font-weight: 800; font-size: 16px; padding: 10px 18px; min-height: 48px; box-shadow: 0 6px 18px rgba(0, 0, 0, .22); cursor: pointer; }
+
+  .xp-pop { position: fixed; z-index: 30; top: 54px; font-weight: 800; color: var(--sun); font-size: 22px; pointer-events: none; animation: rise 1.1s ease forwards; }
+  @keyframes rise { from { opacity: 0; transform: translateY(16px); } 20% { opacity: 1; } to { opacity: 0; transform: translateY(-24px); } }
+
+  /* اسأل المعلم */
+  .sheet { position: fixed; inset: 0; z-index: 40; }
+  .sheet-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, .45); }
+  .sheet-panel { position: absolute; bottom: 0; left: 0; right: 0; margin: 0 auto; max-width: 600px; height: min(86dvh, 680px); background: var(--bg); border-radius: 24px 24px 0 0; display: flex; flex-direction: column; padding: 14px max(16px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+  .sheet-head { display: flex; align-items: center; gap: 10px; }
+  .sheet-head .t { flex: 1; font-weight: 800; line-height: 1.35; }
+  .chat { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 12px 0; }
+  .msg { max-width: 88%; padding: 8px 14px; border-radius: 18px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .msg.teacher-msg { align-self: flex-start; background: var(--surface); border: 1px solid var(--line); border-start-start-radius: 6px; }
+  .msg.child-msg { align-self: flex-end; background: var(--sky-soft); border-start-end-radius: 6px; }
+  .msg.thinking { color: var(--ink-2); }
+  .msg .say-btn { display: block; margin-top: 6px; }
+  .suggest { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ask-form { display: flex; gap: 8px; align-items: flex-end; }
+  .ask-form textarea { flex: 1; resize: none; font: inherit; font-size: 17px; line-height: 1.5; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 10px 12px; min-height: 52px; max-height: 120px; }
+  .ask-form .btn { min-height: 52px; flex: none; }
+
+  /* الصور الحقيقية */
+  .photos { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin: 10px 0 4px; }
+  .photo { width: clamp(84px, 27vw, 124px); aspect-ratio: 1; object-fit: cover; border-radius: 22px; border: 3px solid var(--surface); box-shadow: var(--shadow); background: var(--surface-2); display: block; }
+  .photos.single .photo { width: min(72vw, 280px); aspect-ratio: 4 / 3; }
+  .photos.grouped { flex-direction: column; align-items: stretch; }
+  .photo-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 10px; border-radius: 24px; background: var(--surface-2); }
+  .photo-group:first-child { background: var(--leaf-soft); }
+  .photo-group .photo { width: clamp(72px, 24vw, 108px); }
+  .thumb { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex: none; }
+
+  /* السحب والإفلات */
+  .draggable { touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; }
+  .ghost { position: fixed; z-index: 60; pointer-events: none; transform: translate(-50%, -50%) scale(1.12) rotate(-4deg); opacity: .92; margin: 0; }
+  .dragging { opacity: .35; }
+  [data-drop].over { outline: 3px dashed var(--sky); outline-offset: 3px; }
+
+  /* التجربة */
+  .tool { display: flex; align-items: center; gap: 10px; margin: 12px auto; padding: 8px 22px; min-height: 60px; border-radius: 999px; background: var(--sun-soft); border: 2px dashed var(--sun); font-weight: 800; font-size: 19px; animation: nudge 1.6s ease-in-out infinite; }
+  .tool .big { font-size: 32px; }
+  @keyframes nudge { 50% { transform: translateY(-4px); } }
+  .probe-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .probe-item { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; border-radius: 20px; background: var(--surface); border: 2px solid var(--line); cursor: pointer; }
+  .probe-item .photo { width: 100%; max-width: 108px; transition: transform .6s cubic-bezier(.3, 1.6, .5, 1); }
+  .probe-item .name { font-weight: 700; font-size: 15px; }
+  .probe-item .badge { position: absolute; top: 2px; inset-inline-end: 6px; font-size: 24px; }
+  .probe-item.grew { border-color: var(--leaf); background: var(--leaf-soft); }
+  .probe-item.grew .photo { transform: scale(1.12); }
+  .probe-item.munch .photo { animation: munch .45s ease 2; }
+  .probe-item.still { filter: grayscale(.45); }
+  @keyframes munch { 30% { transform: scale(1.07) rotate(-4deg); } 60% { transform: scale(.96) rotate(4deg); } }
+  .caption { text-align: center; font-weight: 700; min-height: 1.7em; margin: 10px 0 4px; }
+  .progress-line { text-align: center; color: var(--ink-2); font-size: 15px; }
+
+  /* رحلة الاستكشاف */
+  .phase { background: var(--sun-soft); border-radius: 16px; padding: 8px 14px; margin: 8px 0 12px; font-weight: 700; }
+  .hunt-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .spot { position: relative; border-radius: 20px; overflow: hidden; border: 3px solid var(--surface); box-shadow: var(--shadow); aspect-ratio: 4 / 3; padding: 0; cursor: pointer; background: var(--surface-2); }
+  .spot .cover, .spot .found { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.3, 1.3, .5, 1), opacity .4s ease; }
+  .spot .found { opacity: 0; transform: scale(.5); }
+  .spot .emoji-find { display: grid; place-items: center; font-size: 46px; }
+  .spot .label { position: absolute; inset-inline: 0; bottom: 0; padding: 14px 8px 5px; background: linear-gradient(to top, rgba(0, 0, 0, .75), transparent); color: #fff; font-weight: 800; font-size: 15px; text-align: start; }
+  .spot.guessed { border-color: var(--sun); }
+  .spot.open .cover { transform: translateY(-78%) rotate(-10deg); opacity: .3; }
+  .spot.open .found { opacity: 1; transform: scale(1); }
+  .spot.open.empty .cover { transform: none; opacity: 1; filter: grayscale(.7); }
+  .spot.open.empty::after { content: "✖️"; position: absolute; inset: 0; display: grid; place-items: center; font-size: 40px; }
+  .notebook { margin-top: 12px; background: var(--surface); border: 2px solid var(--line); border-radius: 18px; padding: 10px 14px; }
+  .notebook h4 { margin: 0 0 6px; font-size: 17px; }
+  .notes { margin: 0; padding: 0; display: grid; gap: 6px; }
+  .notes li { list-style: none; display: flex; gap: 8px; align-items: center; font-weight: 700; border-bottom: 1px dashed var(--line); padding-bottom: 6px; }
+
+  /* الاحتفال واللاصقات */
+  .confetti { position: fixed; top: -16px; width: 9px; height: 14px; z-index: 70; pointer-events: none; border-radius: 2px; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(108vh) rotate(720deg); } }
+  .sticker-new { font-size: 76px; line-height: 1.2; margin-top: 10px; animation: pop .8s cubic-bezier(.3, 1.8, .5, 1); }
+  @keyframes pop { from { transform: scale(0) rotate(-40deg); } }
+  .album { display: flex; gap: 10px; justify-content: center; align-items: center; font-size: 30px; margin: 12px 0 0; }
+  .album .label { font-size: 14px; color: var(--ink-2); font-weight: 700; }
+  .album .slot.empty { opacity: .2; filter: grayscale(1); }
+  .link-btn { display: block; margin: 12px auto 0; background: none; border: none; color: var(--sky); font-weight: 700; font-size: 15px; cursor: pointer; text-decoration: underline; }
+  .credit { display: flex; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 8px; margin: 8px 0; font-size: 14px; line-height: 1.5; }
+  .credit img { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; flex: none; }
+  .credit a { color: var(--sky); }
+
+  /* ===== الإنجليزي بطل والعربي تحته ===== */
+  .term { display: flex; flex-direction: column; align-items: center; text-align: center; line-height: 1.25; min-width: 0; }
+  .term .en { font-size: 20px; font-weight: 800; color: var(--ink); overflow-wrap: anywhere; }
+  .term .ar { font-size: 14px; color: var(--ink-2); font-weight: 500; }
+  .term-inline { display: flex; flex-direction: column; line-height: 1.35; min-width: 0; }
+  .term-inline bdi { font-weight: 800; font-size: 17px; text-align: left; }
+  .term-inline small { color: var(--ink-2); font-size: 14px; }
+  .step-head { text-align: center; margin: 8px 0 2px; }
+  .step-icon { font-size: 26px; display: block; line-height: 1.2; }
+  .en-title { font-size: 27px; line-height: 1.2; margin: 0; font-weight: 800; }
+  .ar-title { color: var(--ink-2); font-size: 15px; font-weight: 600; }
+  .en-ar { margin: -4px 0 10px !important; font-size: 15px !important; font-weight: 500 !important; color: var(--ink-2); text-align: right !important; direction: rtl; }
+  .emoji-visual { display: grid; place-items: center; font-size: 46px; line-height: 1.2; background: var(--surface-2); border-radius: 22px; aspect-ratio: 1; width: clamp(84px, 27vw, 124px); }
+  .sub-title { text-align: center; font-weight: 800; margin: 14px 0 6px; }
+  .progress-line { text-align: center; color: var(--ink-2); font-size: 15px; }
+  .reveal-caption { text-align: center; font-weight: 700; min-height: 1.7em; margin: 10px 4px 4px; }
+
+  /* المهمة والأوسمة */
+  .mission-badges { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 4px; }
+  .mission-badge { background: var(--surface); border: 2px dashed var(--sun); border-radius: 18px; padding: 8px 4px; text-align: center; }
+  .mission-badge .big { display: block; font-size: 34px; filter: grayscale(1); opacity: .55; }
+  .mission-badge .term .en { font-size: 15px; }
+  .badge-row { display: flex; justify-content: center; gap: 12px; margin-top: 6px; }
+  .badge-slot { font-size: 22px; filter: grayscale(1); opacity: .3; transition: opacity .3s, filter .3s; }
+  .badge-slot.earned { filter: none; opacity: 1; animation: pop .7s cubic-bezier(.3, 1.8, .5, 1); }
+  .badge-toast { cursor: pointer; position: fixed; z-index: 80; top: 28%; left: 50%; transform: translateX(-50%); background: var(--surface); border: 3px solid var(--sun); border-radius: 26px; padding: 14px 26px; text-align: center; box-shadow: 0 16px 40px rgba(0, 0, 0, .25); animation: pop .6s cubic-bezier(.3, 1.8, .5, 1); }
+  .badge-toast .big { font-size: 60px; line-height: 1.2; }
+
+  /* كروت المصطلحات */
+  .terms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-top: 8px; }
+  .term-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; background: var(--surface); border: 2px solid var(--line); border-radius: 20px; padding: 10px 6px; cursor: pointer; box-shadow: var(--shadow); }
+  .term-card .photo, .term-card .emoji-visual { width: 100%; max-width: 116px; }
+  .term-card.heard { border-color: var(--leaf); }
+  .term-card .tick { position: absolute; top: 6px; inset-inline-end: 8px; font-size: 15px; }
+  .term-card.heard .tick::after { content: " ✓"; color: var(--leaf); font-weight: 800; }
+
+  /* الكروت اللي بتتكشف */
+  .reveal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(98px, 1fr)); gap: 10px; margin-top: 10px; }
+  .reveal-card { position: relative; min-height: 184px; border: none; background: none; padding: 0; cursor: pointer; perspective: 900px; }
+  .reveal-card .front, .reveal-card .back { position: absolute; inset: 0; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; backface-visibility: hidden; -webkit-backface-visibility: hidden; transition: transform .55s ease; padding: 8px 4px; }
+  .reveal-card .front { background: linear-gradient(140deg, var(--sky), var(--leaf)); color: #fff; box-shadow: var(--shadow); }
+  .reveal-card .front .q { font-size: 52px; font-weight: 800; line-height: 1; }
+  .reveal-card .front .hint { font-size: 14px; font-weight: 700; color: #fff; }
+  .reveal-card .back { background: var(--surface); border: 2px solid var(--leaf); transform: rotateY(180deg); }
+  .reveal-card .back .photo, .reveal-card .back .emoji-visual { width: 82%; max-width: 104px; }
+  .reveal-card.open .front { transform: rotateY(180deg); }
+  .reveal-card.open .back { transform: rotateY(0deg); }
+
+  /* التوصيل */
+  .match-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 8px; }
+  .match-col { display: grid; gap: 8px; align-content: start; }
+  .m-card { position: relative; display: flex; align-items: center; gap: 8px; background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 6px 8px; min-height: 66px; cursor: pointer; text-align: start; }
+  .m-card .term { align-items: flex-start; text-align: left; }
+  .m-card .term .en { font-size: 17px; }
+  .m-card .thumb { width: 46px; height: 46px; border-radius: 12px; }
+  .m-card .m-emoji { font-size: 28px; }
+  .m-card.pic { justify-content: center; padding: 6px; }
+  .m-card .m-photo { width: 100%; max-width: 110px; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; display: block; }
+  .m-card .emoji-visual.m-photo { font-size: 38px; aspect-ratio: 4 / 3; }
+  .m-card[aria-pressed="true"] { border-color: var(--sky); background: var(--sky-soft); transform: translateY(-2px); }
+  .m-card.done { border-color: var(--pair); box-shadow: inset 0 0 0 2px var(--pair); cursor: default; }
+  .pair-n { position: absolute; top: -8px; inset-inline-end: -6px; width: 24px; height: 24px; border-radius: 50%; background: var(--pair); color: #fff; font-size: 13px; font-weight: 800; display: grid; place-items: center; }
+
+  /* ابني الجملة */
+  .build-line { display: flex; flex-wrap: wrap; gap: 6px; align-items: flex-end; background: var(--surface); border: 2px dashed var(--line); border-radius: 18px; padding: 12px; min-height: 64px; margin-top: 10px; }
+  .build-line .slot { min-width: 54px; min-height: 40px; border-bottom: 3px solid var(--sky); display: inline-flex; align-items: center; padding: 0 4px; font-weight: 800; font-size: 20px; }
+  .build-line .slot.filled { border-bottom-color: var(--leaf); animation: pop .35s ease; }
+  .build-line.complete { border-style: solid; border-color: var(--leaf); background: var(--leaf-soft); }
+  .build-ar { text-align: center; color: var(--ink-2); font-weight: 600; margin-top: 8px; }
+  .tile-tray { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
+  .tile { font-weight: 800; font-size: 19px; background: var(--sun-soft); border: 2px solid var(--sun); border-radius: 14px; padding: 6px 14px; min-height: 50px; cursor: pointer; box-shadow: 0 3px 0 rgba(0, 0, 0, .12); }
+  .tile:active { transform: translateY(2px); box-shadow: none; }
+
+  /* رتّب المراحل */
+  .seq-line { display: grid; grid-template-columns: repeat(auto-fit, minmax(76px, 1fr)); gap: 8px; margin-top: 10px; }
+  .seq-slot { position: relative; min-height: 120px; border: 2px dashed var(--line); border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 6px 2px; }
+  .seq-slot .n { position: absolute; top: 4px; inset-inline-start: 8px; font-weight: 800; color: var(--ink-2); }
+  .seq-slot.filled { border-style: solid; border-color: var(--leaf); background: var(--leaf-soft); }
+  .seq-tray { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
+  .seq-card { display: flex; flex-direction: column; align-items: center; gap: 4px; background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 6px; min-width: 92px; cursor: pointer; }
+  .thumb-lg { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; }
+  .emoji-visual.thumb-lg { font-size: 34px; }
+
+  /* لعبة الترتيب وصلّح تخمينك */
+  .token .term { align-items: flex-start; text-align: left; }
+  .token .term .en { font-size: 17px; }
+  .thumb-sm { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; vertical-align: middle; }
+  .placed { display: inline-flex; align-items: center; gap: 4px; }
+  .fixable { border: 2px solid transparent; cursor: pointer; font: inherit; color: inherit; }
+  .fixable.wrong { background: var(--coral-soft); border-color: var(--coral); animation: pulse 1.2s ease 2; }
+  .fixable.right { background: var(--leaf-soft); border-color: var(--leaf); }
+  .fixable.moved { animation: pop .5s ease; }
+
+  /* ردود فعل التجربة */
+  .probe-item { overflow: hidden; }
+  .probe-item .emoji-visual { width: 100%; max-width: 108px; }
+  .probe-item .term .en { font-size: 16px; }
+  .probe-item .photo { transition: transform .6s cubic-bezier(.3, 1.6, .5, 1), filter .6s ease; }
+  .probe-item.r-grow { border-color: var(--leaf); background: var(--leaf-soft); }
+  .probe-item.r-grow .photo { animation: munch .45s ease 2; transform: scale(1.12); }
+  .probe-item.r-still, .probe-item.r-shadow, .probe-item.r-move-near, .probe-item.r-soak-slow, .probe-item.r-cool { filter: saturate(.7); }
+  .probe-item.r-still { filter: grayscale(.45); }
+  .probe-item.r-glow { border-color: #ffc53d; box-shadow: 0 0 0 3px #ffd84d, 0 0 24px 6px rgba(255, 216, 77, .7); }
+  .probe-item.r-glow .photo { filter: brightness(1.3); }
+  .probe-item.r-shadow .photo { filter: brightness(.4); }
+  .probe-item.r-vibrate .photo { animation: vib .07s linear 14; }
+  @keyframes vib { 25% { transform: translateX(-3px) rotate(-1deg); } 75% { transform: translateX(3px) rotate(1deg); } }
+  .probe-item.r-move-far .photo { transform: translateX(-70%); transition-duration: 1.4s; }
+  .probe-item.r-move-near .photo { transform: translateX(-18%); transition-duration: 1.4s; }
+  .probe-item.r-soak::before, .probe-item.r-soak-slow::before { content: ""; position: absolute; inset: auto 0 0 0; height: 0; background: rgba(43, 123, 214, .32); animation: fillUp .9s ease forwards; pointer-events: none; }
+  .probe-item.r-soak-slow::before { animation-duration: 3.5s; }
+  @keyframes fillUp { to { height: 100%; } }
+  .probe-item.r-hot { border-color: var(--coral); }
+  .probe-item.r-hot .photo { filter: sepia(.5) saturate(2) hue-rotate(-15deg); box-shadow: 0 0 18px 4px rgba(255, 90, 40, .55); }
+  .probe-item.r-cool .photo { filter: hue-rotate(170deg) saturate(.7) brightness(1.05); }
+  .probe-item.r-zoom .photo { transform: scale(1.4); }
+
+  .points li { display: flex; gap: 10px; align-items: center; }
+  .chip-btn.mini { min-height: 36px; padding: 2px 10px; flex: none; }
+  .choice.has-en { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+  .choice.has-en .en { font-size: 20px; font-weight: 800; }
+  .choice.has-en .ar { font-size: 15px; color: var(--ink-2); }
+  .spot .label bdi { display: block; }
+  .spot .label small { display: block; font-size: 13px; font-weight: 600; opacity: .9; }
+  .notes .term-inline bdi { font-size: 16px; }
+  .session-card .t.en { font-size: 19px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div id="app" dir="rtl" lang="ar">
+  <header class="top">
+    <button class="icon-btn" id="homeBtn" aria-label="الصفحة الرئيسية">🏠</button>
+    <div class="top-title"><div id="topTitle"></div><div class="muted" id="topSub"></div></div>
+    <div class="xp" id="xpChip" aria-label="النقط">⭐ <span id="xpVal">0</span></div>
+    <button class="icon-btn" id="soundBtn" aria-label="الصوت شغال">🔊</button>
+  </header>
+  <div class="progress" aria-hidden="true"><div id="progressBar"></div></div>
+  <div class="badge-row" id="badgeRow" aria-label="أوسمة المهمة" hidden></div>
+  <div class="voice-warning" id="voiceWarning" role="status" hidden>
+    <span>🔇 الجهاز ده مفيهوش صوت عربي، فكلام المعلم العربي مش هيتسمع. افتح الموقع من متصفح <b>Microsoft Edge</b> (فيه صوت مصري)، أو من الموبايل.</span>
+    <button class="icon-btn" id="voiceWarningClose" type="button" aria-label="قفل التنبيه">✕</button>
+  </div>
+  <main id="screen" aria-live="polite"></main>
+  <footer class="actions" id="actions"></footer>
+  <button class="ask-fab" id="askBtn" hidden>🦉 اسأل المعلم</button>
+
+  <div class="sheet" id="sheet" hidden>
+    <div class="sheet-backdrop" id="sheetBackdrop"></div>
+    <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <div class="sheet-head">
+        <div class="avatar" aria-hidden="true">🦉</div>
+        <div class="t"><div id="sheetTitle">اسأل أستاذ نبيه</div><div class="muted" id="leftLine"></div></div>
+        <button class="icon-btn" id="sheetClose" aria-label="قفل">✕</button>
+      </div>
+      <div class="chat" id="chat"></div>
+      <form class="ask-form" id="askForm">
+        <textarea id="askInput" rows="1" maxlength="300" placeholder="اكتب سؤالك هنا…" aria-label="سؤالك"></textarea>
+        <button class="btn btn-primary" id="askSend" type="submit">اسأل</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script type="application/json" id="lesson-data">__DATA__</script>
+<script>
+(() => {
+  const DATA = JSON.parse(document.getElementById("lesson-data").textContent);
+  const S = DATA.script;
+  /** الجمل الثابتة (متسجلة مرة واحدة لكل الدروس) */
+  const P = DATA.phrases;
+  const T = DATA.tutor;
+  const TEACHER = "أستاذ نبيه";
+  const DAILY_LIMIT = 10;
+
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+  const app = $("#app"), screen = $("#screen"), actions = $("#actions");
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---------- تخزين بسيط (لو المتصفح مانعه، الصفحة بتشتغل عادي من غيره) ----------
+  const store = {
+    get(key, fallback) { try { const v = localStorage.getItem(`${DATA.lessonId}:${key}`); return v == null ? fallback : JSON.parse(v); } catch { return fallback; } },
+    set(key, value) { try { localStorage.setItem(`${DATA.lessonId}:${key}`, JSON.stringify(value)); } catch {} },
+  };
+  const state = { xp: store.get("xp", 0), done: store.get("done", []), sound: store.get("sound", true), stickers: store.get("stickers", []) };
+  /** لاصقة لكل حصة بتخلص، ولاصقة للمراجعة العلاجية — بتتجمع في ألبوم على صفحة الدرس */
+  const STICKERS = ["🐸", "🔍", "🌻", "🐞", "🦋"];
+  const stickerFor = (mode, n) => (mode === "remediation" ? "💪" : STICKERS[(n - 1) % STICKERS.length]);
+  /** الحصة اللي شغالة دلوقتي (null = الصفحة الرئيسية) */
+  let run = null;
+
+  // ---------- نصوص ----------
+  const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const LATIN_RUN = /[A-Za-z][A-Za-z0-9'’\-]*(?:[\s,:;()\-–\/]+[A-Za-z0-9][A-Za-z0-9'’\-]*)*/g;
+  /**
+   * أجزاء الإنجليزي جوه نص عربي. علامة آخر الجملة بتتحسب مع الإنجليزي لو هو جملة كاملة
+   * ("In the exam: Habitat: the place …lives.")، وبتفضل للعربي لو هو كلمة في جملة عربي ("يبقى non-living thing.").
+   */
+  function latinRuns(text) {
+    const runs = [];
+    for (const m of text.matchAll(LATIN_RUN)) {
+      let end = m.index + m[0].length;
+      if (/[.?!]/.test(text[end] || "") && /^[A-Z]/.test(m[0]) && m[0].split(/\s+/).length >= 3) end++;
+      runs.push({ start: m.index, end });
+    }
+    return runs;
+  }
+  /** نص عربي فيه كلمات إنجليزي: الإنجليزي بيتعزل عشان الترتيب مايتلخبطش */
+  function bidi(text) {
+    let out = "", last = 0;
+    for (const r of latinRuns(text)) {
+      out += esc(text.slice(last, r.start)) + `<bdi dir="ltr" lang="en">${esc(text.slice(r.start, r.end))}</bdi>`;
+      last = r.end;
+    }
+    return out + esc(text.slice(last));
+  }
+  /** جملة إنجليزي مع تعليم الكلمات المهمة اللي لازم تتكتب في الامتحان */
+  function highlight(text, keywords = []) {
+    if (!keywords.length) return esc(text);
+    const re = new RegExp(keywords.slice().sort((a, b) => b.length - a.length).map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "gi");
+    let out = "", last = 0;
+    for (const m of text.matchAll(re)) {
+      out += esc(text.slice(last, m.index)) + `<mark>${esc(m[0])}</mark>`;
+      last = m.index + m[0].length;
+    }
+    return out + esc(text.slice(last));
+  }
+  const shuffle = (arr) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+  // ---------- الصوت (صوت الجهاز الآلي — النسخة الحقيقية هيبقى فيها صوت مصري مسجّل) ----------
+  const hasTTS = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+  const voice = { ar: null, en: null, count: 0 };
+  function pickVoices() {
+    const vs = speechSynthesis.getVoices();
+    voice.count = vs.length;
+    // الأحسن: صوت مصري راجل (زي أستاذ نبيه)، وبعده أي صوت مصري، وبعده أي صوت عربي.
+    // متصفح Edge فيه أصوات مصري طبيعية (شاكر وسلمى)، وChrome على الكمبيوتر مفيهوش أي صوت عربي.
+    const natural = (v) => /natural|online|neural|premium|enhanced/i.test(v.name);
+    const eg = vs.filter((v) => /^ar[-_]EG/i.test(v.lang));
+    const ar = vs.filter((v) => /^ar/i.test(v.lang));
+    voice.ar = eg.find((v) => /shakir|شاكر/i.test(v.name)) || eg.find(natural) || eg[0] || ar.find(natural) || ar[0] || null;
+    const us = vs.filter((v) => /^en[-_]US/i.test(v.lang));
+    voice.en = us.find(natural) || us.find((v) => /google|samantha|aria|jenny/i.test(v.name)) || us[0] || vs.find((v) => /^en/i.test(v.lang)) || null;
+    if (!run) updateVoiceLine();
+  }
+  if (hasTTS) { pickVoices(); speechSynthesis.addEventListener?.("voiceschanged", pickVoices); }
+
+  // كل الكلام بيمشي في طابور واحد: الجملة اللي ليها تسجيل بصوت المعلم بتشتغل بيه، واللي لسه ماتسجلتش بصوت الموبايل.
+  const AUDIO = DATA.audio || {};
+  const player = new Audio(); // عنصر واحد بيتعاد استخدامه — iOS بيسمح بيه بعد أول لمسة
+  player.preload = "auto";
+  let speechGen = 0, queue = [], speaking = false, liveUtterances = [];
+  const setTalking = (on) => app.classList.toggle("talking", on);
+  const EMOJI = "[\\p{Extended_Pictographic}\\u200d\\uFE0F]";
+  const EMOJI_BETWEEN_WORDS = new RegExp(`(?<=[\\p{L}\\p{N}])\\s*(?:${EMOJI}\\s*)+(?=[\\p{L}\\p{N}])`, "gu");
+  /** نفس قواعد narration.ts: الإيموجي اللي بين كلامين بيبقى وقفة، والباقي بيتشال */
+  const cleanForSpeech = (t) => t.replace(EMOJI_BETWEEN_WORDS, "، ").replace(new RegExp(EMOJI, "gu"), "").replace(/\s*[←→|]\s*/g, "، ").replace(/\s+/g, " ").trim();
+  function segments(text) {
+    const out = [];
+    let last = 0;
+    for (const r of latinRuns(text)) {
+      if (r.start > last) out.push({ lang: "ar", text: text.slice(last, r.start) });
+      out.push({ lang: "en", text: text.slice(r.start, r.end) });
+      last = r.end;
+    }
+    if (last < text.length) out.push({ lang: "ar", text: text.slice(last) });
+    return out
+      .flatMap((s) => (s.lang === "ar" ? s.text.split(/(?<=[.؟!:])\s+/).map((t) => ({ lang: "ar", text: t })) : [s]))
+      .filter((s) => /[\p{L}\p{N}]/u.test(s.text));
+  }
+  /** بيقول الجملة: بتسجيل المعلم لو موجود، وإلا بصوت الموبايل (العربي بصوت عربي والإنجليزي بصوت إنجليزي). lang بيجبر لغة واحدة. */
+  function speak(text, { lang } = {}) {
+    if (!state.sound || !text) return;
+    queue.push({ text, lang });
+    if (!speaking) playNext();
+  }
+  function playNext() {
+    const item = queue.shift();
+    if (!item) { speaking = false; setTalking(false); return; }
+    speaking = true;
+    setTalking(true);
+    const gen = speechGen;
+    const done = () => { if (gen === speechGen) playNext(); };
+    const url = AUDIO[item.text];
+    if (!url) return sayWithDevice(item, done);
+    // كل جملة بتخلص مرة واحدة بس: يا التسجيل خلص، يا فشل فبتتقري بصوت الموبايل (مش الاتنين)
+    let settled = false;
+    const settle = (fn) => () => { if (settled || gen !== speechGen) return; settled = true; fn(); };
+    const fallback = settle(() => sayWithDevice(item, done));
+    player.onended = settle(done);
+    player.onerror = fallback;
+    player.src = url;
+    player.play().catch(fallback);
+  }
+  function sayWithDevice({ text, lang }, done) {
+    const clean = cleanForSpeech(text);
+    const parts = !hasTTS ? [] : lang ? [{ lang, text: clean }] : segments(clean);
+    if (!parts.length) return done();
+    liveUtterances = parts.map((p, i) => {
+      const u = new SpeechSynthesisUtterance(p.text);
+      const en = p.lang === "en";
+      u.lang = en ? (voice.en?.lang || "en-US") : (voice.ar?.lang || "ar-EG");
+      const v = en ? voice.en : voice.ar;
+      if (v) u.voice = v;
+      u.rate = en ? 0.88 : 0.95;
+      if (i === parts.length - 1) u.onend = u.onerror = done;
+      speechSynthesis.speak(u);
+      return u; // بنحتفظ بيهم عشان Chrome ساعات بيرمي الجملة قبل ما تخلص ومابيبعتش onend
+    });
+  }
+  function stopSpeech() {
+    speechGen++;
+    queue = [];
+    speaking = false;
+    setTalking(false);
+    player.onended = player.onerror = null;
+    player.pause();
+    if (hasTTS) speechSynthesis.cancel();
+  }
+
+  let audioCtx = null;
+  function tone(kind) {
+    if (!state.sound) return;
+    try {
+      audioCtx ??= new (window.AudioContext || window.webkitAudioContext)();
+      const notes = kind === "good" ? [660, 880] : kind === "win" ? [523, 659, 784, 1047] : kind === "still" ? [294, 262] : kind === "vibrate" ? [180, 190, 180, 190] : [196];
+      notes.forEach((f, i) => {
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = kind === "bad" ? "triangle" : kind === "vibrate" ? "square" : "sine";
+        o.frequency.value = f;
+        const t = audioCtx.currentTime + i * 0.11;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.16, t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.28);
+        o.connect(g).connect(audioCtx.destination);
+        o.start(t);
+        o.stop(t + 0.3);
+      });
+    } catch {}
+  }
+
+  function setSound(on) {
+    state.sound = on;
+    store.set("sound", on);
+    const b = $("#soundBtn");
+    b.textContent = on ? "🔊" : "🔇";
+    b.setAttribute("aria-label", on ? "الصوت شغال" : "الصوت مقفول");
+    if (!on) stopSpeech();
+  }
+
+  // ---------- XP ----------
+  function updateXP(gain) {
+    $("#xpVal").textContent = state.xp;
+    if (!gain) return;
+    const chip = $("#xpChip").getBoundingClientRect();
+    const pop = document.createElement("div");
+    pop.className = "xp-pop";
+    pop.textContent = `+${gain} ⭐`;
+    pop.style.left = `${chip.left}px`;
+    document.body.appendChild(pop);
+    setTimeout(() => pop.remove(), 1200);
+  }
+  function award(key, n) {
+    if (!run || run.awarded.has(key)) return;
+    run.awarded.add(key);
+    run.xp += n;
+    state.xp += n;
+    store.set("xp", state.xp);
+    updateXP(n);
+  }
+
+  // ---------- بناء الحصة ----------
+  /** الاسترجاع وتذكرة الخروج: كل سؤال شاشة لوحده، والوسام (لو فيه) بييجي مع آخر سؤال */
+  function quizSteps(quiz, say, pool, count, badge) {
+    const items = shuffle(pool || []).slice(0, count);
+    return items.map((item, k) => ({
+      kind: "quiz_q", quiz, item, k, of: items.length,
+      say: k === 0 ? say : quiz === "recall" ? P.recallMore : "",
+      ...(k === items.length - 1 && badge !== undefined ? { badge } : {}),
+    }));
+  }
+
+  function sessionSteps(n) {
+    const steps = [];
+    for (const st of S.sessions[n - 1].steps) {
+      // زي المحرك: الحصة الأولى بتسترجع من الدرس اللي قبله، والباقي من حصص الدرس اللي خلصت (ولو مفيش، الخطوة بتتشال)
+      if (st.kind === "recall") steps.push(...quizSteps("recall", st.say, n === 1 ? DATA.recall.previous : DATA.recall.covered[n], st.count));
+      else if (st.kind === "exit") steps.push(...quizSteps("exit", st.say, DATA.recall.exit[n], st.count, st.badge));
+      else steps.push(st);
+    }
+    return steps;
+  }
+
+  /** نفس منطق المحرك: الشرح البديل للجزئيات الضعيفة + نصايح الامتحان بتاعتها + خلاصة */
+  function remediationSteps(weak) {
+    const all = S.sessions.flatMap((s) => s.steps);
+    const steps = [{ kind: "hook", say: P.remediationIntro, illustration: { emoji: "🔁", prompt: "" } }];
+    for (const o of weak) {
+      steps.push(...(S.alternatives[o] || []));
+      steps.push(...all.filter((s) => s.kind === "exam_tip" && s.objectiveId === o));
+    }
+    steps.push({
+      kind: "summary",
+      say: P.remediationSummary,
+      points: all.filter((s) => s.kind === "explain" && weak.includes(s.objectiveId)).map((s) => ({ en: s.english.text, ar: s.english.ar || s.title })),
+    });
+    return steps;
+  }
+
+  // ---------- قطع الواجهة ----------
+  const teacher = (text, live = true) => `<div class="teacher"><div class="avatar${live ? " live" : ""}" aria-hidden="true">🦉</div><div class="bubble"><div class="who">${TEACHER}</div><p>${bidi(text)}</p></div></div>`;
+  const MEDIA = DATA.media || {};
+  /** صورة من مكتبة الصور، أو "" لو مش موجودة (والمكان بيرجع للإيموجي) */
+  const img = (key, cls = "photo") => (key && MEDIA[key] ? `<img class="${cls}" src="${esc(MEDIA[key].src)}" alt="" loading="lazy" draggable="false">` : "");
+  /** صورة المصطلح، أو الإيموجي بتاعه كبير لو مفيش صورة */
+  const visual = (t, cls = "photo") => img(t.photo, cls) || `<span class="emoji-visual ${cls}" aria-hidden="true">${esc(t.emoji || "")}</span>`;
+  /** الإنجليزي كبير والعربي ترجمة صغيرة تحته */
+  const heroTerm = (t) => `<span class="term"><bdi class="en" dir="ltr" lang="en">${esc(t.en)}</bdi>${t.ar ? `<span class="ar">${esc(t.ar)}</span>` : ""}</span>`;
+  /** عنوان الشاشة: إنجليزي كبير، وتحته العربي */
+  const stepHead = (en, ar, icon = "") => `<div class="step-head">${icon ? `<span class="step-icon" aria-hidden="true">${icon}</span>` : ""}<h2 class="en-title" dir="ltr" lang="en">${esc(en)}</h2>${ar ? `<div class="ar-title">${esc(ar)}</div>` : ""}</div>`;
+  const pulse = (el) => { el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse"); };
+  const shake = (el) => { el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); };
+  const nearest = (el) => el && el.scrollIntoView({ block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
+
+  function illus(ill) {
+    if (!ill) return "";
+    const photos = (ill.photos || []).filter((k) => k === "|" || MEDIA[k]);
+    if (photos.some((k) => k !== "|")) {
+      if (photos.includes("|")) {
+        // مجموعتين أو أكتر (حي | مش حي): كل مجموعة في صندوق لوحدها
+        const groups = photos.join(" ").split("|").map((g) => g.trim().split(" ").filter(Boolean));
+        return `<div class="photos grouped" aria-hidden="true">${groups.map((g) => `<div class="photo-group">${g.map((k) => img(k)).join("")}</div>`).join("")}</div>`;
+      }
+      return `<div class="photos${photos.length === 1 ? " single" : ""}" aria-hidden="true">${photos.map((k) => img(k)).join("")}</div>`;
+    }
+    const parts = ill.emoji.split("|").map((s) => s.trim()).filter(Boolean);
+    return `<div class="illus" aria-hidden="true">${parts.map((p) => `<span class="blob">${esc(p)}</span>`).join('<span class="sep"></span>')}</div>`;
+  }
+
+  /**
+   * سحب وإفلات باللمس أو الماوس. لو الطفل داس بس من غير ما يسحب، بتشتغل onTap
+   * (ومن الكيبورد كمان) — عشان اللعبة تشتغل بالطريقتين.
+   */
+  function enableDrag(el, { onDrop, onTap }) {
+    el.classList.add("draggable");
+    el.addEventListener("click", (e) => { if (e.detail === 0) onTap?.(); });
+    el.addEventListener("pointerdown", (e) => {
+      if (el.disabled) return;
+      const x0 = e.clientX, y0 = e.clientY;
+      let ghost = null, over = null;
+      el.setPointerCapture?.(e.pointerId);
+      const targetAt = (x, y) => document.elementFromPoint(x, y)?.closest("[data-drop]") || null;
+      const move = (ev) => {
+        if (!ghost && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 8) return;
+        if (!ghost) {
+          ghost = el.cloneNode(true);
+          ghost.classList.add("ghost");
+          ghost.style.width = `${el.offsetWidth}px`;
+          document.body.appendChild(ghost);
+          el.classList.add("dragging");
+        }
+        ghost.style.left = `${ev.clientX}px`;
+        ghost.style.top = `${ev.clientY}px`;
+        const t = targetAt(ev.clientX, ev.clientY);
+        if (t !== over) { over?.classList.remove("over"); t?.classList.add("over"); over = t; }
+      };
+      const up = (ev) => {
+        el.removeEventListener("pointermove", move);
+        el.removeEventListener("pointerup", up);
+        el.removeEventListener("pointercancel", up);
+        over?.classList.remove("over");
+        if (!ghost) { if (ev.type === "pointerup") onTap?.(); return; }
+        ghost.remove();
+        el.classList.remove("dragging");
+        const t = targetAt(ev.clientX, ev.clientY);
+        if (t && ev.type === "pointerup") onDrop(t);
+      };
+      el.addEventListener("pointermove", move);
+      el.addEventListener("pointerup", up);
+      el.addEventListener("pointercancel", up);
+    });
+  }
+
+  function confetti() {
+    if (reduceMotion) return;
+    const colors = ["#1f8a57", "#f2a900", "#2370c9", "#cf4a35", "#8e5bd6", "#3cc483"];
+    for (let i = 0; i < 44; i++) {
+      const c = document.createElement("div");
+      c.className = "confetti";
+      c.style.left = `${Math.random() * 100}vw`;
+      c.style.background = colors[i % colors.length];
+      c.style.animationDuration = `${1.6 + Math.random() * 1.4}s`;
+      c.style.animationDelay = `${Math.random() * 0.35}s`;
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 3600);
+    }
+  }
+
+  const englishBox = (line, label = "📝 جملة الامتحان") =>
+    `<div class="en-box"><div class="en-label">${label}</div><p dir="ltr" lang="en">${highlight(line.text, line.keywords)}</p>${line.ar ? `<p class="en-ar">${esc(line.ar)}</p>` : ""}<button class="chip-btn" data-say-en="${esc(line.text)}">🔊 اسمعها</button></div>`;
+
+  // ---------- الأوسمة ----------
+  function renderBadges() {
+    const row = $("#badgeRow");
+    if (!run || !run.badges.length) { row.hidden = true; return; }
+    row.hidden = false;
+    row.innerHTML = run.badges.map((b, i) => `<span class="badge-slot${run.earned.has(i) ? " earned" : ""}" title="${esc(b.en)}" aria-label="${esc(b.en)}">${esc(b.emoji)}</span>`).join("");
+  }
+  function earnBadge(i) {
+    if (!run || i === undefined || run.earned.has(i) || !run.badges[i]) return;
+    run.earned.add(i);
+    renderBadges();
+    const b = run.badges[i];
+    const toast = document.createElement("div");
+    toast.className = "badge-toast";
+    toast.setAttribute("role", "status");
+    toast.innerHTML = `<div class="big" aria-hidden="true">${esc(b.emoji)}</div><div class="muted">🏅 وسام جديد!</div>${heroTerm(b)}`;
+    toast.addEventListener("click", () => toast.remove());
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2200);
+    confetti();
+    tone("win");
+    award(`badge${i}`, 10);
+    speak(P.badgeEarned);
+    speak(b.en, { lang: "en" });
+  }
+
+  const nextLabel = () => run.nextLabel || (run.i === run.steps.length - 1 ? "خلّصت ✅" : "التالي ←");
+  function setReady(ready = true) {
+    run.ready = ready;
+    if (ready) earnBadge(run.steps[run.i].badge);
+    const b = $("#nextBtn");
+    if (b) { b.disabled = !ready; b.textContent = nextLabel(); }
+  }
+  function firstAttempt() {
+    if (run.attempted.has(run.i)) return false;
+    run.attempted.add(run.i);
+    run.checks.total++;
+    return true;
+  }
+
+  /** "كمّل الجملة" بعد الشرح: الجملة الإنجليزي من غير الكلمة المهمة، والطفل يختارها. مايعديش غير لما يختار صح. */
+  function startConfirm(root, st) {
+    const { answer, distractors } = st.confirm;
+    const text = st.english.text;
+    const m = new RegExp(`\\b${answer.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").exec(text);
+    const word = m[0], before = text.slice(0, m.index), after = text.slice(m.index + word.length);
+    const zone = $(".en-zone", root);
+    zone.innerHTML = `<div class="en-box confirm"><div class="en-label">✍️ كمّل الجملة: اختار الكلمة الناقصة</div>`
+      + `<p dir="ltr" lang="en">${esc(before)}<span class="blank"></span>${esc(after)}</p>`
+      + `<div class="word-bank" dir="ltr">${shuffle([answer, ...distractors]).map((o) => `<button class="token" data-w="${esc(o)}" lang="en">${esc(o)}</button>`).join("")}</div>`
+      + `<div class="feedback"></div></div>`;
+    run.intercept = null;
+    run.nextLabel = null;
+    setReady(false);
+    stopSpeech();
+    speak(P.confirmPrompt);
+    nearest(zone);
+    const fb = $(".feedback", zone);
+    let tries = 0, fresh = false;
+    $$(".token", zone).forEach((btn) => btn.addEventListener("click", () => {
+      if (tries === 0) fresh = firstAttempt();
+      tries++;
+      stopSpeech();
+      if (btn.dataset.w === answer) {
+        if (tries === 1 && fresh) run.checks.first++;
+        $(".blank", zone).outerHTML = `<mark>${esc(word)}</mark>`;
+        btn.classList.add("right");
+        $$(".token", zone).forEach((b) => (b.disabled = true));
+        fb.innerHTML = `<div class="fb good">برافو! 👏</div>`;
+        award(`f${run.i}`, tries === 1 ? 5 : 2);
+        tone("good");
+        speak(P.confirmRight);
+        speak(text, { lang: "en" });
+        setReady(true);
+      } else {
+        btn.classList.add("wrong");
+        shake(btn);
+        btn.disabled = true;
+        tone("bad");
+        fb.innerHTML = `<div class="fb bad">مش دي 🤔</div>`;
+        speak(P.confirmWrong);
+      }
+      nearest(fb);
+    }));
+  }
+
+  /**
+   * لعبة التوصيل: يدوس على كارت من الشمال وبعدين على اللي يناسبه من اليمين (أو العكس).
+   * كل زوج صح بياخد لون ورقم. pictureOnly: الكارت اليمين صورة بس (كلمة ← صورة).
+   */
+  const PAIR_COLORS = ["#1f8a57", "#2370c9", "#e09b00", "#8e5bd6", "#cf4a35", "#138a8a"];
+  function mountMatch(zone, pairs, { pictureOnly = false, onDone, onMistake } = {}) {
+    const right = shuffle(pairs.map((p, i) => ({ t: p.right, i })));
+    const card = (t, side, i) => side === "r" && pictureOnly
+      ? `<button class="m-card pic" type="button" data-side="r" data-i="${i}" aria-label="${esc(t.en)}">${visual(t, "m-photo")}</button>`
+      : `<button class="m-card" type="button" data-side="${side}" data-i="${i}">${img(t.photo, "thumb") || (t.emoji ? `<span class="m-emoji" aria-hidden="true">${esc(t.emoji)}</span>` : "")}${heroTerm(t)}</button>`;
+    zone.innerHTML = `<div class="match-grid"><div class="match-col">${pairs.map((p, i) => card(pictureOnly ? { en: p.left.en, ar: p.left.ar } : p.left, "l", i)).join("")}</div>`
+      + `<div class="match-col">${right.map((r) => card(r.t, "r", r.i)).join("")}</div></div><div class="feedback"></div>`;
+    const fb = $(".feedback", zone);
+    let picked = null, done = 0;
+    $$(".m-card", zone).forEach((btn) => btn.addEventListener("click", () => {
+      if (btn.classList.contains("done")) return;
+      const side = btn.dataset.side, i = +btn.dataset.i;
+      const t = side === "l" ? pairs[i].left : pairs[i].right;
+      stopSpeech();
+      speak(t.en, { lang: "en" });
+      if (!picked || picked.dataset.side === side) {
+        picked?.setAttribute("aria-pressed", "false");
+        picked = btn;
+        btn.setAttribute("aria-pressed", "true");
+        return;
+      }
+      if (+picked.dataset.i === i) {
+        const color = PAIR_COLORS[done % PAIR_COLORS.length];
+        for (const b of [picked, btn]) {
+          b.classList.add("done");
+          b.setAttribute("aria-pressed", "false");
+          b.style.setProperty("--pair", color);
+          b.insertAdjacentHTML("beforeend", `<span class="pair-n" aria-hidden="true">${done + 1}</span>`);
+        }
+        picked = null;
+        done++;
+        fb.innerHTML = "";
+        tone("good");
+        if (done === pairs.length) {
+          tone("win");
+          speak(P.matchDone);
+          onDone?.();
+        }
+      } else {
+        shake(btn);
+        shake(picked);
+        picked.setAttribute("aria-pressed", "false");
+        picked = null;
+        tone("bad");
+        fb.innerHTML = `<div class="fb bad">${esc(P.matchWrong)}</div>`;
+        speak(P.matchWrong);
+        onMistake?.();
+      }
+    }));
+  }
+
+  /** ردود فعل التجربة: حركة + إيموجي + صوت لكل نوع */
+  const REACTIONS = {
+    grow: { badge: "😋", tone: "good" },
+    still: { badge: "😐", tone: "still" },
+    glow: { badge: "✨", tone: "good" },
+    shadow: { badge: "🌑", tone: "still" },
+    vibrate: { badge: "🔊", tone: "vibrate" },
+    "move-far": { badge: "💨", tone: "good" },
+    "move-near": { badge: "🐢", tone: "still" },
+    soak: { badge: "💧", tone: "good" },
+    "soak-slow": { badge: "⏳", tone: "still" },
+    hot: { badge: "🔥", tone: "good" },
+    cool: { badge: "❄️", tone: "still" },
+    zoom: { badge: "🔍", tone: "good" },
+  };
+
+  const VIEWS = {
+    mission: (st) => ({
+      html: `<div class="mission">${stepHead(st.titleEn, st.title, "🎯")}${illus(st.illustration)}${teacher(st.say)}`
+        + `<div class="mission-badges">${st.badges.map((b) => `<div class="mission-badge"><span class="big" aria-hidden="true">${esc(b.emoji)}</span>${heroTerm(b)}</div>`).join("")}</div></div>`,
+      ready: true,
+      narrate: () => speak(st.say),
+      mount() { run.nextLabel = "🚀 يلا نبدأ المهمة"; },
+    }),
+
+    hook: (st) => ({ html: illus(st.illustration) + teacher(st.say), ready: true, narrate: () => speak(st.say) }),
+
+    terms: (st) => ({
+      html: stepHead("Key words", "كلمات مهمة", "🔑") + teacher(st.say)
+        + `<div class="terms-grid">${st.terms.map((t, i) => `<button class="term-card" type="button" data-i="${i}">${visual(t)}${heroTerm(t)}<span class="tick" aria-hidden="true">🔊</span></button>`).join("")}</div>`
+        + `<div class="terms-match"></div>`,
+      ready: false,
+      narrate: () => speak(st.say),
+      mount(root) {
+        const heard = new Set();
+        $$(".term-card", root).forEach((btn) => btn.addEventListener("click", () => {
+          const i = +btn.dataset.i, t = st.terms[i];
+          stopSpeech();
+          speak(t.en, { lang: "en" });
+          speak(t.ar, { lang: "ar" });
+          btn.classList.add("heard");
+          pulse(btn);
+          heard.add(i);
+          if (heard.size < st.terms.length || root.dataset.matching) return;
+          root.dataset.matching = "1";
+          if (!st.match) { setReady(true); return; }
+          const zone = $(".terms-match", root);
+          zone.innerHTML = `<div class="sub-title">🔗 ${esc(P.termsMatch)}</div><div class="zone-inner"></div>`;
+          mountMatch($(".zone-inner", zone), st.terms.map((t2) => ({ left: t2, right: t2 })), { pictureOnly: true, onDone: () => { award(`t${run.i}`, 5); setReady(true); } });
+          speak(P.termsMatch);
+          nearest(zone);
+        }));
+      },
+    }),
+
+    explain: (st) => ({
+      html: stepHead(st.titleEn, st.title, "💡") + illus(st.illustration) + teacher(st.say)
+        + `<div class="reveal-grid">${st.points.map((p, i) => `<button class="reveal-card" type="button" data-i="${i}" aria-label="اكشف الكارت ${i + 1}"><span class="front"><span class="q" aria-hidden="true">?</span><span class="hint">دوس واكشف</span></span><span class="back">${visual(p)}${heroTerm(p)}</span></button>`).join("")}</div>`
+        + `<div class="reveal-caption" aria-live="polite"></div><div class="progress-line"></div>`
+        + `<div class="en-zone" hidden>${englishBox(st.english)}</div>`,
+      ready: false,
+      narrate: () => speak(st.say),
+      mount(root) {
+        const opened = new Set();
+        const cap = $(".reveal-caption", root), prog = $(".progress-line", root);
+        const update = () => (prog.textContent = `كشفت ${opened.size} من ${st.points.length}`);
+        update();
+        $$(".reveal-card", root).forEach((card) => card.addEventListener("click", () => {
+          const i = +card.dataset.i, p = st.points[i];
+          stopSpeech();
+          card.classList.add("open");
+          cap.innerHTML = bidi(p.say);
+          speak(p.en, { lang: "en" });
+          speak(p.say);
+          if (!opened.has(i)) { opened.add(i); tone("good"); award(`x${run.i}-${i}`, 2); }
+          update();
+          if (opened.size < st.points.length || root.dataset.done) return;
+          root.dataset.done = "1";
+          const zone = $(".en-zone", root);
+          zone.hidden = false;
+          speak(P.examSentence);
+          speak(st.english.text, { lang: "en" });
+          nearest(zone);
+          if (st.confirm) { run.nextLabel = "فهمت ✓ يلا نتأكد"; run.intercept = () => startConfirm(root, st); }
+          setReady(true);
+        }));
+      },
+    }),
+
+    check: (st) => ({
+      html: stepHead("Quick check", "سؤال فهم", "🤔") + illus(st.illustration) + teacher(st.ask)
+        + `<div class="choices">${st.choices.map((c, i) => `<button class="choice${c.en ? " has-en" : ""}" data-i="${i}">${c.en ? `<bdi class="en" dir="ltr" lang="en">${esc(c.en)}</bdi><span class="ar">${bidi(c.text)}</span>` : bidi(c.text)}</button>`).join("")}</div>`
+        + `<div class="feedback"><div class="hint">اختار إجابة 👆</div></div>`,
+      ready: false,
+      narrate: () => speak(st.ask),
+      mount(root) {
+        const fb = $(".feedback", root);
+        let tries = 0, fresh = false;
+        $$(".choice", root).forEach((btn) => btn.addEventListener("click", () => {
+          const c = st.choices[+btn.dataset.i];
+          if (tries === 0) fresh = firstAttempt();
+          tries++;
+          stopSpeech();
+          if (c.correct) {
+            if (tries === 1 && fresh) run.checks.first++;
+            btn.classList.add("right");
+            $$(".choice", root).forEach((b) => (b.disabled = true));
+            fb.innerHTML = `<div class="fb good">${bidi(c.feedback)}</div>`;
+            award(`c${run.i}`, tries === 1 ? 10 : 5);
+            tone("good");
+            if (c.en) speak(c.en, { lang: "en" });
+            speak(c.feedback);
+            setReady(true);
+          } else {
+            btn.classList.add("wrong");
+            btn.disabled = true;
+            fb.innerHTML = `<div class="fb bad">${bidi(c.feedback)}</div>`
+              + `<div class="reteach"><div class="who">🦉 خليني أشرحهالك بطريقة تانية</div><p>${bidi(st.reteach)}</p></div>`
+              + `<div class="hint">يلا جرّب تاني 👆</div>`;
+            tone("bad");
+            speak(c.feedback);
+            speak(st.reteach);
+          }
+          nearest(fb);
+        }));
+      },
+    }),
+
+    quiz_q: (st) => {
+      const it = st.item, tf = it.type === "true_false", exit = st.quiz === "exit";
+      return {
+        html: (exit ? stepHead("Exit ticket", "تذكرة الخروج", "🎟️") : stepHead("Warm-up", "نسخّن", "🔁"))
+          + (st.say ? teacher(st.say) : "")
+          + `<div class="exam-card"><div class="exam-badge">${exit ? "تذكرة الخروج" : "سؤال استرجاع"} ${st.k + 1} / ${st.of}</div><p class="exam-q" dir="ltr" lang="en">${esc(it.prompt)}</p><button class="chip-btn" data-say-en="${esc(it.prompt)}">🔊 اسمع السؤال</button></div>`
+          + `<div class="choices${tf ? " tf" : ""}" dir="ltr">${it.choices.map((c, i) => `<button class="choice en" data-i="${i}" lang="en">${tf ? (c === "True" ? "✓ True" : "✗ False") : esc(c)}</button>`).join("")}</div>`
+          + `<div class="feedback" dir="rtl"></div>`,
+        ready: false,
+        narrate: () => { if (st.say) speak(st.say); speak(it.prompt, { lang: "en" }); },
+        mount(root) {
+          const fb = $(".feedback", root);
+          $$(".choice", root).forEach((btn) => btn.addEventListener("click", () => {
+            const pick = it.choices[+btn.dataset.i];
+            const ok = pick === it.answerKey;
+            const fresh = firstAttempt();
+            stopSpeech();
+            $$(".choice", root).forEach((b) => { b.disabled = true; if (it.choices[+b.dataset.i] === it.answerKey) b.classList.add("right"); });
+            if (!ok) btn.classList.add("wrong");
+            if (ok && fresh) run.checks.first++;
+            // التصحيح بيشرح: الإجابة الصح + السبب
+            const why = it.explanation ? `<p dir="auto">${bidi(it.explanation)}</p>` : "";
+            fb.innerHTML = ok
+              ? `<div class="fb good">صح! 👏</div>${why}`
+              : `<div class="fb bad">الإجابة الصح: <bdi dir="ltr" lang="en">${esc(it.answerKey)}</bdi></div>${why}`;
+            if (ok) { award(`q${run.i}`, 5); tone("good"); speak(P.recallRight); } else { tone("bad"); speak(P.recallWrong); speak(it.answerKey, { lang: "en" }); }
+            if (it.explanation) speak(it.explanation, { lang: /[؀-ۿ]/.test(it.explanation) ? undefined : "en" });
+            setReady(true);
+            nearest(fb);
+          }));
+        },
+      };
+    },
+
+    activity: (st) => {
+      const predict = !!st.predictId;
+      return {
+        html: (predict ? stepHead("Guess first!", "خمّن الأول", "🤔") : stepHead("Sort it!", "رتّب", "🎯")) + teacher(st.say)
+          + `<div class="hint">اسحب كل كارت لمجموعته، أو دوس عليه وبعدين على المجموعة</div>`
+          + `<div class="tray">${shuffle(st.items.map((it, i) => ({ ...it, i }))).map((it) => `<button class="token" data-i="${it.i}" aria-pressed="false">${img(it.photo, "thumb") || `<span aria-hidden="true">${esc(it.emoji)}</span>`}${heroTerm(it)}</button>`).join("")}</div>`
+          + `<div class="zones">${st.groups.map((g, gi) => `<button class="zone" data-drop data-g="${gi}"><span class="zone-title" dir="ltr" lang="en">${esc(g)}</span>${st.groupsAr?.[gi] ? `<span class="zone-ar">${esc(st.groupsAr[gi])}</span>` : ""}<span class="zone-items"></span></button>`).join("")}</div>`
+          + `<div class="feedback"></div>`
+          + (st.tryAtHome ? `<div class="home-task" hidden><div class="who">🏡 جرّبها في البيت</div>${bidi(st.tryAtHome)}</div>` : ""),
+        ready: false,
+        narrate: () => speak(st.say),
+        mount(root) {
+          const fb = $(".feedback", root);
+          let selected = null, placed = 0, mistakes = 0;
+          const fresh = predict ? false : firstAttempt();
+          if (predict) run.predictions[st.predictId] = {};
+          const arm = (on) => $$(".zone", root).forEach((z) => z.classList.toggle("armed", on));
+          const select = (tok) => {
+            $$(".token", root).forEach((t) => t.setAttribute("aria-pressed", "false"));
+            if (selected === tok) { selected = null; arm(false); return; }
+            selected = tok;
+            tok.setAttribute("aria-pressed", "true");
+            arm(true);
+            speak(st.items[+tok.dataset.i].en, { lang: "en" });
+          };
+          const place = (tok, zone) => {
+            const i = +tok.dataset.i, item = st.items[i], g = +zone.dataset.g;
+            // في "خمّن" أي مكان مقبول، والتخمين بيتحفظ لخطوة "صلّح تخمينك"
+            if (!predict && st.groups[g] !== item.group) {
+              mistakes++;
+              tone("bad");
+              shake(tok);
+              fb.innerHTML = `<div class="fb bad">مش المجموعة دي 🤔 فكّر تاني وجرّب التانية.</div>`;
+              return;
+            }
+            if (predict) run.predictions[st.predictId][i] = g;
+            $(".zone-items", zone).insertAdjacentHTML("beforeend", `<span class="placed">${img(item.photo, "thumb-sm") || esc(item.emoji)} <bdi dir="ltr" lang="en">${esc(item.en)}</bdi></span>`);
+            tok.remove();
+            if (selected === tok) selected = null;
+            arm(false);
+            placed++;
+            fb.innerHTML = "";
+            if (placed < st.items.length) { tone(predict ? "still" : "good"); return; }
+            const home = $(".home-task", root);
+            if (home) home.hidden = false;
+            stopSpeech();
+            if (predict) {
+              fb.innerHTML = `<div class="fb good">🔬 ${esc(P.predictSaved)}</div>`;
+              tone("good");
+              speak(P.predictSaved);
+            } else {
+              if (fresh && mistakes === 0) run.checks.first++;
+              tone("win");
+              confetti();
+              award(`a${run.i}`, mistakes === 0 ? 15 : 10);
+              fb.innerHTML = `<div class="fb good">👏 برافو! رتّبتهم كلهم صح.</div>`;
+              speak(P.activityDone);
+            }
+            if (st.tryAtHome) speak(st.tryAtHome);
+            setReady(true);
+            nearest(home || fb);
+          };
+          $$(".token", root).forEach((tok) => enableDrag(tok, { onTap: () => select(tok), onDrop: (zone) => place(tok, zone) }));
+          $$(".zone", root).forEach((zone) => zone.addEventListener("click", () => {
+            if (!selected) { fb.innerHTML = `<div class="hint">اختار كارت من فوق الأول 👆</div>`; return; }
+            place(selected, zone);
+          }));
+        },
+      };
+    },
+
+    revisit: (st) => {
+      // الطفل بيشوف تخمينه، واللي غلط فيه بيدوس عليه فيروح لمكانه الصح ومعاه السبب
+      const src = run.steps.find((s) => s.kind === "activity" && s.predictId === st.predictId);
+      const guess = run.predictions[st.predictId] || {};
+      const groupOf = (i) => (guess[i] !== undefined ? guess[i] : src.groups.indexOf(src.items[i].group));
+      const wrong = src.items.map((it, i) => src.groups[groupOf(i)] !== it.group);
+      const chip = (it, i) => `<button class="placed fixable ${wrong[i] ? "wrong" : "right"}" type="button" data-i="${i}">${img(it.photo, "thumb-sm") || esc(it.emoji)} <bdi dir="ltr" lang="en">${esc(it.en)}</bdi> <span aria-hidden="true">${wrong[i] ? "✗" : "✓"}</span></button>`;
+      return {
+        html: stepHead("Check your guess", "صلّح تخمينك", "🔍") + teacher(st.say)
+          + `<div class="zones">${src.groups.map((g, gi) => `<div class="zone" data-g="${gi}"><span class="zone-title" dir="ltr" lang="en">${esc(g)}</span>${src.groupsAr?.[gi] ? `<span class="zone-ar">${esc(src.groupsAr[gi])}</span>` : ""}<span class="zone-items">${src.items.map((it, i) => (groupOf(i) === gi ? chip(it, i) : "")).join("")}</span></div>`).join("")}</div>`
+          + `<div class="reveal-caption" aria-live="polite"></div><div class="feedback"></div>`,
+        ready: false,
+        narrate: () => speak(st.say),
+        mount(root) {
+          const cap = $(".reveal-caption", root), fb = $(".feedback", root);
+          let left = wrong.filter(Boolean).length;
+          const fresh = firstAttempt();
+          const finish = (allRight) => {
+            if (fresh && allRight) run.checks.first++;
+            award(`v${run.i}`, allRight ? 10 : 5);
+            const line = allRight ? P.revisitAllRight : P.revisitDone;
+            fb.innerHTML = `<div class="fb good">${esc(line)}</div>`;
+            tone("win");
+            speak(line);
+            setReady(true);
+          };
+          if (left === 0) {
+            fb.innerHTML = `<div class="fb good">🎯 ${esc(P.revisitAllRight)}</div>`;
+            finish(true);
+          } else {
+            fb.innerHTML = `<div class="hint">دوس على الكروت اللي عليها ✗ عشان تصلّحها</div>`;
+          }
+          $$(".fixable", root).forEach((btn) => btn.addEventListener("click", () => {
+            const i = +btn.dataset.i, it = src.items[i];
+            stopSpeech();
+            cap.innerHTML = bidi(it.why || "");
+            speak(it.en, { lang: "en" });
+            if (it.why) speak(it.why);
+            if (!btn.classList.contains("wrong")) return;
+            const target = $(`.zone[data-g="${src.groups.indexOf(it.group)}"] .zone-items`, root);
+            btn.classList.remove("wrong");
+            btn.classList.add("right", "moved");
+            btn.lastElementChild.textContent = "✓";
+            target.appendChild(btn);
+            run.predictions[st.predictId] = { ...run.predictions[st.predictId], [i]: src.groups.indexOf(it.group) };
+            tone("good");
+            if (--left === 0) finish(false);
+          }));
+        },
+      };
+    },
+
+    probe: (st) => ({
+      html: stepHead(st.titleEn, st.title, "🧪") + teacher(st.say)
+        + `<button class="tool" type="button">${img(st.tool.photo, "thumb") || `<span class="big" aria-hidden="true">${esc(st.tool.emoji)}</span>`}${heroTerm(st.tool)}</button>`
+        + `<div class="probe-grid">${st.items.map((it, i) => `<button class="probe-item" type="button" data-drop data-i="${i}">${visual(it)}${heroTerm(it)}<span class="badge" aria-hidden="true"></span></button>`).join("")}</div>`
+        + `<div class="caption" aria-live="polite"></div><div class="progress-line"></div><div class="conclusion"></div>`,
+      ready: false,
+      narrate: () => speak(st.say),
+      mount(root) {
+        const cap = $(".caption", root), prog = $(".progress-line", root);
+        const tried = new Set();
+        const update = () => (prog.textContent = `جرّبت ${tried.size} من ${st.items.length}`);
+        update();
+        const apply = (el) => {
+          const i = +el.dataset.i, it = st.items[i], r = REACTIONS[it.reaction] || REACTIONS.still;
+          stopSpeech();
+          if (tried.has(i)) { speak(it.caption); return; }
+          tried.add(i);
+          el.classList.add("tried", `r-${it.reaction}`);
+          $(".badge", el).textContent = r.badge;
+          tone(r.tone);
+          cap.innerHTML = bidi(it.caption);
+          speak(it.caption);
+          update();
+          if (tried.size < st.items.length) return;
+          $(".conclusion", root).innerHTML = teacher(st.conclusion);
+          award(`p${run.i}`, 15);
+          confetti();
+          tone("win");
+          speak(st.conclusion);
+          setReady(true);
+          nearest($(".conclusion", root));
+        };
+        enableDrag($(".tool", root), {
+          onDrop: (target) => apply(target),
+          onTap: () => { cap.textContent = `اسحب «${st.tool.ar}» على أي حاجة، أو دوس عليها 👇`; },
+        });
+        $$(".probe-item", root).forEach((el) => el.addEventListener("click", () => apply(el)));
+      },
+    }),
+
+    match: (st) => ({
+      html: stepHead("Match", "وصّل", "🔗") + teacher(st.say) + `<div class="match-zone"></div>`,
+      ready: false,
+      narrate: () => speak(st.say),
+      mount(root) {
+        const fresh = firstAttempt();
+        let mistakes = 0;
+        mountMatch($(".match-zone", root), st.pairs, {
+          onMistake: () => mistakes++,
+          onDone: () => { if (fresh && mistakes === 0) run.checks.first++; award(`m${run.i}`, mistakes ? 5 : 10); setReady(true); },
+        });
+      },
+    }),
+
+    build: (st) => {
+      const tiles = shuffle([...st.tiles.map((t, i) => ({ t, i })), ...(st.distractors || []).map((t) => ({ t, i: -1 }))]);
+      return {
+        html: stepHead("Build the sentence", "ابني الجملة", "🧱") + teacher(st.say)
+          + `<div class="build-line" dir="ltr" lang="en">${st.tiles.map((_, i) => `<span class="slot" data-slot="${i}"></span>`).join("")}</div>`
+          + `<div class="build-ar" hidden>${esc(st.ar)}</div>`
+          + `<div class="tile-tray" dir="ltr">${tiles.map((x) => `<button class="tile" type="button" data-i="${x.i}" lang="en">${esc(x.t)}</button>`).join("")}</div>`
+          + `<div class="feedback"></div>`,
+        ready: false,
+        narrate: () => speak(st.say),
+        mount(root) {
+          let next = 0, mistakes = 0;
+          const fresh = firstAttempt();
+          const fb = $(".feedback", root);
+          $$(".tile", root).forEach((tile) => tile.addEventListener("click", () => {
+            stopSpeech();
+            if (+tile.dataset.i !== next) {
+              mistakes++;
+              tone("bad");
+              shake(tile);
+              fb.innerHTML = `<div class="fb bad">${esc(P.buildWrong)}</div>`;
+              speak(P.buildWrong);
+              // بعد غلطتين بنلمّح للكارت الصح
+              if (mistakes % 2 === 0) $$(".tile", root).filter((t) => +t.dataset.i === next).forEach(pulse);
+              return;
+            }
+            const slot = $(`.slot[data-slot="${next}"]`, root);
+            slot.textContent = st.tiles[next];
+            slot.classList.add("filled");
+            tile.remove();
+            next++;
+            fb.innerHTML = "";
+            tone("good");
+            speak(st.tiles[next - 1], { lang: "en" });
+            if (next < st.tiles.length) return;
+            $(".build-line", root).classList.add("complete");
+            $(".build-ar", root).hidden = false;
+            $$(".tile", root).forEach((t) => (t.disabled = true));
+            if (fresh && mistakes === 0) run.checks.first++;
+            award(`b${run.i}`, mistakes ? 5 : 10);
+            speak(P.buildDone);
+            speak(st.sentence, { lang: "en" });
+            setReady(true);
+          }));
+        },
+      };
+    },
+
+    sequence: (st) => ({
+      html: stepHead(st.titleEn, st.title, "🔢") + teacher(st.say)
+        + `<div class="seq-line">${st.items.map((_, i) => `<div class="seq-slot" data-slot="${i}"><span class="n">${i + 1}</span></div>`).join("")}</div>`
+        + `<div class="seq-tray">${shuffle(st.items.map((it, i) => ({ it, i }))).map(({ it, i }) => `<button class="seq-card" type="button" data-i="${i}">${visual(it, "thumb-lg")}${heroTerm(it)}</button>`).join("")}</div>`
+        + `<div class="feedback"></div><div class="conclusion"></div>`,
+      ready: false,
+      narrate: () => speak(st.say),
+      mount(root) {
+        let next = 0, mistakes = 0;
+        const fresh = firstAttempt();
+        const fb = $(".feedback", root);
+        $$(".seq-card", root).forEach((card) => card.addEventListener("click", () => {
+          stopSpeech();
+          if (+card.dataset.i !== next) {
+            mistakes++;
+            tone("bad");
+            shake(card);
+            fb.innerHTML = `<div class="fb bad">${esc(P.sequenceWrong)}</div>`;
+            speak(P.sequenceWrong);
+            return;
+          }
+          const it = st.items[next];
+          const slot = $(`.seq-slot[data-slot="${next}"]`, root);
+          slot.insertAdjacentHTML("beforeend", `${visual(it, "thumb-lg")}${heroTerm(it)}`);
+          slot.classList.add("filled");
+          card.remove();
+          next++;
+          fb.innerHTML = "";
+          tone("good");
+          speak(it.en, { lang: "en" });
+          if (next < st.items.length) return;
+          if (fresh && mistakes === 0) run.checks.first++;
+          award(`s${run.i}`, mistakes ? 5 : 10);
+          $(".conclusion", root).innerHTML = teacher(st.conclusion);
+          confetti();
+          tone("win");
+          speak(st.conclusion);
+          setReady(true);
+        }));
+      },
+    }),
+
+    hunt: (st) => ({
+      html: stepHead(st.titleEn, st.title, "🔍") + teacher(st.say)
+        + `<div class="phase"></div>`
+        + `<div class="hunt-grid">${st.spots.map((sp, i) => `<button class="spot" type="button" data-i="${i}">`
+          + (sp.find ? img(sp.find.photo, "found") || `<span class="found emoji-find">${esc(sp.find.emoji)}</span>` : "")
+          + (img(sp.photo, "cover") || `<span class="cover emoji-find">${esc(sp.emoji)}</span>`)
+          + `<span class="label"><bdi dir="ltr" lang="en">${esc(sp.en)}</bdi><small>${esc(sp.ar)}</small></span></button>`).join("")}</div>`
+        + `<div class="caption" aria-live="polite"></div>`
+        + `<div class="notebook"><h4>📒 <bdi dir="ltr" lang="en">Explorer's notebook</bdi> · كراسة المستكشف</h4><ul class="notes"><li class="muted">لسه مالقيناش حاجة…</li></ul></div>`
+        + (st.tryAtHome ? `<div class="home-task" hidden><div class="who">🏡 جرّبها في البيت</div>${bidi(st.tryAtHome)}</div>` : ""),
+      ready: false,
+      narrate: () => { speak(st.say); speak(st.guess.ask); },
+      mount(root) {
+        const phaseEl = $(".phase", root), cap = $(".caption", root), notes = $(".notes", root);
+        const total = st.spots.filter((sp) => sp.find).length;
+        let guess = null, found = 0;
+        const setPhase = () => {
+          phaseEl.innerHTML = guess === null
+            ? `1️⃣ <bdi dir="ltr" lang="en">Guess</bdi> خمّن: ${bidi(st.guess.ask)}`
+            : `2️⃣ <bdi dir="ltr" lang="en">Search</bdi> دوّر · 3️⃣ <bdi dir="ltr" lang="en">Record</bdi> سجّل — لقيت ${found} من ${total}`;
+        };
+        setPhase();
+        $$(".spot", root).forEach((btn) => btn.addEventListener("click", () => {
+          const sp = st.spots[+btn.dataset.i];
+          stopSpeech();
+          if (guess === null) {
+            guess = sp.en;
+            btn.classList.add("guessed");
+            setPhase();
+            cap.innerHTML = `تخمينك: <bdi dir="ltr" lang="en"><b>${esc(sp.en)}</b></bdi> 🤔 ${esc(P.huntSearch)}`;
+            speak(P.huntSearch);
+            return;
+          }
+          if (btn.classList.contains("open")) { speak(sp.caption); return; }
+          btn.classList.add("open");
+          cap.innerHTML = bidi(sp.caption);
+          speak(sp.caption);
+          if (!sp.find) { btn.classList.add("empty"); tone("still"); return; }
+          found++;
+          tone("good");
+          if (found === 1) notes.innerHTML = "";
+          const line = `${sp.find.en}: ${sp.en}`;
+          notes.insertAdjacentHTML("beforeend", `<li>${img(sp.find.photo, "thumb") || esc(sp.find.emoji)}<span class="term-inline"><bdi dir="ltr" lang="en">${esc(line)}</bdi><small>${esc(sp.find.ar)} · ${esc(sp.ar)}</small></span></li>`);
+          speak(line, { lang: "en" });
+          if (sp.en === guess && guess === st.guess.answer) {
+            award(`g${run.i}`, 5);
+            cap.innerHTML += ` <b>🎯 ${esc(P.guessRight)}</b>`;
+            speak(P.guessRight);
+          }
+          setPhase();
+          if (found < total) return;
+          award(`h${run.i}`, 15);
+          confetti();
+          tone("win");
+          const home = $(".home-task", root);
+          if (home) home.hidden = false;
+          speak(P.huntDone);
+          if (st.tryAtHome) speak(st.tryAtHome);
+          setReady(true);
+          nearest(home || $(".notebook", root));
+        }));
+      },
+    }),
+
+    exam_tip: (st) => ({
+      html: stepHead("Exam question", `سؤال امتحان · ${DATA.styleLabels[st.style] || ""}`, "📝")
+        + `<div class="exam-card"><p class="exam-q" dir="ltr" lang="en">${esc(st.question)}</p></div>`
+        + teacher(st.say)
+        + `<button class="reveal">👀 فكّر في الإجابة… وبعدين اكشفها</button>`
+        + `<div class="model" hidden>${englishBox(st.modelAnswer, "✍️ الإجابة النموذجية — اكتبها كده بالظبط")}</div>`,
+      ready: false,
+      narrate: () => { speak(st.question, { lang: "en" }); speak(st.say); },
+      mount(root) {
+        $(".reveal", root).addEventListener("click", (e) => {
+          e.currentTarget.hidden = true;
+          const model = $(".model", root);
+          model.hidden = false;
+          stopSpeech();
+          speak(st.modelAnswer.text, { lang: "en" });
+          award(`t${run.i}`, 5);
+          setReady(true);
+          nearest(model);
+        });
+      },
+    }),
+
+    summary: (st) => ({
+      html: stepHead("Summary", "الخلاصة", "🌟") + teacher(st.say)
+        + `<ul class="points">${st.points.map((p) => `<li><button class="chip-btn mini" data-say-en="${esc(p.en)}" aria-label="اسمعها">🔊</button><span class="term-inline"><bdi dir="ltr" lang="en">${esc(p.en)}</bdi><small>${esc(p.ar)}</small></span></li>`).join("")}</ul>`,
+      ready: true,
+      narrate: () => { speak(st.say); st.points.forEach((p) => speak(p.en, { lang: "en" })); },
+    }),
+  };
+
+  // ---------- الشاشات ----------
+  // عنوان إنجليزي جوه سطر عربي: بيتعزل عشان علامة الاستفهام ماتطيرش للناحية التانية
+  const isolate = (text) => `\u2068${text}\u2069`;
+  function setHeader(title, sub) {
+    $("#topTitle").textContent = title;
+    $("#topTitle").dir = "auto";
+    $("#topSub").textContent = sub;
+  }
+  const setProgress = (ratio) => ($("#progressBar").style.width = `${Math.round(ratio * 100)}%`);
+
+  function updateVoiceLine() {
+    const el = $("#voiceLine");
+    if (!el) return;
+    const { recorded, total } = DATA.audioStats;
+    if (recorded === total) { el.textContent = "🎙️ الحصة كلها متسجلة بصوت المعلم."; return; }
+    const prefix = recorded ? `🎙️ ${recorded} من ${total} جملة متسجلة بصوت المعلم، والباقي مؤقتًا بصوت الموبايل. ` : "🎙️ لسه مفيش تسجيلات بصوت المعلم، فالصوت مؤقتًا صوت الموبايل. ";
+    if (!hasTTS) el.textContent = prefix + "⚠️ والمتصفح ده مابيقراش بالصوت، فاللي ماتسجلش هيفضل مكتوب.";
+    else if (voice.ar || !voice.count) el.textContent = prefix;
+    else el.textContent = prefix + "⚠️ والجهاز ده مفيهوش صوت عربي، فالعربي اللي ماتسجلش هيفضل مكتوب.";
+  }
+
+  function renderHome() {
+    run = null;
+    stopSpeech();
+    setProgress(0);
+    renderBadges();
+    setHeader(DATA.subjectLine, DATA.unitTitle);
+    const done = state.done;
+    const count = S.sessions.length;
+    const nextSession = S.sessions.findIndex((_, i) => !done.includes(i + 1)) + 1; // 0 = كل الحصص خلصت
+    const now = nextSession ? nextSession - 1 : count;
+    const nodes = [...S.sessions.map((_, i) => `الحصة ${i + 1}`), "الواجب", "الاختبار الأساسي", "الدرس الجاي"];
+    const journey = nodes.map((label, i) => {
+      const cls = i < count && done.includes(i + 1) ? "done" : i === now ? "now" : "";
+      const icon = cls === "done" ? "✓" : i === nodes.length - 1 ? "🔒" : i + 1;
+      return `<div class="node ${cls}"><div class="dot">${icon}</div>${label}</div>`;
+    }).join("");
+    const card = (n) => {
+      const sess = S.sessions[n - 1];
+      const mins = Math.max(8, Math.round(sess.steps.length * 0.75));
+      return `<button class="session-card" data-session="${n}"><span class="num">${n}</span><span><bdi class="t en" dir="ltr" lang="en">${esc(sess.titleEn)}</bdi><br><span class="muted">${esc(sess.title)} · ${done.includes(n) ? '<span class="done-badge">✓ خلصت</span> · ' : ""}حوالي ${mins} دقيقة</span></span></button>`;
+    };
+    screen.innerHTML = `
+      <section class="hero">
+        <div class="hero-owl" aria-hidden="true">🦉</div>
+        <h1 dir="ltr" lang="en">${esc(DATA.title)}</h1>
+        <p>${esc(DATA.titleAr)} — ${esc(DATA.lessonLabel)}</p>
+      </section>
+      <div class="journey" style="grid-template-columns: repeat(${nodes.length}, minmax(0, 1fr))" aria-label="مسار الدرس">${journey}</div>
+      <div class="album" aria-label="ألبوم اللاصقات"><span class="label">ألبومي:</span>${[...S.sessions.map((_, i) => ["lesson", i + 1]), ["remediation", 1]].map(([m, n]) => `<span class="slot${state.stickers.includes(`${m}-${n}`) ? "" : " empty"}">${stickerFor(m, n)}</span>`).join("")}</div>
+      <div class="cards">
+        ${S.sessions.map((_, i) => card(i + 1)).join("")}
+        <button class="session-card alt" data-remediation><span class="num">🔁</span><span><span class="t">شكل المراجعة لو الطفل غلط</span><br><span class="muted">شرح بطريقة تانية للجزئيات اللي غلط فيها بس — هنا مثال بجزئيتين من الدرس</span></span></button>
+      </div>
+      <p class="note">💡 في التطبيق الحقيقي: الحصص بتفتح واحدة ورا التانية، والواجب بعد آخر حصة، والمراجعة دي بتظهر بس لو الطفل وقع في الاختبار الأساسي مرتين ورا بعض. هنا كله مفتوح عشان تجرّب.</p>
+      <p class="note" id="voiceLine"></p>
+      ${Object.keys(MEDIA).length ? '<button class="link-btn" id="creditsBtn" type="button">📷 حقوق الصور</button>' : ""}`;
+    updateVoiceLine();
+    $("#creditsBtn")?.addEventListener("click", renderCredits);
+    $$("[data-session]", screen).forEach((b) => b.addEventListener("click", () => startRun("lesson", +b.dataset.session)));
+    $("[data-remediation]", screen).addEventListener("click", () => startRun("remediation"));
+    const first = nextSession || 1;
+    actions.innerHTML = `<button class="btn btn-primary" id="startBtn">${nextSession ? `▶️ ابدأ الحصة ${first}` : "🔁 عيد الحصة 1"}</button>`;
+    $("#startBtn").addEventListener("click", () => startRun("lesson", first));
+  }
+
+  /** صفحة حقوق الصور: كل صورة ومصدرها وصاحبها ورخصتها */
+  function renderCredits() {
+    stopSpeech();
+    setHeader("حقوق الصور", "كل الصور برخص مفتوحة، والشكر لأصحابها");
+    setProgress(0);
+    const license = (m) => `${m.license === "cc0" ? "CC0" : m.license === "pdm" ? "Public Domain" : `CC ${m.license.toUpperCase()}`}${m.licenseVersion && m.license !== "pdm" ? ` ${m.licenseVersion}` : ""}`;
+    const link = (url, text) => (url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(text)}</a>` : esc(text));
+    screen.innerHTML = `<p class="note">الصور دي من <bdi dir="ltr">Openverse</bdi>، وكلها برخص بتسمح باستخدامها مع ذكر صاحبها.</p>`
+      + Object.values(MEDIA).map((m) => `<div class="credit" dir="ltr">${`<img src="${esc(m.src)}" alt="">`}<div>${link(m.source, m.title || "Photo")}<br>by ${link(m.creatorUrl, m.creator)} · ${link(m.licenseUrl, license(m))}</div></div>`).join("");
+    actions.innerHTML = `<button class="btn btn-primary" id="goHome">🏠 الرجوع للدرس</button>`;
+    $("#goHome").addEventListener("click", renderHome);
+  }
+
+  /** لو العربي هيتقري بصوت الموبايل والجهاز مفيهوش صوت عربي، بنقول كده بوضوح مرة واحدة */
+  let voiceWarningClosed = false;
+  function checkArabicVoice() {
+    const allRecorded = DATA.audioStats.recorded === DATA.audioStats.total;
+    const missing = !allRecorded && (!hasTTS || (voice.count > 0 && !voice.ar));
+    $("#voiceWarning").hidden = voiceWarningClosed || !missing;
+  }
+
+  function startRun(mode, n = 1) {
+    checkArabicVoice();
+    const steps = mode === "lesson" ? sessionSteps(n) : remediationSteps(DATA.demoWeak);
+    run = {
+      mode, n, steps, i: 0, ready: false, xp: 0, narrate: null,
+      title: mode === "lesson" ? S.sessions[n - 1].titleEn : "Review",
+      checks: { total: 0, first: 0 }, awarded: new Set(), attempted: new Set(), intercept: null, nextLabel: null,
+      badges: steps.find((s) => s.kind === "mission")?.badges || [], earned: new Set(), predictions: {},
+    };
+    renderBadges();
+    showStep();
+  }
+
+  function showStep() {
+    stopSpeech();
+    document.querySelectorAll(".badge-toast").forEach((t) => t.remove());
+    const st = run.steps[run.i];
+    const view = VIEWS[st.kind](st);
+    screen.innerHTML = `<div class="step">${view.html}</div>`;
+    window.scrollTo({ top: 0 });
+    run.ready = !!view.ready;
+    run.narrate = view.narrate;
+    run.intercept = null;
+    run.nextLabel = null;
+    view.mount?.(screen.firstElementChild);
+    renderStepActions();
+    setHeader(DATA.title, `${run.mode === "lesson" ? `الحصة ${run.n} من ${S.sessions.length}: ${isolate(run.title)}` : "مراجعة بطريقة تانية"} · ${run.i + 1}/${run.steps.length}`);
+    setProgress((run.i + 1) / run.steps.length);
+    run.narrate?.();
+  }
+
+  function renderStepActions() {
+    actions.innerHTML = `
+      <button class="icon-btn" id="backBtn" aria-label="الخطوة اللي فاتت" ${run.i === 0 ? "disabled" : ""}>→</button>
+      <button class="btn btn-ghost" id="replayBtn" aria-label="اسمع تاني">🔁 اسمع</button>
+      <button class="btn btn-primary" id="nextBtn" ${run.ready ? "" : "disabled"}>${nextLabel()}</button>`;
+    $("#backBtn").addEventListener("click", () => { if (run.i > 0) { run.i--; showStep(); } });
+    $("#replayBtn").addEventListener("click", () => { if (!state.sound) setSound(true); stopSpeech(); run.narrate?.(); });
+    $("#nextBtn").addEventListener("click", () => {
+      if (!run.ready) return;
+      if (run.intercept) run.intercept();
+      else if (run.i === run.steps.length - 1) finishRun();
+      else { run.i++; showStep(); }
+    });
+  }
+
+  function finishRun() {
+    stopSpeech();
+    document.querySelectorAll(".badge-toast").forEach((t) => t.remove());
+    const { total, first } = run.checks;
+    const ratio = total ? first / total : 1;
+    const stars = ratio >= 0.9 ? 3 : ratio >= 0.6 ? 2 : 1;
+    if (run.mode === "lesson") {
+      award("finish", 20);
+      if (!state.done.includes(run.n)) { state.done.push(run.n); store.set("done", state.done); }
+    }
+    const next = run.mode === "lesson" && run.n < S.sessions.length ? run.n + 1 : null;
+    const stickerKey = `${run.mode}-${run.n}`;
+    const newSticker = !state.stickers.includes(stickerKey);
+    if (newSticker) { state.stickers.push(stickerKey); store.set("stickers", state.stickers); }
+    confetti();
+    let headline, line;
+    if (run.mode === "remediation") {
+      headline = "المراجعة خلصت 💪";
+      line = "دلوقتي الطفل بيرجع يحل الواجب تاني، والأسئلة بتركّز على الجزئيات اللي اتراجعت.";
+    } else if (next) {
+      headline = `عاش يا بطل! الحصة ${run.n} خلصت`;
+      line = `الحصة ${next} مستنياك: <bdi dir="ltr" lang="en">${esc(S.sessions[next - 1].titleEn)}</bdi> (${esc(S.sessions[next - 1].title)})`;
+    } else {
+      headline = "عاش! الدرس كله خلص 🎉";
+      line = "كده الواجب اتفتح 📝 ولما يعدّي الاختبار الأساسي، الدرس الجاي يفتح.";
+    }
+    screen.innerHTML = `
+      <section class="finish">
+        <div class="stars" aria-label="${stars} من 3 نجوم">${"⭐".repeat(stars)}${"☆".repeat(3 - stars)}</div>
+        <h2>${esc(headline)}</h2>
+        <p>${line}</p>
+        <div class="gain">+${run.xp} نقطة ⭐</div>
+        <div class="sticker-new" aria-hidden="true">${stickerFor(run.mode, run.n)}</div>
+        <p class="muted">${newSticker ? "🎁 لاصقة جديدة اتضافت لألبومك!" : "اللاصقة دي في ألبومك من قبل كده 😉"}</p>
+        ${run.badges.length ? `<div class="album">${run.badges.map((b, i) => `<span class="slot${run.earned.has(i) ? "" : " empty"}" title="${esc(b.en)}">${esc(b.emoji)}</span>`).join("")}</div>` : ""}
+        ${total ? `<p class="muted">جاوب ${first} من ${total} صح من أول مرة</p>` : ""}
+      </section>`;
+    setHeader(DATA.title, `${isolate(run.title)} · خلصت ✅`);
+    setProgress(1);
+    actions.innerHTML = next
+      ? `<button class="btn btn-ghost" id="goHome">🏠</button><button class="btn btn-primary" id="goNext">ابدأ الحصة ${next} ←</button>`
+      : `<button class="btn btn-primary" id="goHome">🏠 الرجوع للدرس</button>`;
+    $("#goHome").addEventListener("click", renderHome);
+    $("#goNext")?.addEventListener("click", () => startRun("lesson", next));
+    tone("win");
+    speak(run.mode === "remediation" ? P.remediationDone : next ? P.sessionDone : P.lessonDone);
+  }
+
+  // ---------- اسأل المعلم ----------
+  let sample = null, turns = [], askCtl = null, asking = false, pendingQuestion = null;
+  const ENDPOINT = DATA.tutorEndpoint;
+  const today = () => new Date().toISOString().slice(0, 10);
+  const usedToday = () => store.get(`asked:${today()}`, 0);
+  const left = () => Math.max(0, DAILY_LIMIT - usedToday());
+  const useOne = () => { store.set(`asked:${today()}`, usedToday() + 1); updateLeft(); };
+  const updateLeft = () => ($("#leftLine").textContent = left() ? `باقي لك ${left()} من ${DAILY_LIMIT} أسئلة النهارده` : "خلصت أسئلة النهارده");
+  const HIDE = new Set(["not_granted", "sampling_disabled", "not_declared", "capability_disabled", "capability_removed"]);
+  const SUGGEST = DATA.suggestions;
+
+  function addMsg(who, text, extra = "") {
+    const div = document.createElement("div");
+    div.className = `msg ${who === "child" ? "child-msg" : "teacher-msg"} ${extra}`;
+    div.innerHTML = bidi(text);
+    $("#chat").appendChild(div);
+    div.scrollIntoView({ block: "end", behavior: reduceMotion ? "auto" : "smooth" });
+    return div;
+  }
+  function setMsg(div, text) {
+    div.classList.remove("thinking");
+    div.innerHTML = bidi(text);
+    const chat = $("#chat");
+    chat.scrollTop = chat.scrollHeight;
+  }
+  function whereNow() {
+    if (!run) return "The child is on the lesson's home screen.";
+    const st = run.steps[run.i];
+    const at = st.title || st.ask || st.question || st.say || "";
+    return `Where the child is right now: ${run.mode === "lesson" ? `session ${run.n} of ${S.sessions.length} ("${run.title}")` : "a remediation review"}, at this part: "${at.slice(0, 160)}".`;
+  }
+  function openSheet() {
+    stopSpeech();
+    $("#sheet").hidden = false;
+    if (!$("#chat").children.length) {
+      addMsg("teacher", "اسألني أي حاجة في الدرس ده وأنا أشرحهالك 😊");
+      const box = document.createElement("div");
+      box.className = "suggest";
+      box.innerHTML = SUGGEST.map((s) => `<button class="chip-btn" type="button">${bidi(s)}</button>`).join("");
+      $$("button", box).forEach((b, i) => b.addEventListener("click", () => ask(SUGGEST[i])));
+      $("#chat").appendChild(box);
+    }
+    updateLeft();
+    $("#sheetClose").focus();
+  }
+  function closeSheet() {
+    askCtl?.abort();
+    $("#sheet").hidden = true;
+    $("#askBtn").focus();
+  }
+  function setAsking(on) {
+    asking = on;
+    $("#askSend").disabled = on;
+    $("#askSend").textContent = on ? "…" : "اسأل";
+  }
+
+  /** جوه Claude: السؤال بيروح لـ Claude من حساب اللي فاتح الصفحة، والرد بيظهر وهو بيتكتب */
+  async function askClaude(q, bubble) {
+    const instructions = `${T.rules}\n\n${T.context}\n\n${whereNow()}\n\nNow answer the child's next message as ${TEACHER}, in plain text only.`;
+    const { text } = await sample([{ role: "user", content: instructions }, ...turns.slice(-8), { role: "user", content: q }], {
+      cache: false,
+      modelTier: "quick",
+      signal: askCtl.signal,
+      onText: ({ text }) => setMsg(bubble, text),
+    });
+    return text;
+  }
+
+  /** على الموقع: السؤال بيروح للسيرفر بتاعنا، وهو اللي بيسأل Claude بمفتاح الـ API */
+  async function askServer(q) {
+    const history = [];
+    for (let i = 0; i + 1 < turns.length; i += 2) history.push({ question: turns[i].content, answer: turns[i + 1].content });
+    let res;
+    try {
+      res = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ lessonId: DATA.lessonId, question: q, history: history.slice(-4), where: whereNow(), code: store.get("pilotCode", "") }),
+        signal: askCtl.signal,
+      });
+    } catch (e) {
+      throw { code: e && e.name === "AbortError" ? "cancelled" : "upstream_error" };
+    }
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 401) throw { code: "pilot_code" };
+    if (!res.ok || !data.answer) throw { code: "upstream_error" };
+    return data.answer;
+  }
+
+  async function ask(raw) {
+    if (asking) return;
+    const q = raw.trim().slice(0, 300);
+    if (pendingQuestion !== null) {
+      // الرسالة دي هي كود التجربة، وبعده بنبعت السؤال اللي كان مستني
+      if (!q) return;
+      store.set("pilotCode", q);
+      $("#askInput").value = "";
+      addMsg("child", "🔑 ••••");
+      const waiting = pendingQuestion;
+      pendingQuestion = null;
+      return answer(waiting);
+    }
+    if (!q) { addMsg("teacher", T.messages.empty); return; }
+    if (left() <= 0) { addMsg("teacher", T.messages.limitReached); return; }
+    $("#askInput").value = "";
+    $(".suggest")?.remove();
+    addMsg("child", q);
+    return answer(q);
+  }
+
+  async function answer(q) {
+    const bubble = addMsg("teacher", `${TEACHER} بيفكر… 🤔`, "thinking");
+    askCtl = new AbortController();
+    setAsking(true);
+    try {
+      const text = sample ? await askClaude(q, bubble) : await askServer(q);
+      setMsg(bubble, text);
+      turns.push({ role: "user", content: q }, { role: "assistant", content: text });
+      useOne();
+      const say = document.createElement("button");
+      say.className = "chip-btn say-btn";
+      say.type = "button";
+      say.textContent = "🔊 اسمع الرد";
+      say.addEventListener("click", () => { if (!state.sound) setSound(true); stopSpeech(); speak(text); });
+      bubble.appendChild(say);
+      speak(text);
+    } catch (e) {
+      const code = e && e.code;
+      if (code === "pilot_code") {
+        setMsg(bubble, "محتاج كود التجربة الأول 🔑 اكتبه في المربع اللي تحت وابعته، وأنا هجاوبك على طول.");
+        pendingQuestion = q;
+        store.set("pilotCode", "");
+      } else if (code === "cancelled") setMsg(bubble, e.text || "…");
+      else if (HIDE.has(code)) {
+        setMsg(bubble, "المعلم مش متاح في النسخة دي دلوقتي 🙏");
+        $("#askBtn").hidden = true;
+        $("#askForm").hidden = true;
+      } else if (code === "refused" || code === "empty_completion") { setMsg(bubble, T.messages.refused); useOne(); }
+      else setMsg(bubble, (e && e.text ? e.text + "\n\n" : "") + T.messages.busy);
+    } finally {
+      setAsking(false);
+    }
+  }
+
+  // جوه Claude بنستخدم Claude نفسه، وعلى الموقع بنستخدم السيرفر
+  if (ENDPOINT) $("#askBtn").hidden = false;
+  (async () => {
+    try { if (window.claude?.use) sample = await window.claude.use("sample"); } catch { sample = null; }
+    if (sample) $("#askBtn").hidden = false;
+  })();
+
+  $("#askBtn").addEventListener("click", openSheet);
+  $("#sheetClose").addEventListener("click", closeSheet);
+  $("#sheetBackdrop").addEventListener("click", closeSheet);
+  $("#askForm").addEventListener("submit", (e) => { e.preventDefault(); ask($("#askInput").value); });
+  $("#askInput").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(e.currentTarget.value); } });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#sheet").hidden) closeSheet(); });
+
+  // ---------- عام ----------
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-say-en]");
+    if (!b) return;
+    if (!state.sound) setSound(true);
+    stopSpeech();
+    speak(b.dataset.sayEn, { lang: "en" });
+    b.classList.remove("pulse");
+    void b.offsetWidth;
+    b.classList.add("pulse");
+  });
+  $("#homeBtn").addEventListener("click", renderHome);
+  $("#voiceWarningClose").addEventListener("click", () => { voiceWarningClosed = true; $("#voiceWarning").hidden = true; });
+  $("#soundBtn").addEventListener("click", () => setSound(!state.sound));
+
+  setSound(state.sound);
+  updateXP(0);
+  renderHome();
+})();
+</script>

@@ -3,12 +3,12 @@ import { buildWeeklyReport, levelForXp, newGamificationState, recordActivity } f
 import { startTiny } from "./fixtures";
 
 describe("gamification", () => {
-  it("levels up at 100, 300, 600 XP", () => {
+  it("levels up at 150, 450, 900 XP", () => {
     expect(levelForXp(0).level).toBe(1);
-    expect(levelForXp(99).level).toBe(1);
-    expect(levelForXp(100).level).toBe(2);
-    expect(levelForXp(300).level).toBe(3);
-    expect(levelForXp(600).level).toBe(4);
+    expect(levelForXp(149).level).toBe(1);
+    expect(levelForXp(150).level).toBe(2);
+    expect(levelForXp(450).level).toBe(3);
+    expect(levelForXp(900).level).toBe(4);
   });
 
   it("keeps the streak over one rest day but not two", () => {
