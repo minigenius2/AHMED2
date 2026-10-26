@@ -579,7 +579,8 @@
       u.lang = en ? (voice.en?.lang || "en-US") : (voice.ar?.lang || "ar-EG");
       const v = en ? voice.en : voice.ar;
       if (v) u.voice = v;
-      u.rate = en ? 0.88 : 0.95;
+      // الإنجليزي أبطأ بوضوح: الطفل لسه بيتعلم نطق المصطلح، زي مدرس بيملي
+      u.rate = en ? 0.72 : 0.95;
       if (i === parts.length - 1) u.onend = u.onerror = done;
       speechSynthesis.speak(u);
       return u; // بنحتفظ بيهم عشان Chrome ساعات بيرمي الجملة قبل ما تخلص ومابيبعتش onend
