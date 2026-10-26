@@ -16,8 +16,8 @@ export const ch1l1Script: LessonScript = {
       steps: [
         {
           kind: "hook",
-          say: "أهلًا يا بطل! أنا أستاذ نبيه 🦉 تعالى نتفرج على الجنينة دي: فيها ولاد بيلعبوا، وكلب، وشجرة، وحجارة، ومية. تفتكر مين فيهم عايش ومين مش عايش؟ النهارده هنعرف إزاي نفرّق بينهم.",
-          illustration: { emoji: "🌳🐕🪨💧", prompt: "A sunny Egyptian garden with two children playing, a dog, a tree, rocks and a small pond, children's book style", photos: ["garden"] },
+          say: "أهلًا يا بطل! أنا أستاذ نبيه 🦉 بص على الصور دي: كلب، وشجرة، وحجارة، ومية، وعصفورة. تفتكر مين فيهم عايش ومين مش عايش؟ النهارده هنعرف إزاي نفرّق بينهم.",
+          illustration: { emoji: "🐕🌳🪨💧🐦", prompt: "Photos of a dog, a tree, stones, water and a sparrow", photos: ["dog", "tree", "stones", "water", "sparrow"] },
         },
         {
           kind: "recall",
@@ -187,7 +187,7 @@ export const ch1l1Script: LessonScript = {
         {
           kind: "hook",
           say: "تعالى نبقى مستكشفين النهارده 🔍 لو عايز تلاقي جرادة، أو نملة، أو سحلية… هتدور عليهم فين؟ كل واحد فيهم بيحب مكان مختلف، ونعرف ليه.",
-          illustration: { emoji: "🔍🦗🐜🦎", prompt: "A child explorer with goggles and a magnifying glass searching a garden", photos: ["magnifier", "garden"] },
+          illustration: { emoji: "🔍🦗🐜🦎", prompt: "Photos of a grasshopper, an ant and a lizard", photos: ["grasshopper", "ant", "lizard"] },
         },
         {
           kind: "recall",

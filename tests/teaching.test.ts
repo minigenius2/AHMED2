@@ -193,7 +193,7 @@ describe("narration for human recording", () => {
 
   it("lists every spoken line of the lesson once, in lesson order", () => {
     const texts = lines.map((l) => l.text);
-    expect(texts[0]).toMatch(/^أهلًا يا بطل! أنا أستاذ نبيه، تعالى/);
+    expect(texts[0]).toMatch(/^أهلًا يا بطل! أنا أستاذ نبيه، بص على الصور دي/);
     for (const step of script.sessions.flatMap((s) => s.steps)) {
       if (step.kind === "explain") expect(texts).toContain(spokenText(step.english.text));
       if (step.kind === "check") expect(texts).toContain(spokenText(step.reteach));
