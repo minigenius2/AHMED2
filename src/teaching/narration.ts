@@ -13,6 +13,9 @@ export const PLAYER_PHRASES = {
   confirmRight: "برافو!",
   confirmWrong: "مش دي. فكّر تاني.",
   activityDone: "برافو! رتّبتهم كلهم صح.",
+  huntSearch: "يلا نشوف! دوس على الأماكن ودوّر.",
+  guessRight: "تخمينك كان صح!",
+  huntDone: "عاش يا مستكشف! لقيت كل الكائنات، وسجّلتهم في الكراسة.",
   remediationIntro: "تعالى نراجع سوا الحتت اللي كانت صعبة شوية، بس المرة دي هشرحهالك بطريقة تانية خالص 💪",
   remediationSummary: "دي أهم حاجات لازم تفتكرها. يلا نجرب الواجب تاني 🚀",
   sessionDone: "عاش يا بطل! الحصة خلصت، والحصة الجاية مستنياك.",
@@ -90,6 +93,8 @@ const STEP_NAMES: Record<ScriptStep["kind"], string> = {
   check: "سؤال فهم",
   vocab: "كلمات",
   activity: "لعبة",
+  probe: "تجربة",
+  hunt: "رحلة استكشاف",
   exam_tip: "سؤال امتحان",
   summary: "خلاصة",
 };
@@ -120,6 +125,23 @@ function collectStep(c: LineCollector, step: ScriptStep, place: string): void {
     case "activity":
       c.add(step.say, where());
       for (const item of step.items) c.add(item.text, where("اسم كارت"));
+      c.add(step.tryAtHome, where("جرّبها في البيت"));
+      break;
+    case "probe":
+      c.add(step.say, where(`«${step.title}»`));
+      for (const item of step.items) {
+        c.add(item.text, where("اسم الحاجة"));
+        c.add(item.caption, where(`رد الفعل · ${item.text}`));
+      }
+      c.add(step.conclusion, where("الاستنتاج"));
+      break;
+    case "hunt":
+      c.add(step.say, where(`«${step.title}»`));
+      c.add(step.guess.ask, where("سؤال التخمين"));
+      for (const spot of step.spots) {
+        c.add(spot.caption, where(`لما يكشف «${spot.label}»`));
+        if (spot.find) c.add(`${spot.find.text}: ${spot.labelEn}`, where("سطر كراسة المستكشف"));
+      }
       c.add(step.tryAtHome, where("جرّبها في البيت"));
       break;
     case "exam_tip":

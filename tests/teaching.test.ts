@@ -1,3 +1,6 @@
+import { existsSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import type Anthropic from "@anthropic-ai/sdk";
 import { describe, expect, it, vi } from "vitest";
 import {
@@ -16,6 +19,7 @@ import {
   PLAYER_PHRASES,
   scienceG4Term1,
   scienceG4Term1Bank,
+  scienceG4Term1Media,
   scienceG4Term1Scripts,
   spokenText,
   StudentJourney,
@@ -36,10 +40,29 @@ function start(config: AssistantConfig = DEFAULT_CONFIG) {
 }
 
 describe("lesson scripts", () => {
-  it("has a valid script for every lesson that has one", () => {
+  it("has a valid script for every lesson that has one, with every photo in the library", () => {
     for (const s of Object.values(scienceG4Term1Scripts)) {
-      expect(validateScript(s, findLesson(scienceG4Term1, s.lessonId)), s.lessonId).toEqual([]);
+      expect(validateScript(s, findLesson(scienceG4Term1, s.lessonId), scienceG4Term1Media), s.lessonId).toEqual([]);
     }
+  });
+
+  it("uses only openly licensed photos that exist on disk and credit their source", () => {
+    const dir = join(dirname(fileURLToPath(import.meta.url)), "../src/content/science-g4-term1/media");
+    for (const [key, m] of Object.entries(scienceG4Term1Media)) {
+      expect(existsSync(join(dir, m.file)), key).toBe(true);
+      expect(["cc0", "pdm", "by", "by-sa"], key).toContain(m.license);
+      expect(m.source, key).toMatch(/^https:\/\//);
+      expect(m.creator, key).not.toBe("");
+    }
+  });
+
+  it("flags a photo that is not in the library", () => {
+    const broken = structuredClone(script);
+    const probe = broken.sessions[0]!.steps.find((s) => s.kind === "probe");
+    if (probe?.kind === "probe") probe.items[0]!.photo = "unicorn";
+    expect(validateScript(broken, findLesson(scienceG4Term1, "ch1-l1"), scienceG4Term1Media)).toEqual([
+      'Script ch1-l1: unknown photo "unicorn" in step "probe"',
+    ]);
   });
 
   it("rejects an explanation whose fill-the-gap check does not fit its sentence", () => {

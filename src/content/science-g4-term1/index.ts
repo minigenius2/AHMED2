@@ -9,9 +9,10 @@ import { chapter5Questions } from "./questions-ch5";
 import { chapter6Questions } from "./questions-ch6";
 import { chapter7Questions } from "./questions-ch7";
 import { chapter8Questions } from "./questions-ch8";
+import { scienceG4Term1Media } from "./media";
 import { scienceG4Term1Scripts } from "./scripts";
 
-export { scienceG4Term1, term1Calendar2026, scienceG4Term1Scripts };
+export { scienceG4Term1, term1Calendar2026, scienceG4Term1Scripts, scienceG4Term1Media };
 
 /** بنك الأسئلة الحقيقي فقط (اللي يظهر لطالب حقيقي). */
 export const scienceG4Term1Bank = [

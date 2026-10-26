@@ -3,11 +3,29 @@
 import type { VocabularyItem } from "../curriculum/types";
 import type { ExamStyle } from "../questions/types";
 
-/** صورة الكارت. دلوقتي إيموجي في النسخة التجريبية، وبعدين صورة مرسومة خصيصًا (الوصف الإنجليزي بيستخدم في توليدها). */
+/** صورة حقيقية من مصدر برخصة مفتوحة، ومعاها بيانات صاحبها ورخصتها عشان صفحة حقوق الصور */
+export interface MediaItem {
+  file: string;
+  title: string;
+  creator: string;
+  creatorUrl: string;
+  license: string;
+  licenseVersion: string;
+  licenseUrl: string;
+  /** صفحة الصورة الأصلية */
+  source: string;
+}
+
+/** مكتبة صور المادة: اسم الصورة ← بياناتها */
+export type MediaLibrary = Record<string, MediaItem>;
+
+/** صورة الكارت: صور حقيقية لو موجودة، وإلا الإيموجي */
 export interface Illustration {
   emoji: string;
-  /** وصف للصورة اللي هتترسم بعدين (مش صور الكتاب — ليها حقوق) */
+  /** وصف للصورة (لو احتجنا نرسمها أو ندوّر عليها) — مش صور الكتاب، ليها حقوق */
   prompt: string;
+  /** أسماء صور من مكتبة الصور. "|" بيفصل مجموعتين (حي | مش حي مثلًا) */
+  photos?: string[];
 }
 
 /** جملة إنجليزي زي ما الطفل هيكتبها في الامتحان — بتتقري بصوت إنجليزي */
@@ -86,7 +104,57 @@ export interface SortActivityStep {
   groups: string[];
   /** معنى أسماء المجموعات بالعربي، بنفس الترتيب — بيظهر تحت الاسم الإنجليزي */
   groupsAr?: string[];
-  items: Array<{ text: string; emoji: string; group: string }>;
+  items: Array<{ text: string; emoji: string; group: string; photo?: string }>;
+  /** تجربة آمنة يعملها في البيت مع حد كبير */
+  tryAtHome?: string;
+}
+
+/** رد فعل الحاجة في التجربة — كل نوع ليه حركة جاهزة في الواجهة، وبنزوّد أنواع مع الدروس الجاية */
+export type ProbeReaction =
+  | "grow" // بياكل وبيكبر (كائن حي)
+  | "still"; // مابيتغيرش خالص (شيء غير حي)
+
+/**
+ * تجربة يكتشف فيها الطفل الفكرة بنفسه: يسحب أداة (أكل، مية، كشاف نور…) على كل حاجة ويشوف رد فعلها،
+ * وبعدين المعلم يقول الاستنتاج. نفس الشكل بيتعاد في دروس كتير بأدوات وردود فعل مختلفة.
+ */
+export interface ProbeStep {
+  kind: "probe";
+  objectiveId: string;
+  title: string;
+  say: string;
+  tool: { label: string; emoji: string; photo?: string };
+  items: Array<{ text: string; emoji: string; photo?: string; reaction: ProbeReaction; caption: string }>;
+  /** استنتاج المعلم بعد ما الطفل يجرّب على كل الحاجات */
+  conclusion: string;
+}
+
+/** مكان في رحلة الاستكشاف: الطفل يدوس عليه فيتكشف (الحجر يترفع، الحشيش يتزاح…) */
+export interface HuntSpot {
+  /** اسم المكان بالعربي (تحت الحجر) */
+  label: string;
+  /** اسمه بالإنجليزي زي الكتاب (Under a stone) */
+  labelEn: string;
+  emoji: string;
+  photo?: string;
+  /** الكائن اللي مستخبي هنا (أو مفيش) */
+  find?: { text: string; emoji: string; photo?: string };
+  /** كلام المعلم لما المكان يتكشف */
+  caption: string;
+}
+
+/**
+ * رحلة استكشاف بخطوات العلماء: يخمّن الأول (Guess)، وبعدين يدوّر في الأماكن (Search)،
+ * وكل كائن يلاقيه بيتسجل في كراسة المستكشف مع مكانه (Record).
+ */
+export interface HuntStep {
+  kind: "hunt";
+  objectiveId: string;
+  title: string;
+  say: string;
+  /** سؤال التخمين قبل البحث، والإجابة اسم مكان فيه كائن */
+  guess: { ask: string; answer: string };
+  spots: HuntSpot[];
   /** تجربة آمنة يعملها في البيت مع حد كبير */
   tryAtHome?: string;
 }
@@ -113,6 +181,8 @@ export type ScriptStep =
   | CheckStep
   | VocabStep
   | SortActivityStep
+  | ProbeStep
+  | HuntStep
   | ExamTipStep
   | SummaryStep;
 

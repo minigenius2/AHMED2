@@ -1,8 +1,24 @@
 // فحص سيناريو الحصة قبل ما يوصل لطفل: كل ناتج تعلم متشرح ومتسأل عليه وليه شرح بديل.
 import type { LessonRef } from "../curriculum/types";
-import type { LessonScript, ScriptStep } from "./script-types";
+import type { LessonScript, MediaLibrary, ScriptStep } from "./script-types";
 
-export function validateScript(script: LessonScript, lesson: LessonRef): string[] {
+/** كل أسماء الصور اللي الخطوة بتستخدمها */
+function photosOf(step: ScriptStep): string[] {
+  const illustration = "illustration" in step && step.illustration ? (step.illustration.photos ?? []).filter((p) => p !== "|") : [];
+  switch (step.kind) {
+    case "activity":
+      return [...step.items.flatMap((i) => (i.photo ? [i.photo] : []))];
+    case "probe":
+      return [...(step.tool.photo ? [step.tool.photo] : []), ...step.items.flatMap((i) => (i.photo ? [i.photo] : []))];
+    case "hunt":
+      return step.spots.flatMap((s) => [s.photo, s.find?.photo].filter((p): p is string => !!p));
+    default:
+      return illustration;
+  }
+}
+
+/** media: مكتبة الصور — لو اتبعتت، أي اسم صورة مش موجود فيها بيتحسب غلطة */
+export function validateScript(script: LessonScript, lesson: LessonRef, media?: MediaLibrary): string[] {
   const problems: string[] = [];
   const tag = `Script ${script.lessonId}`;
   if (script.lessonId !== lesson.id) problems.push(`${tag}: lessonId does not match ${lesson.id}`);
@@ -36,6 +52,15 @@ export function validateScript(script: LessonScript, lesson: LessonRef): string[
       if (step.kind === "activity" && step.groupsAr && step.groupsAr.length !== step.groups.length) {
         problems.push(`${tag}: groupsAr must have one Arabic name per group`);
       }
+      if (step.kind === "probe" && step.items.length < 2) problems.push(`${tag}: probe "${step.title}" needs at least 2 items to compare`);
+      if (step.kind === "hunt") {
+        const finds = step.spots.filter((s) => s.find);
+        if (step.spots.length < 3 || finds.length < 2) problems.push(`${tag}: hunt "${step.title}" needs 3+ places and 2+ creatures to find`);
+        if (!finds.some((s) => s.label === step.guess.answer)) problems.push(`${tag}: hunt guess answer "${step.guess.answer}" must be a place with a creature`);
+      }
+      if (media) {
+        for (const photo of photosOf(step)) if (!media[photo]) problems.push(`${tag}: unknown photo "${photo}" in step "${step.kind}"`);
+      }
     }
   };
   checkSteps(allSteps);
@@ -63,4 +88,10 @@ export function validateScript(script: LessonScript, lesson: LessonRef): string[
 /** الكلمة موجودة ككلمة كاملة (مش جزء من كلمة أطول) — نفس اللي الواجهة بتعمله لما تخبي الكلمة */
 export function containsWord(text: string, word: string): boolean {
   return new RegExp(`\\b${word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(text);
+}
+
+/** كل الصور اللي السيناريو بيستخدمها (الحصص والمراجعة العلاجية) — عشان تتنسخ مع الدرس */
+export function scriptPhotos(script: LessonScript): string[] {
+  const steps = [...script.sessions.flatMap((s) => s.steps), ...Object.values(script.alternatives).flat()];
+  return [...new Set(steps.flatMap(photosOf))];
 }

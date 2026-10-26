@@ -202,6 +202,70 @@
   .ask-form textarea { flex: 1; resize: none; font: inherit; font-size: 17px; line-height: 1.5; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 10px 12px; min-height: 52px; max-height: 120px; }
   .ask-form .btn { min-height: 52px; flex: none; }
 
+  /* الصور الحقيقية */
+  .photos { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin: 10px 0 4px; }
+  .photo { width: clamp(84px, 27vw, 124px); aspect-ratio: 1; object-fit: cover; border-radius: 22px; border: 3px solid var(--surface); box-shadow: var(--shadow); background: var(--surface-2); display: block; }
+  .photos.single .photo { width: min(72vw, 280px); aspect-ratio: 4 / 3; }
+  .photos.grouped { flex-direction: column; align-items: stretch; }
+  .photo-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 10px; border-radius: 24px; background: var(--surface-2); }
+  .photo-group:first-child { background: var(--leaf-soft); }
+  .photo-group .photo { width: clamp(72px, 24vw, 108px); }
+  .thumb { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex: none; }
+
+  /* السحب والإفلات */
+  .draggable { touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; }
+  .ghost { position: fixed; z-index: 60; pointer-events: none; transform: translate(-50%, -50%) scale(1.12) rotate(-4deg); opacity: .92; margin: 0; }
+  .dragging { opacity: .35; }
+  [data-drop].over { outline: 3px dashed var(--sky); outline-offset: 3px; }
+
+  /* التجربة */
+  .tool { display: flex; align-items: center; gap: 10px; margin: 12px auto; padding: 8px 22px; min-height: 60px; border-radius: 999px; background: var(--sun-soft); border: 2px dashed var(--sun); font-weight: 800; font-size: 19px; animation: nudge 1.6s ease-in-out infinite; }
+  .tool .big { font-size: 32px; }
+  @keyframes nudge { 50% { transform: translateY(-4px); } }
+  .probe-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .probe-item { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; border-radius: 20px; background: var(--surface); border: 2px solid var(--line); cursor: pointer; }
+  .probe-item .photo { width: 100%; max-width: 108px; transition: transform .6s cubic-bezier(.3, 1.6, .5, 1); }
+  .probe-item .name { font-weight: 700; font-size: 15px; }
+  .probe-item .badge { position: absolute; top: 2px; inset-inline-end: 6px; font-size: 24px; }
+  .probe-item.grew { border-color: var(--leaf); background: var(--leaf-soft); }
+  .probe-item.grew .photo { transform: scale(1.12); }
+  .probe-item.munch .photo { animation: munch .45s ease 2; }
+  .probe-item.still { filter: grayscale(.45); }
+  @keyframes munch { 30% { transform: scale(1.07) rotate(-4deg); } 60% { transform: scale(.96) rotate(4deg); } }
+  .caption { text-align: center; font-weight: 700; min-height: 1.7em; margin: 10px 0 4px; }
+  .progress-line { text-align: center; color: var(--ink-2); font-size: 15px; }
+
+  /* رحلة الاستكشاف */
+  .phase { background: var(--sun-soft); border-radius: 16px; padding: 8px 14px; margin: 8px 0 12px; font-weight: 700; }
+  .hunt-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .spot { position: relative; border-radius: 20px; overflow: hidden; border: 3px solid var(--surface); box-shadow: var(--shadow); aspect-ratio: 4 / 3; padding: 0; cursor: pointer; background: var(--surface-2); }
+  .spot .cover, .spot .found { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.3, 1.3, .5, 1), opacity .4s ease; }
+  .spot .found { opacity: 0; transform: scale(.5); }
+  .spot .emoji-find { display: grid; place-items: center; font-size: 46px; }
+  .spot .label { position: absolute; inset-inline: 0; bottom: 0; padding: 14px 8px 5px; background: linear-gradient(to top, rgba(0, 0, 0, .75), transparent); color: #fff; font-weight: 800; font-size: 15px; text-align: start; }
+  .spot.guessed { border-color: var(--sun); }
+  .spot.open .cover { transform: translateY(-78%) rotate(-10deg); opacity: .3; }
+  .spot.open .found { opacity: 1; transform: scale(1); }
+  .spot.open.empty .cover { transform: none; opacity: 1; filter: grayscale(.7); }
+  .spot.open.empty::after { content: "✖️"; position: absolute; inset: 0; display: grid; place-items: center; font-size: 40px; }
+  .notebook { margin-top: 12px; background: var(--surface); border: 2px solid var(--line); border-radius: 18px; padding: 10px 14px; }
+  .notebook h4 { margin: 0 0 6px; font-size: 17px; }
+  .notes { margin: 0; padding: 0; display: grid; gap: 6px; }
+  .notes li { list-style: none; display: flex; gap: 8px; align-items: center; font-weight: 700; border-bottom: 1px dashed var(--line); padding-bottom: 6px; }
+
+  /* الاحتفال واللاصقات */
+  .confetti { position: fixed; top: -16px; width: 9px; height: 14px; z-index: 70; pointer-events: none; border-radius: 2px; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(108vh) rotate(720deg); } }
+  .sticker-new { font-size: 76px; line-height: 1.2; margin-top: 10px; animation: pop .8s cubic-bezier(.3, 1.8, .5, 1); }
+  @keyframes pop { from { transform: scale(0) rotate(-40deg); } }
+  .album { display: flex; gap: 10px; justify-content: center; align-items: center; font-size: 30px; margin: 12px 0 0; }
+  .album .label { font-size: 14px; color: var(--ink-2); font-weight: 700; }
+  .album .slot.empty { opacity: .2; filter: grayscale(1); }
+  .link-btn { display: block; margin: 12px auto 0; background: none; border: none; color: var(--sky); font-weight: 700; font-size: 15px; cursor: pointer; text-decoration: underline; }
+  .credit { display: flex; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 8px; margin: 8px 0; font-size: 14px; line-height: 1.5; }
+  .credit img { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; flex: none; }
+  .credit a { color: var(--sky); }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
@@ -257,7 +321,10 @@
     get(key, fallback) { try { const v = localStorage.getItem(`${DATA.lessonId}:${key}`); return v == null ? fallback : JSON.parse(v); } catch { return fallback; } },
     set(key, value) { try { localStorage.setItem(`${DATA.lessonId}:${key}`, JSON.stringify(value)); } catch {} },
   };
-  const state = { xp: store.get("xp", 0), done: store.get("done", []), sound: store.get("sound", true) };
+  const state = { xp: store.get("xp", 0), done: store.get("done", []), sound: store.get("sound", true), stickers: store.get("stickers", []) };
+  /** لاصقة لكل حصة بتخلص، ولاصقة للمراجعة العلاجية — بتتجمع في ألبوم على صفحة الدرس */
+  const STICKERS = ["🐸", "🔍", "🌻", "🐞", "🦋"];
+  const stickerFor = (mode, n) => (mode === "remediation" ? "💪" : STICKERS[(n - 1) % STICKERS.length]);
   /** الحصة اللي شغالة دلوقتي (null = الصفحة الرئيسية) */
   let run = null;
 
@@ -390,7 +457,7 @@
     if (!state.sound) return;
     try {
       audioCtx ??= new (window.AudioContext || window.webkitAudioContext)();
-      const notes = kind === "good" ? [660, 880] : kind === "win" ? [523, 659, 784, 1047] : [196];
+      const notes = kind === "good" ? [660, 880] : kind === "win" ? [523, 659, 784, 1047] : kind === "still" ? [294, 262] : [196];
       notes.forEach((f, i) => {
         const o = audioCtx.createOscillator(), g = audioCtx.createGain();
         o.type = kind === "bad" ? "triangle" : "sine";
@@ -467,10 +534,81 @@
 
   // ---------- قطع الواجهة ----------
   const teacher = (text, live = true) => `<div class="teacher"><div class="avatar${live ? " live" : ""}" aria-hidden="true">🦉</div><div class="bubble"><div class="who">${TEACHER}</div><p>${bidi(text)}</p></div></div>`;
+  const MEDIA = DATA.media || {};
+  /** صورة من مكتبة الصور، أو "" لو مش موجودة (والمكان بيرجع للإيموجي) */
+  const img = (key, cls = "photo") => (key && MEDIA[key] ? `<img class="${cls}" src="${esc(MEDIA[key].src)}" alt="" loading="lazy" draggable="false">` : "");
   function illus(ill) {
     if (!ill) return "";
+    const photos = (ill.photos || []).filter((k) => k === "|" || MEDIA[k]);
+    if (photos.some((k) => k !== "|")) {
+      if (photos.includes("|")) {
+        // مجموعتين أو أكتر (حي | مش حي): كل مجموعة في صندوق لوحدها
+        const groups = photos.join(" ").split("|").map((g) => g.trim().split(" ").filter(Boolean));
+        return `<div class="photos grouped" aria-hidden="true">${groups.map((g) => `<div class="photo-group">${g.map((k) => img(k)).join("")}</div>`).join("")}</div>`;
+      }
+      return `<div class="photos${photos.length === 1 ? " single" : ""}" aria-hidden="true">${photos.map((k) => img(k)).join("")}</div>`;
+    }
     const parts = ill.emoji.split("|").map((s) => s.trim()).filter(Boolean);
     return `<div class="illus" aria-hidden="true">${parts.map((p) => `<span class="blob">${esc(p)}</span>`).join('<span class="sep"></span>')}</div>`;
+  }
+
+  /**
+   * سحب وإفلات باللمس أو الماوس. لو الطفل داس بس من غير ما يسحب، بتشتغل onTap
+   * (ومن الكيبورد كمان) — عشان اللعبة تشتغل بالطريقتين.
+   */
+  function enableDrag(el, { onDrop, onTap }) {
+    el.classList.add("draggable");
+    el.addEventListener("click", (e) => { if (e.detail === 0) onTap?.(); });
+    el.addEventListener("pointerdown", (e) => {
+      if (el.disabled) return;
+      const x0 = e.clientX, y0 = e.clientY;
+      let ghost = null, over = null;
+      el.setPointerCapture?.(e.pointerId);
+      const targetAt = (x, y) => document.elementFromPoint(x, y)?.closest("[data-drop]") || null;
+      const move = (ev) => {
+        if (!ghost && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 8) return;
+        if (!ghost) {
+          ghost = el.cloneNode(true);
+          ghost.classList.add("ghost");
+          ghost.style.width = `${el.offsetWidth}px`;
+          document.body.appendChild(ghost);
+          el.classList.add("dragging");
+        }
+        ghost.style.left = `${ev.clientX}px`;
+        ghost.style.top = `${ev.clientY}px`;
+        const t = targetAt(ev.clientX, ev.clientY);
+        if (t !== over) { over?.classList.remove("over"); t?.classList.add("over"); over = t; }
+      };
+      const up = (ev) => {
+        el.removeEventListener("pointermove", move);
+        el.removeEventListener("pointerup", up);
+        el.removeEventListener("pointercancel", up);
+        over?.classList.remove("over");
+        if (!ghost) { if (ev.type === "pointerup") onTap?.(); return; }
+        ghost.remove();
+        el.classList.remove("dragging");
+        const t = targetAt(ev.clientX, ev.clientY);
+        if (t && ev.type === "pointerup") onDrop(t);
+      };
+      el.addEventListener("pointermove", move);
+      el.addEventListener("pointerup", up);
+      el.addEventListener("pointercancel", up);
+    });
+  }
+
+  function confetti() {
+    if (reduceMotion) return;
+    const colors = ["#1f8a57", "#f2a900", "#2370c9", "#cf4a35", "#8e5bd6", "#3cc483"];
+    for (let i = 0; i < 44; i++) {
+      const c = document.createElement("div");
+      c.className = "confetti";
+      c.style.left = `${Math.random() * 100}vw`;
+      c.style.background = colors[i % colors.length];
+      c.style.animationDuration = `${1.6 + Math.random() * 1.4}s`;
+      c.style.animationDelay = `${Math.random() * 0.35}s`;
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 3600);
+    }
   }
   const englishBox = (line, label = "بالإنجليزي، زي ما هتكتبها في الامتحان") =>
     `<div class="en-box"><div class="en-label">${label}</div><p dir="ltr" lang="en">${highlight(line.text, line.keywords)}</p><button class="chip-btn" data-say-en="${esc(line.text)}">🔊 اسمعها بالإنجليزي</button></div>`;
@@ -638,61 +776,172 @@
 
     activity: (st) => ({
       html: `<span class="step-tag">يلا نلعب 🎯</span>` + teacher(st.say)
-        + `<div class="hint">دوس على كارت، وبعدين دوس على المجموعة بتاعته</div>`
-        + `<div class="tray">${shuffle(st.items.map((it, i) => ({ ...it, i }))).map((it) => `<button class="token" data-i="${it.i}" aria-pressed="false"><span aria-hidden="true">${esc(it.emoji)}</span><bdi dir="ltr" lang="en">${esc(it.text)}</bdi></button>`).join("")}</div>`
-        + `<div class="zones">${st.groups.map((g, gi) => `<button class="zone" data-g="${gi}"><span class="zone-title" dir="ltr" lang="en">${esc(g)}</span>${st.groupsAr?.[gi] ? `<span class="zone-ar">${esc(st.groupsAr[gi])}</span>` : ""}<span class="zone-items"></span></button>`).join("")}</div>`
+        + `<div class="hint">اسحب كل كارت لمجموعته، أو دوس عليه وبعدين على المجموعة</div>`
+        + `<div class="tray">${shuffle(st.items.map((it, i) => ({ ...it, i }))).map((it) => `<button class="token" data-i="${it.i}" aria-pressed="false">${img(it.photo, "thumb") || `<span aria-hidden="true">${esc(it.emoji)}</span>`}<bdi dir="ltr" lang="en">${esc(it.text)}</bdi></button>`).join("")}</div>`
+        + `<div class="zones">${st.groups.map((g, gi) => `<button class="zone" data-drop data-g="${gi}"><span class="zone-title" dir="ltr" lang="en">${esc(g)}</span>${st.groupsAr?.[gi] ? `<span class="zone-ar">${esc(st.groupsAr[gi])}</span>` : ""}<span class="zone-items"></span></button>`).join("")}</div>`
         + `<div class="feedback"></div>`
         + (st.tryAtHome ? `<div class="home-task" hidden><div class="who">🏡 جرّبها في البيت</div>${bidi(st.tryAtHome)}</div>` : ""),
       ready: false,
       narrate: () => speak(st.say),
       mount(root) {
-        const fb = $(".feedback", root), tray = $(".tray", root);
+        const fb = $(".feedback", root);
         let selected = null, placed = 0, mistakes = 0;
         const fresh = firstAttempt();
         const arm = (on) => $$(".zone", root).forEach((z) => z.classList.toggle("armed", on));
-        tray.addEventListener("click", (e) => {
-          const tok = e.target.closest(".token");
-          if (!tok) return;
+        const select = (tok) => {
           $$(".token", root).forEach((t) => t.setAttribute("aria-pressed", "false"));
           if (selected === tok) { selected = null; arm(false); return; }
           selected = tok;
           tok.setAttribute("aria-pressed", "true");
           arm(true);
           speak(st.items[+tok.dataset.i].text, { lang: "en" });
-        });
-        $$(".zone", root).forEach((zone) => zone.addEventListener("click", () => {
-          if (!selected) { fb.innerHTML = `<div class="hint">اختار كارت من فوق الأول 👆</div>`; return; }
-          const item = st.items[+selected.dataset.i];
-          if (st.groups[+zone.dataset.g] === item.group) {
-            $(".zone-items", zone).insertAdjacentHTML("beforeend", `<span class="placed">${esc(item.emoji)} <bdi dir="ltr" lang="en">${esc(item.text)}</bdi></span>`);
-            selected.remove();
-            selected = null;
-            arm(false);
-            placed++;
-            fb.innerHTML = "";
-            if (placed === st.items.length) {
-              if (fresh && mistakes === 0) run.checks.first++;
-              tone("win");
-              award(`a${run.i}`, mistakes === 0 ? 15 : 10);
-              fb.innerHTML = `<div class="fb good">👏 برافو! رتّبتهم كلهم صح.</div>`;
-              const home = $(".home-task", root);
-              if (home) home.hidden = false;
-              stopSpeech();
-              speak(P.activityDone);
-              if (st.tryAtHome) speak(st.tryAtHome);
-              setReady(true);
-              nearest(home || fb);
-            } else {
-              tone("good");
-            }
-          } else {
+        };
+        const place = (tok, zone) => {
+          const item = st.items[+tok.dataset.i];
+          if (st.groups[+zone.dataset.g] !== item.group) {
             mistakes++;
             tone("bad");
-            selected.classList.remove("shake");
-            void selected.offsetWidth;
-            selected.classList.add("shake");
+            tok.classList.remove("shake");
+            void tok.offsetWidth;
+            tok.classList.add("shake");
             fb.innerHTML = `<div class="fb bad">مش المجموعة دي 🤔 فكّر تاني وجرّب التانية.</div>`;
+            return;
           }
+          $(".zone-items", zone).insertAdjacentHTML("beforeend", `<span class="placed">${esc(item.emoji)} <bdi dir="ltr" lang="en">${esc(item.text)}</bdi></span>`);
+          tok.remove();
+          if (selected === tok) selected = null;
+          arm(false);
+          placed++;
+          fb.innerHTML = "";
+          if (placed < st.items.length) { tone("good"); return; }
+          if (fresh && mistakes === 0) run.checks.first++;
+          tone("win");
+          confetti();
+          award(`a${run.i}`, mistakes === 0 ? 15 : 10);
+          fb.innerHTML = `<div class="fb good">👏 برافو! رتّبتهم كلهم صح.</div>`;
+          const home = $(".home-task", root);
+          if (home) home.hidden = false;
+          stopSpeech();
+          speak(P.activityDone);
+          if (st.tryAtHome) speak(st.tryAtHome);
+          setReady(true);
+          nearest(home || fb);
+        };
+        $$(".token", root).forEach((tok) => enableDrag(tok, { onTap: () => select(tok), onDrop: (zone) => place(tok, zone) }));
+        $$(".zone", root).forEach((zone) => zone.addEventListener("click", () => {
+          if (!selected) { fb.innerHTML = `<div class="hint">اختار كارت من فوق الأول 👆</div>`; return; }
+          place(selected, zone);
+        }));
+      },
+    }),
+
+    probe: (st) => ({
+      html: `<span class="step-tag">🧪 ${esc(st.title)}</span>` + teacher(st.say)
+        + `<button class="tool" type="button">${img(st.tool.photo, "thumb") || `<span class="big" aria-hidden="true">${esc(st.tool.emoji)}</span>`}${esc(st.tool.label)}</button>`
+        + `<div class="probe-grid">${st.items.map((it, i) => `<button class="probe-item" type="button" data-drop data-i="${i}">${img(it.photo) || `<span class="blob">${esc(it.emoji)}</span>`}<span class="name" dir="ltr" lang="en">${esc(it.text)}</span><span class="badge" aria-hidden="true"></span></button>`).join("")}</div>`
+        + `<div class="caption" aria-live="polite"></div><div class="progress-line"></div><div class="conclusion"></div>`,
+      ready: false,
+      narrate: () => speak(st.say),
+      mount(root) {
+        const cap = $(".caption", root), prog = $(".progress-line", root);
+        const tried = new Set();
+        const update = () => (prog.textContent = `جرّبت ${tried.size} من ${st.items.length}`);
+        update();
+        const feed = (el) => {
+          const i = +el.dataset.i, it = st.items[i];
+          stopSpeech();
+          if (tried.has(i)) { speak(it.caption); return; }
+          tried.add(i);
+          if (it.reaction === "grow") {
+            el.classList.add("munch");
+            setTimeout(() => el.classList.add("grew"), 450);
+            $(".badge", el).textContent = "😋";
+            tone("good");
+          } else {
+            el.classList.add("still");
+            $(".badge", el).textContent = "😐";
+            tone("still");
+          }
+          cap.innerHTML = bidi(it.caption);
+          speak(it.caption);
+          update();
+          if (tried.size < st.items.length) return;
+          $(".conclusion", root).innerHTML = teacher(st.conclusion);
+          award(`p${run.i}`, 15);
+          confetti();
+          tone("win");
+          speak(st.conclusion);
+          setReady(true);
+          nearest($(".conclusion", root));
+        };
+        enableDrag($(".tool", root), {
+          onDrop: (target) => feed(target),
+          onTap: () => { cap.textContent = `اسحب «${st.tool.label}» على أي حاجة، أو دوس عليها 👇`; },
+        });
+        $$(".probe-item", root).forEach((el) => el.addEventListener("click", () => feed(el)));
+      },
+    }),
+
+    hunt: (st) => ({
+      html: `<span class="step-tag">🔍 ${esc(st.title)}</span>` + teacher(st.say)
+        + `<div class="phase"></div>`
+        + `<div class="hunt-grid">${st.spots.map((sp, i) => `<button class="spot" type="button" data-i="${i}">`
+          + (sp.find ? img(sp.find.photo, "found") || `<span class="found emoji-find">${esc(sp.find.emoji)}</span>` : "")
+          + (img(sp.photo, "cover") || `<span class="cover emoji-find">${esc(sp.emoji)}</span>`)
+          + `<span class="label">${esc(sp.emoji)} ${esc(sp.label)}</span></button>`).join("")}</div>`
+        + `<div class="caption" aria-live="polite"></div>`
+        + `<div class="notebook"><h4>📒 كراسة المستكشف</h4><ul class="notes"><li class="muted">لسه مالقيناش حاجة…</li></ul></div>`
+        + (st.tryAtHome ? `<div class="home-task" hidden><div class="who">🏡 جرّبها في البيت</div>${bidi(st.tryAtHome)}</div>` : ""),
+      ready: false,
+      narrate: () => { speak(st.say); speak(st.guess.ask); },
+      mount(root) {
+        const phaseEl = $(".phase", root), cap = $(".caption", root), notes = $(".notes", root);
+        const total = st.spots.filter((sp) => sp.find).length;
+        let guess = null, found = 0;
+        const setPhase = () => {
+          phaseEl.innerHTML = guess === null
+            ? `1️⃣ <bdi dir="ltr" lang="en">Guess</bdi> خمّن: ${bidi(st.guess.ask)}`
+            : `2️⃣ <bdi dir="ltr" lang="en">Search</bdi> دوّر · 3️⃣ <bdi dir="ltr" lang="en">Record</bdi> سجّل — لقيت ${found} من ${total}`;
+        };
+        setPhase();
+        $$(".spot", root).forEach((btn) => btn.addEventListener("click", () => {
+          const sp = st.spots[+btn.dataset.i];
+          stopSpeech();
+          if (guess === null) {
+            guess = sp.label;
+            btn.classList.add("guessed");
+            setPhase();
+            cap.innerHTML = `تخمينك: <b>${esc(sp.label)}</b> 🤔 ${esc(P.huntSearch)}`;
+            speak(P.huntSearch);
+            return;
+          }
+          if (btn.classList.contains("open")) { speak(sp.caption); return; }
+          btn.classList.add("open");
+          cap.innerHTML = bidi(sp.caption);
+          speak(sp.caption);
+          if (!sp.find) { btn.classList.add("empty"); tone("still"); return; }
+          found++;
+          tone("good");
+          if (found === 1) notes.innerHTML = "";
+          const line = `${sp.find.text}: ${sp.labelEn}`;
+          notes.insertAdjacentHTML("beforeend", `<li>${img(sp.find.photo, "thumb") || esc(sp.find.emoji)}<bdi dir="ltr" lang="en">${esc(line)}</bdi></li>`);
+          speak(line, { lang: "en" });
+          if (sp.label === guess && guess === st.guess.answer) {
+            award(`g${run.i}`, 5);
+            cap.innerHTML += ` <b>🎯 ${esc(P.guessRight)}</b>`;
+            speak(P.guessRight);
+          }
+          setPhase();
+          if (found < total) return;
+          award(`h${run.i}`, 15);
+          confetti();
+          tone("win");
+          const home = $(".home-task", root);
+          if (home) home.hidden = false;
+          speak(P.huntDone);
+          if (st.tryAtHome) speak(st.tryAtHome);
+          setReady(true);
+          nearest(home || $(".notebook", root));
         }));
       },
     }),
@@ -770,18 +1019,34 @@
         <p>${esc(DATA.titleAr)} — ${esc(DATA.lessonLabel)}</p>
       </section>
       <div class="journey" style="grid-template-columns: repeat(${nodes.length}, minmax(0, 1fr))" aria-label="مسار الدرس">${journey}</div>
+      <div class="album" aria-label="ألبوم اللاصقات"><span class="label">ألبومي:</span>${[...S.sessions.map((_, i) => ["lesson", i + 1]), ["remediation", 1]].map(([m, n]) => `<span class="slot${state.stickers.includes(`${m}-${n}`) ? "" : " empty"}">${stickerFor(m, n)}</span>`).join("")}</div>
       <div class="cards">
         ${S.sessions.map((_, i) => card(i + 1)).join("")}
         <button class="session-card alt" data-remediation><span class="num">🔁</span><span><span class="t">شكل المراجعة لو الطفل غلط</span><br><span class="muted">شرح بطريقة تانية للجزئيات اللي غلط فيها بس — هنا مثال بجزئيتين من الدرس</span></span></button>
       </div>
       <p class="note">💡 في التطبيق الحقيقي: الحصص بتفتح واحدة ورا التانية، والواجب بعد آخر حصة، والمراجعة دي بتظهر بس لو الطفل وقع في الاختبار الأساسي مرتين ورا بعض. هنا كله مفتوح عشان تجرّب.</p>
-      <p class="note" id="voiceLine"></p>`;
+      <p class="note" id="voiceLine"></p>
+      ${Object.keys(MEDIA).length ? '<button class="link-btn" id="creditsBtn" type="button">📷 حقوق الصور</button>' : ""}`;
     updateVoiceLine();
+    $("#creditsBtn")?.addEventListener("click", renderCredits);
     $$("[data-session]", screen).forEach((b) => b.addEventListener("click", () => startRun("lesson", +b.dataset.session)));
     $("[data-remediation]", screen).addEventListener("click", () => startRun("remediation"));
     const first = nextSession || 1;
     actions.innerHTML = `<button class="btn btn-primary" id="startBtn">${nextSession ? `▶️ ابدأ الحصة ${first}` : "🔁 عيد الحصة 1"}</button>`;
     $("#startBtn").addEventListener("click", () => startRun("lesson", first));
+  }
+
+  /** صفحة حقوق الصور: كل صورة ومصدرها وصاحبها ورخصتها */
+  function renderCredits() {
+    stopSpeech();
+    setHeader("حقوق الصور", "كل الصور برخص مفتوحة، والشكر لأصحابها");
+    setProgress(0);
+    const license = (m) => `${m.license === "cc0" ? "CC0" : m.license === "pdm" ? "Public Domain" : `CC ${m.license.toUpperCase()}`}${m.licenseVersion && m.license !== "pdm" ? ` ${m.licenseVersion}` : ""}`;
+    const link = (url, text) => (url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(text)}</a>` : esc(text));
+    screen.innerHTML = `<p class="note">الصور دي من <bdi dir="ltr">Openverse</bdi>، وكلها برخص بتسمح باستخدامها مع ذكر صاحبها.</p>`
+      + Object.values(MEDIA).map((m) => `<div class="credit" dir="ltr">${`<img src="${esc(m.src)}" alt="">`}<div>${link(m.source, m.title || "Photo")}<br>by ${link(m.creatorUrl, m.creator)} · ${link(m.licenseUrl, license(m))}</div></div>`).join("");
+    actions.innerHTML = `<button class="btn btn-primary" id="goHome">🏠 الرجوع للدرس</button>`;
+    $("#goHome").addEventListener("click", renderHome);
   }
 
   function startRun(mode, n = 1) {
@@ -836,6 +1101,10 @@
       if (!state.done.includes(run.n)) { state.done.push(run.n); store.set("done", state.done); }
     }
     const next = run.mode === "lesson" && run.n < S.sessions.length ? run.n + 1 : null;
+    const stickerKey = `${run.mode}-${run.n}`;
+    const newSticker = !state.stickers.includes(stickerKey);
+    if (newSticker) { state.stickers.push(stickerKey); store.set("stickers", state.stickers); }
+    confetti();
     let headline, line;
     if (run.mode === "remediation") {
       headline = "المراجعة خلصت 💪";
@@ -853,6 +1122,8 @@
         <h2>${esc(headline)}</h2>
         <p>${esc(line)}</p>
         <div class="gain">+${run.xp} نقطة ⭐</div>
+        <div class="sticker-new" aria-hidden="true">${stickerFor(run.mode, run.n)}</div>
+        <p class="muted">${newSticker ? "🎁 لاصقة جديدة اتضافت لألبومك!" : "اللاصقة دي في ألبومك من قبل كده 😉"}</p>
         ${total ? `<p class="muted">جاوب ${first} من ${total} صح من أول مرة</p>` : ""}
       </section>`;
     setHeader(run.title, "خلصت ✅");
@@ -867,7 +1138,8 @@
   }
 
   // ---------- اسأل المعلم ----------
-  let sample = null, turns = [], askCtl = null, asking = false;
+  let sample = null, turns = [], askCtl = null, asking = false, pendingQuestion = null;
+  const ENDPOINT = DATA.tutorEndpoint;
   const today = () => new Date().toISOString().slice(0, 10);
   const usedToday = () => store.get(`asked:${today()}`, 0);
   const left = () => Math.max(0, DAILY_LIMIT - usedToday());
@@ -921,25 +1193,66 @@
     $("#askSend").textContent = on ? "…" : "اسأل";
   }
 
+  /** جوه Claude: السؤال بيروح لـ Claude من حساب اللي فاتح الصفحة، والرد بيظهر وهو بيتكتب */
+  async function askClaude(q, bubble) {
+    const instructions = `${T.rules}\n\n${T.context}\n\n${whereNow()}\n\nNow answer the child's next message as ${TEACHER}, in plain text only.`;
+    const { text } = await sample([{ role: "user", content: instructions }, ...turns.slice(-8), { role: "user", content: q }], {
+      cache: false,
+      modelTier: "quick",
+      signal: askCtl.signal,
+      onText: ({ text }) => setMsg(bubble, text),
+    });
+    return text;
+  }
+
+  /** على الموقع: السؤال بيروح للسيرفر بتاعنا، وهو اللي بيسأل Claude بمفتاح الـ API */
+  async function askServer(q) {
+    const history = [];
+    for (let i = 0; i + 1 < turns.length; i += 2) history.push({ question: turns[i].content, answer: turns[i + 1].content });
+    let res;
+    try {
+      res = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ lessonId: DATA.lessonId, question: q, history: history.slice(-4), where: whereNow(), code: store.get("pilotCode", "") }),
+        signal: askCtl.signal,
+      });
+    } catch (e) {
+      throw { code: e && e.name === "AbortError" ? "cancelled" : "upstream_error" };
+    }
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 401) throw { code: "pilot_code" };
+    if (!res.ok || !data.answer) throw { code: "upstream_error" };
+    return data.answer;
+  }
+
   async function ask(raw) {
     if (asking) return;
     const q = raw.trim().slice(0, 300);
+    if (pendingQuestion !== null) {
+      // الرسالة دي هي كود التجربة، وبعده بنبعت السؤال اللي كان مستني
+      if (!q) return;
+      store.set("pilotCode", q);
+      $("#askInput").value = "";
+      addMsg("child", "🔑 ••••");
+      const waiting = pendingQuestion;
+      pendingQuestion = null;
+      return answer(waiting);
+    }
     if (!q) { addMsg("teacher", T.messages.empty); return; }
     if (left() <= 0) { addMsg("teacher", T.messages.limitReached); return; }
     $("#askInput").value = "";
     $(".suggest")?.remove();
     addMsg("child", q);
+    return answer(q);
+  }
+
+  async function answer(q) {
     const bubble = addMsg("teacher", `${TEACHER} بيفكر… 🤔`, "thinking");
     askCtl = new AbortController();
     setAsking(true);
-    const instructions = `${T.rules}\n\n${T.context}\n\n${whereNow()}\n\nNow answer the child's next message as ${TEACHER}, in plain text only.`;
     try {
-      const { text } = await sample([{ role: "user", content: instructions }, ...turns.slice(-8), { role: "user", content: q }], {
-        cache: false,
-        modelTier: "quick",
-        signal: askCtl.signal,
-        onText: ({ text }) => setMsg(bubble, text),
-      });
+      const text = sample ? await askClaude(q, bubble) : await askServer(q);
       setMsg(bubble, text);
       turns.push({ role: "user", content: q }, { role: "assistant", content: text });
       useOne();
@@ -952,7 +1265,11 @@
       speak(text);
     } catch (e) {
       const code = e && e.code;
-      if (code === "cancelled") setMsg(bubble, e.text || "…");
+      if (code === "pilot_code") {
+        setMsg(bubble, "محتاج كود التجربة الأول 🔑 اكتبه في المربع اللي تحت وابعته، وأنا هجاوبك على طول.");
+        pendingQuestion = q;
+        store.set("pilotCode", "");
+      } else if (code === "cancelled") setMsg(bubble, e.text || "…");
       else if (HIDE.has(code)) {
         setMsg(bubble, "المعلم مش متاح في النسخة دي دلوقتي 🙏");
         $("#askBtn").hidden = true;
@@ -964,6 +1281,8 @@
     }
   }
 
+  // جوه Claude بنستخدم Claude نفسه، وعلى الموقع بنستخدم السيرفر
+  if (ENDPOINT) $("#askBtn").hidden = false;
   (async () => {
     try { if (window.claude?.use) sample = await window.claude.use("sample"); } catch { sample = null; }
     if (sample) $("#askBtn").hidden = false;
