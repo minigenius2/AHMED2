@@ -23,6 +23,7 @@
 | [docs/04-teaching.md](docs/04-teaching.md) | طريقة الشرح: الحصة التفاعلية، والمراجعة العلاجية، والصوت، و"اسأل المعلم" وتكلفته |
 | [docs/05-voice-recording.md](docs/05-voice-recording.md) | تسجيل صوت المعلم: حجم الشغل، واختيار الصوت، وإرشادات مؤدي الصوت، ونص التسجيل |
 | [docs/06-deploy-vercel.md](docs/06-deploy-vercel.md) | الرفع على Vercel للتجربة مع الطلاب، خطوة بخطوة |
+| [docs/07-learning-design.md](docs/07-learning-design.md) | تصميم التعلّم المبني على الأبحاث، وشكل الدرس الأول الجديد شاشة بشاشة |
 
 ## الحالة دلوقتي
 
