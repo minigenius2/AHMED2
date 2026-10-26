@@ -19,6 +19,7 @@ export * from "./simulation/simulated-student";
 export * from "./teaching/script-types";
 export { validateScript } from "./teaching/validate-script";
 export { buildLearningSession, type PlayableSession, type PlayableStep } from "./teaching/session-builder";
+export * from "./teaching/narration";
 export * from "./teaching/ask-teacher";
 export { anthropicTutor, DEFAULT_TUTOR_MODEL } from "./teaching/anthropic-tutor";
 export * from "./content/science-g4-term1";

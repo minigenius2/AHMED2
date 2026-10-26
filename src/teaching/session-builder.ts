@@ -5,6 +5,7 @@ import { generateQuiz, type QuizItem } from "../assessment/quiz";
 import type { StudentJourney } from "../journey/journey";
 import type { Question } from "../questions/types";
 import { hashString } from "../utils/random";
+import { PLAYER_PHRASES } from "./narration";
 import type { ExplainStep, LessonScript, RecallStep, ScriptStep, SummaryStep } from "./script-types";
 
 export type PlayableStep = Exclude<ScriptStep, RecallStep> | { kind: "recall"; say: string; items: QuizItem[] };
@@ -34,7 +35,7 @@ export function buildLearningSession(
     const steps: PlayableStep[] = [
       {
         kind: "hook",
-        say: "تعالى نراجع سوا الحتت اللي كانت صعبة شوية، بس المرة دي هشرحهالك بطريقة تانية خالص 💪",
+        say: PLAYER_PHRASES.remediationIntro,
         illustration: { emoji: "🔁", prompt: "A friendly teacher character encouraging a child to try again" },
       },
     ];
@@ -95,5 +96,5 @@ function remediationSummary(allSteps: ScriptStep[], weak: string[]): SummaryStep
   const points = allSteps
     .filter((s): s is ExplainStep => s.kind === "explain" && weak.includes(s.objectiveId))
     .map((s) => s.english.text);
-  return { kind: "summary", say: "دي أهم حاجات لازم تفتكرها. يلا نجرب الواجب تاني 🚀", points };
+  return { kind: "summary", say: PLAYER_PHRASES.remediationSummary, points };
 }

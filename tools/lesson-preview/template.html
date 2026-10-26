@@ -241,6 +241,8 @@
 (() => {
   const DATA = JSON.parse(document.getElementById("lesson-data").textContent);
   const S = DATA.script;
+  /** الجمل الثابتة (متسجلة مرة واحدة لكل الدروس) */
+  const P = DATA.phrases;
   const T = DATA.tutor;
   const TEACHER = "أستاذ نبيه";
   const DAILY_LIMIT = 10;
@@ -310,9 +312,16 @@
   }
   if (hasTTS) { pickVoices(); speechSynthesis.addEventListener?.("voiceschanged", pickVoices); }
 
-  let speechGen = 0, pending = 0;
+  // كل الكلام بيمشي في طابور واحد: الجملة اللي ليها تسجيل بصوت المعلم بتشتغل بيه، واللي لسه ماتسجلتش بصوت الموبايل.
+  const AUDIO = DATA.audio || {};
+  const player = new Audio(); // عنصر واحد بيتعاد استخدامه — iOS بيسمح بيه بعد أول لمسة
+  player.preload = "auto";
+  let speechGen = 0, queue = [], speaking = false, liveUtterances = [];
   const setTalking = (on) => app.classList.toggle("talking", on);
-  const cleanForSpeech = (t) => t.replace(/[\p{Extended_Pictographic}‍️]/gu, "").replace(/[←→|]/g, "، ").replace(/\s+/g, " ").trim();
+  const EMOJI = "[\\p{Extended_Pictographic}\\u200d\\uFE0F]";
+  const EMOJI_BETWEEN_WORDS = new RegExp(`(?<=[\\p{L}\\p{N}])\\s*(?:${EMOJI}\\s*)+(?=[\\p{L}\\p{N}])`, "gu");
+  /** نفس قواعد narration.ts: الإيموجي اللي بين كلامين بيبقى وقفة، والباقي بيتشال */
+  const cleanForSpeech = (t) => t.replace(EMOJI_BETWEEN_WORDS, "، ").replace(new RegExp(EMOJI, "gu"), "").replace(/\s*[←→|]\s*/g, "، ").replace(/\s+/g, " ").trim();
   function segments(text) {
     const out = [];
     let last = 0;
@@ -326,29 +335,53 @@
       .flatMap((s) => (s.lang === "ar" ? s.text.split(/(?<=[.؟!:])\s+/).map((t) => ({ lang: "ar", text: t })) : [s]))
       .filter((s) => /[\p{L}\p{N}]/u.test(s.text));
   }
-  /** بيقرا النص: العربي بصوت عربي، والكلمات الإنجليزي بصوت إنجليزي. lang بيجبر لغة واحدة. */
+  /** بيقول الجملة: بتسجيل المعلم لو موجود، وإلا بصوت الموبايل (العربي بصوت عربي والإنجليزي بصوت إنجليزي). lang بيجبر لغة واحدة. */
   function speak(text, { lang } = {}) {
-    if (!hasTTS || !state.sound || !text) return;
-    const clean = cleanForSpeech(text);
-    const parts = lang ? [{ lang, text: clean }] : segments(clean);
+    if (!state.sound || !text) return;
+    queue.push({ text, lang });
+    if (!speaking) playNext();
+  }
+  function playNext() {
+    const item = queue.shift();
+    if (!item) { speaking = false; setTalking(false); return; }
+    speaking = true;
+    setTalking(true);
     const gen = speechGen;
-    for (const p of parts) {
+    const done = () => { if (gen === speechGen) playNext(); };
+    const url = AUDIO[item.text];
+    if (!url) return sayWithDevice(item, done);
+    // كل جملة بتخلص مرة واحدة بس: يا التسجيل خلص، يا فشل فبتتقري بصوت الموبايل (مش الاتنين)
+    let settled = false;
+    const settle = (fn) => () => { if (settled || gen !== speechGen) return; settled = true; fn(); };
+    const fallback = settle(() => sayWithDevice(item, done));
+    player.onended = settle(done);
+    player.onerror = fallback;
+    player.src = url;
+    player.play().catch(fallback);
+  }
+  function sayWithDevice({ text, lang }, done) {
+    const clean = cleanForSpeech(text);
+    const parts = !hasTTS ? [] : lang ? [{ lang, text: clean }] : segments(clean);
+    if (!parts.length) return done();
+    liveUtterances = parts.map((p, i) => {
       const u = new SpeechSynthesisUtterance(p.text);
       const en = p.lang === "en";
       u.lang = en ? (voice.en?.lang || "en-US") : (voice.ar?.lang || "ar-EG");
       const v = en ? voice.en : voice.ar;
       if (v) u.voice = v;
       u.rate = en ? 0.88 : 0.95;
-      pending++;
-      setTalking(true);
-      u.onend = u.onerror = () => { if (gen !== speechGen) return; pending = Math.max(0, pending - 1); if (!pending) setTalking(false); };
+      if (i === parts.length - 1) u.onend = u.onerror = done;
       speechSynthesis.speak(u);
-    }
+      return u; // بنحتفظ بيهم عشان Chrome ساعات بيرمي الجملة قبل ما تخلص ومابيبعتش onend
+    });
   }
   function stopSpeech() {
     speechGen++;
-    pending = 0;
+    queue = [];
+    speaking = false;
     setTalking(false);
+    player.onended = player.onerror = null;
+    player.pause();
     if (hasTTS) speechSynthesis.cancel();
   }
 
@@ -411,7 +444,7 @@
       if (st.kind !== "recall") { steps.push(st); continue; }
       // زي المحرك: الحصة الأولى بتسترجع من الدرس اللي قبله، والباقي من حصص الدرس اللي خلصت (ولو مفيش، الخطوة بتتشال)
       const items = shuffle((n === 1 ? DATA.recall.previous : DATA.recall.covered[n]) || []).slice(0, st.count);
-      items.forEach((item, k) => steps.push({ kind: "recall_q", say: k === 0 ? st.say : "وسؤال كمان:", item, k, of: items.length }));
+      items.forEach((item, k) => steps.push({ kind: "recall_q", say: k === 0 ? st.say : P.recallMore, item, k, of: items.length }));
     }
     return steps;
   }
@@ -419,14 +452,14 @@
   /** نفس منطق المحرك: الشرح البديل للجزئيات الضعيفة + نصايح الامتحان بتاعتها + خلاصة */
   function remediationSteps(weak) {
     const all = S.sessions.flatMap((s) => s.steps);
-    const steps = [{ kind: "hook", say: "تعالى نراجع سوا الحتت اللي كانت صعبة شوية، بس المرة دي هشرحهالك بطريقة تانية خالص 💪", illustration: { emoji: "🔁", prompt: "" } }];
+    const steps = [{ kind: "hook", say: P.remediationIntro, illustration: { emoji: "🔁", prompt: "" } }];
     for (const o of weak) {
       steps.push(...(S.alternatives[o] || []));
       steps.push(...all.filter((s) => s.kind === "exam_tip" && s.objectiveId === o));
     }
     steps.push({
       kind: "summary",
-      say: "دي أهم حاجات لازم تفتكرها. يلا نجرب الواجب تاني 🚀",
+      say: P.remediationSummary,
       points: all.filter((s) => s.kind === "explain" && weak.includes(s.objectiveId) && s.english).map((s) => s.english.text),
     });
     return steps;
@@ -471,7 +504,7 @@
     run.nextLabel = null;
     setReady(false);
     stopSpeech();
-    speak("كمّل الجملة: اختار الكلمة الناقصة.");
+    speak(P.confirmPrompt);
     nearest(zone);
     const fb = $(".feedback", zone);
     let tries = 0, fresh = false;
@@ -487,7 +520,7 @@
         fb.innerHTML = `<div class="fb good">برافو! 👏 فهمتها.</div>`;
         award(`f${run.i}`, tries === 1 ? 5 : 2);
         tone("good");
-        speak("برافو!");
+        speak(P.confirmRight);
         speak(text, { lang: "en" });
         setReady(true);
       } else {
@@ -499,7 +532,7 @@
           e.currentTarget.outerHTML = `<p class="peek" dir="ltr" lang="en">${esc(text)}</p>`;
           speak(text, { lang: "en" });
         });
-        speak("مش دي. فكّر تاني.");
+        speak(P.confirmWrong);
       }
       nearest(fb);
     }));
@@ -580,7 +613,7 @@
             fb.innerHTML = ok
               ? `<div class="fb good">صح! 👏 لسه فاكر.</div>${why}`
               : `<div class="fb bad">الإجابة الصح: <bdi dir="ltr" lang="en">${esc(it.answerKey)}</bdi></div>${why}`;
-            if (ok) { award(`r${run.i}`, 5); tone("good"); speak("صح! لسه فاكر."); } else { tone("bad"); speak("مش مشكلة، الإجابة الصح:"); speak(it.answerKey, { lang: "en" }); }
+            if (ok) { award(`r${run.i}`, 5); tone("good"); speak(P.recallRight); } else { tone("bad"); speak(P.recallWrong); speak(it.answerKey, { lang: "en" }); }
             setReady(true);
             nearest(fb);
           }));
@@ -645,7 +678,7 @@
               const home = $(".home-task", root);
               if (home) home.hidden = false;
               stopSpeech();
-              speak("برافو! رتّبتهم كلهم صح.");
+              speak(P.activityDone);
               if (st.tryAtHome) speak(st.tryAtHome);
               setReady(true);
               nearest(home || fb);
@@ -702,10 +735,12 @@
   function updateVoiceLine() {
     const el = $("#voiceLine");
     if (!el) return;
-    if (!hasTTS) el.textContent = "⚠️ المتصفح ده مابيقراش بالصوت — الكلام كله مكتوب قدامك.";
-    else if (voice.ar) el.textContent = `🔊 صوت المعلم: صوت الجهاز العربي (${voice.ar.lang}). ده صوت آلي مؤقت — النسخة الحقيقية هيبقى فيها صوت مصري.`;
-    else if (voice.count) el.textContent = "⚠️ الجهاز ده مفيهوش صوت عربي متسطّب — الإنجليزي هيتقري، والعربي هيفضل مكتوب.";
-    else el.textContent = "🔊 الصوت بيشتغل أول ما تبدأ الحصة (صوت آلي مؤقت).";
+    const { recorded, total } = DATA.audioStats;
+    if (recorded === total) { el.textContent = "🎙️ الحصة كلها متسجلة بصوت المعلم."; return; }
+    const prefix = recorded ? `🎙️ ${recorded} من ${total} جملة متسجلة بصوت المعلم، والباقي مؤقتًا بصوت الموبايل. ` : "🎙️ لسه مفيش تسجيلات بصوت المعلم، فالصوت مؤقتًا صوت الموبايل. ";
+    if (!hasTTS) el.textContent = prefix + "⚠️ والمتصفح ده مابيقراش بالصوت، فاللي ماتسجلش هيفضل مكتوب.";
+    else if (voice.ar || !voice.count) el.textContent = prefix;
+    else el.textContent = prefix + "⚠️ والجهاز ده مفيهوش صوت عربي، فالعربي اللي ماتسجلش هيفضل مكتوب.";
   }
 
   function renderHome() {
@@ -828,7 +863,7 @@
     $("#goHome").addEventListener("click", renderHome);
     $("#goNext")?.addEventListener("click", () => startRun("lesson", next));
     tone("win");
-    speak(`${headline}. ${line}`);
+    speak(run.mode === "remediation" ? P.remediationDone : next ? P.sessionDone : P.lessonDone);
   }
 
   // ---------- اسأل المعلم ----------

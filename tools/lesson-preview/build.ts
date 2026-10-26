@@ -2,13 +2,15 @@
 //   npm run preview:lesson -- ch1-l1 [preview/ch1-l1.html] [--title="حصة الكائنات الحية"]
 // الصفحة بتقرا السيناريو زي المحرك بالظبط (استرجاع، أسئلة فهم وإعادة شرح، لعبة ترتيب، نصايح امتحان، خلاصة، مراجعة علاجية)،
 // وفيها "اسأل المعلم" بنفس قواعد المعلم ومعلومات الدرس — بيشتغل لما الصفحة تتنشر كـ Artifact فيه قدرة sample.
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+// لو فيه تسجيلات في recordings/<الدرس>/ و recordings/common/ (أو --audio=فولدر)، الصفحة بتشغّلها بدل صوت الموبايل.
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { listLessons } from "../../src/curriculum/types";
 import { generateQuiz } from "../../src/assessment/quiz";
 import { EXAM_STYLE_LABELS_AR, type Question } from "../../src/questions/types";
 import { buildLessonContext, MESSAGES, TUTOR_RULES } from "../../src/teaching/ask-teacher";
+import { commonNarration, lessonNarration, PLAYER_PHRASES } from "../../src/teaching/narration";
 import { validateScript } from "../../src/teaching/validate-script";
 import { scienceG4Term1, scienceG4Term1Bank, scienceG4Term1Scripts } from "../../src/content/science-g4-term1";
 
@@ -47,6 +49,30 @@ script.sessions.forEach((_, i) => {
   covered[i + 1] = recallPool(scienceG4Term1Bank.filter((q) => objectives.has(q.objectiveId)), lessonId);
 });
 
+// التسجيلات البشرية: recordings/<الدرس>/ و recordings/common/ (أو --audio=فولدر للدرس).
+// الجملة اللي ليها تسجيل بتشتغل بيه، واللي لسه ماتسجلتش بتتقري بصوت الموبايل.
+const here = dirname(fileURLToPath(import.meta.url));
+const out = outArg ?? join(here, "../../preview", `${lessonId}.html`);
+const recordingsRoot = join(here, "../../recordings");
+const audioDirs = [flags.audio ?? join(recordingsRoot, lessonId), join(recordingsRoot, "common")].filter((d) => existsSync(d));
+const recorded = new Map<string, { dir: string; file: string }>();
+for (const dir of audioDirs) {
+  for (const file of readdirSync(dir)) {
+    const id = file.match(/^(n[0-9a-z]+)\.(mp3|m4a|ogg|wav)$/i)?.[1];
+    if (id) recorded.set(id, { dir, file });
+  }
+}
+const narration = [...lessonNarration(script), ...commonNarration()];
+const audio: Record<string, string> = {};
+for (const line of narration) {
+  const found = recorded.get(line.id);
+  if (!found) continue;
+  mkdirSync(join(dirname(out), "audio"), { recursive: true });
+  copyFileSync(join(found.dir, found.file), join(dirname(out), "audio", found.file));
+  for (const source of line.sources) audio[source] = `audio/${found.file}`;
+}
+const recordedCount = narration.filter((l) => recorded.has(l.id)).length;
+
 const unitNumber = scienceG4Term1.units.findIndex((u) => u.id === lesson.unitId) + 1;
 const lessonNumber = scienceG4Term1.units[unitNumber - 1]!.lessons.findIndex((l) => l.id === lessonId) + 1;
 const objectiveIds = lesson.objectives.map((o) => o.id);
@@ -66,10 +92,11 @@ const data = {
   demoWeak: [objectiveIds[0], objectiveIds[2] ?? objectiveIds[1]].filter((id): id is string => !!id),
   suggestions: [...vocabulary.slice(0, 2).map((v) => `يعني إيه ${v.en}؟`), "إيه أهم حاجة في الدرس ده للامتحان؟"],
   tutor: { rules: TUTOR_RULES, context: buildLessonContext(lesson), messages: MESSAGES },
+  phrases: PLAYER_PHRASES,
+  audio,
+  audioStats: { recorded: recordedCount, total: narration.length },
 };
 
-const here = dirname(fileURLToPath(import.meta.url));
-const out = outArg ?? join(here, "../../preview", `${lessonId}.html`);
 const title = flags.title ?? `حصة ${lesson.titleAr ?? lesson.title}`;
 // JSON جوه <script>: "<" بتتكتب < عشان "</script>" جوه نص مايقفلش الوسم
 const json = JSON.stringify(data).replace(/</g, "\\u003c");
@@ -78,4 +105,4 @@ const html = readFileSync(join(here, "template.html"), "utf8")
   .replace("__DATA__", () => json);
 mkdirSync(dirname(out), { recursive: true });
 writeFileSync(out, html);
-console.log(`${lessonId}: ${script.sessions.length} sessions → ${out}`);
+console.log(`${lessonId}: ${script.sessions.length} sessions, ${recordedCount}/${narration.length} lines recorded → ${out}`);

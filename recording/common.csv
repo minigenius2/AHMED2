@@ -1,0 +1,13 @@
+﻿#,file,language,text,where
+"1","n0wupr2209ud3dc.wav","ar","وسؤال كمان:","جملة ثابتة · recallMore"
+"2","n1raj2121af3x5s.wav","ar","صح! لسه فاكر.","جملة ثابتة · recallRight"
+"3","n1l4or1i1bk7g5s.wav","ar","مش مشكلة، الإجابة الصح:","جملة ثابتة · recallWrong"
+"4","n1ggyua213v6tjw.wav","ar","كمّل الجملة: اختار الكلمة الناقصة.","جملة ثابتة · confirmPrompt"
+"5","n0bxmt9h07ht8rf.wav","ar","برافو!","جملة ثابتة · confirmRight"
+"6","n0c1mwfe0hs6tn0.wav","ar","مش دي. فكّر تاني.","جملة ثابتة · confirmWrong"
+"7","n1nmotmg08iohoq.wav","ar","برافو! رتّبتهم كلهم صح.","جملة ثابتة · activityDone"
+"8","n04bw7n108dnq3j.wav","ar","تعالى نراجع سوا الحتت اللي كانت صعبة شوية، بس المرة دي هشرحهالك بطريقة تانية خالص","جملة ثابتة · remediationIntro"
+"9","n0hz4wwq0me4k1c.wav","ar","دي أهم حاجات لازم تفتكرها. يلا نجرب الواجب تاني","جملة ثابتة · remediationSummary"
+"10","n1gjga5u1wox5z8.wav","ar","عاش يا بطل! الحصة خلصت، والحصة الجاية مستنياك.","جملة ثابتة · sessionDone"
+"11","n1sus6hn1r76e51.wav","ar","عاش! الدرس كله خلص، وكده الواجب اتفتح.","جملة ثابتة · lessonDone"
+"12","n0f76xb51wwyy4r.wav","ar","المراجعة خلصت. يلا نحل الواجب تاني.","جملة ثابتة · remediationDone"

@@ -8,7 +8,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "simulate": "tsx examples/simulate-term.ts",
-    "preview:lesson": "tsx tools/lesson-preview/build.ts"
+    "preview:lesson": "tsx tools/lesson-preview/build.ts",
+    "voice:sheet": "tsx tools/voice/sheet.ts"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",

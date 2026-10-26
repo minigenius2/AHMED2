@@ -7,12 +7,17 @@ import {
   buildLearningSession,
   buildStudyPlan,
   buildWeeklyReport,
+  commonNarration,
   DEFAULT_CONFIG,
   findLesson,
+  lessonNarration,
   MESSAGES,
+  narrationId,
+  PLAYER_PHRASES,
   scienceG4Term1,
   scienceG4Term1Bank,
   scienceG4Term1Scripts,
+  spokenText,
   StudentJourney,
   term1Calendar2026,
   TutorUnavailableError,
@@ -157,5 +162,49 @@ describe("Anthropic tutor", () => {
     expect(await anthropicTutor({ client, model: "claude-haiku-5-5" })(request)).toEqual({ text: "", refused: true });
     expect(create.mock.calls[0]![0]).not.toHaveProperty("fallbacks");
     expect(create.mock.calls[0]![0]).not.toHaveProperty("betas");
+  });
+});
+
+describe("narration for human recording", () => {
+  const lines = lessonNarration(script);
+
+  it("lists every spoken line of the lesson once, in lesson order", () => {
+    const texts = lines.map((l) => l.text);
+    expect(texts[0]).toMatch(/^أهلًا يا بطل! أنا أستاذ نبيه، تعالى/);
+    for (const step of script.sessions.flatMap((s) => s.steps)) {
+      if (step.kind === "explain") expect(texts).toContain(spokenText(step.english.text));
+      if (step.kind === "check") expect(texts).toContain(spokenText(step.reteach));
+    }
+    expect(new Set(lines.map((l) => l.id)).size).toBe(lines.length);
+    expect(texts.filter((t) => t === "لأ يا بطل، فكّر تاني")).toHaveLength(1);
+  });
+
+  it("keeps a file name when only emoji change, and changes it when the words change", () => {
+    expect(narrationId("صح! 🌿 هناك بتلاقي أكلها")).toBe(narrationId("صح! هناك بتلاقي أكلها"));
+    expect(narrationId("صح! هناك بتلاقي أكلها")).not.toBe(narrationId("صح! هناك بتلاقي أكله"));
+    expect(spokenText("أنا أستاذ نبيه 🦉 تعالى")).toBe("أنا أستاذ نبيه، تعالى");
+  });
+
+  it("marks English and mixed lines so the narrator pronounces the English words in English", () => {
+    const byText = new Map(lines.map((l) => [l.text, l.lang]));
+    expect(byText.get("Living organisms feed, grow and breathe.")).toBe("en");
+    expect(byText.get("قبل ما نبدأ، سؤالين سريعين من اللي فات:")).toBe("ar");
+    expect(lines.find((l) => l.text.includes("اسمهم living organisms"))?.lang).toBe("mixed");
+  });
+
+  it("records the fixed phrases once, and the remediation session speaks exactly those", () => {
+    expect(commonNarration().map((l) => l.text)).toContain(spokenText(PLAYER_PHRASES.remediationIntro));
+    const j = start();
+    while (j.lesson("ch1-l1").status === "learning") j.completeLearning("ch1-l1", DAY);
+    const hw = j.createQuiz({ type: "homework", lessonId: "ch1-l1", remediation: false });
+    j.submit(hw, answerAll(hw, () => true), DAY);
+    for (let i = 0; i < 2; i++) {
+      const quiz = j.createQuiz({ type: "quiz", lessonId: "ch1-l1", tier: "basic" });
+      j.submit(quiz, answerAll(quiz, () => false), DAY);
+    }
+    const remediation = buildLearningSession(j, script, scienceG4Term1Bank);
+    expect(remediation.kind).toBe("remediation");
+    expect(remediation.steps[0]).toMatchObject({ kind: "hook", say: PLAYER_PHRASES.remediationIntro });
+    expect(remediation.steps.at(-1)).toMatchObject({ kind: "summary", say: PLAYER_PHRASES.remediationSummary });
   });
 });
