@@ -16,6 +16,17 @@ export const PLAYER_PHRASES = {
   huntSearch: "يلا نشوف! دوس على الأماكن ودوّر.",
   guessRight: "تخمينك كان صح!",
   huntDone: "عاش يا مستكشف! لقيت كل الكائنات، وسجّلتهم في الكراسة.",
+  termsMatch: "يلا وصّل كل كلمة بصورتها.",
+  matchWrong: "مش دي، جرّب تاني.",
+  matchDone: "برافو! وصّلتهم كلهم صح.",
+  buildWrong: "مش دي. فكّر في الكلمة اللي بعدها.",
+  buildDone: "برافو! بنيت الجملة كلها بنفسك.",
+  sequenceWrong: "لأ، فكّر إيه اللي بييجي بعد كده.",
+  revisitAllRight: "تخمينك كان صح كله! برافو عليك.",
+  revisitDone: "عاش! صلّحت تخمينك بنفسك.",
+  examSentence: "ودي جملة الامتحان. اسمعها كويس:",
+  predictSaved: "تمام! يلا نختبر تخمينك.",
+  badgeEarned: "كسبت وسام جديد!",
   remediationIntro: "تعالى نراجع سوا الحتت اللي كانت صعبة شوية، بس المرة دي هشرحهالك بطريقة تانية خالص 💪",
   remediationSummary: "دي أهم حاجات لازم تفتكرها. يلا نجرب الواجب تاني 🚀",
   sessionDone: "عاش يا بطل! الحصة خلصت، والحصة الجاية مستنياك.",
@@ -87,60 +98,96 @@ class LineCollector {
 }
 
 const STEP_NAMES: Record<ScriptStep["kind"], string> = {
+  mission: "المهمة",
   hook: "بداية",
   recall: "استرجاع",
+  terms: "المصطلحات",
   explain: "شرح",
   check: "سؤال فهم",
-  vocab: "كلمات",
-  activity: "لعبة",
+  activity: "لعبة ترتيب",
+  revisit: "صلّح تخمينك",
   probe: "تجربة",
+  match: "وصّل",
+  build: "ابني الجملة",
+  sequence: "رتّب المراحل",
   hunt: "رحلة استكشاف",
   exam_tip: "سؤال امتحان",
+  exit: "تذكرة الخروج",
   summary: "خلاصة",
 };
 
 function collectStep(c: LineCollector, step: ScriptStep, place: string): void {
   const where = (detail?: string) => `${place} · ${STEP_NAMES[step.kind]}${detail ? ` · ${detail}` : ""}`;
+  const term = (t: { en: string; ar: string }, detail: string) => {
+    c.add(t.en, where(`${detail} (إنجليزي)`));
+    c.add(t.ar, where(`${detail} (عربي)`));
+  };
   switch (step.kind) {
+    case "mission":
+      c.add(step.say, where(`«${step.titleEn}»`));
+      step.badges.forEach((b, i) => term(b, `وسام ${i + 1}`));
+      break;
     case "hook":
     case "recall":
+    case "revisit":
+    case "exit":
       c.add(step.say, where());
       break;
+    case "terms":
+      c.add(step.say, where());
+      for (const t of step.terms) term(t, "مصطلح");
+      break;
     case "explain":
-      c.add(step.say, where(`«${step.title}»`));
-      c.add(step.english.text, where(`«${step.title}» · جملة الامتحان`));
+      c.add(step.say, where(`«${step.titleEn}»`));
+      for (const p of step.points) {
+        c.add(p.en, where(`كارت «${p.en}»`));
+        c.add(p.say, where(`لما يكشف «${p.en}»`));
+      }
+      c.add(step.english.text, where(`«${step.titleEn}» · جملة الامتحان`));
       break;
     case "check":
       c.add(step.ask, where("السؤال"));
-      for (const choice of step.choices) c.add(choice.feedback, where(choice.correct ? "لو جاوب صح" : `لو اختار «${choice.text}»`));
+      for (const choice of step.choices) c.add(choice.feedback, where(choice.correct ? "لو جاوب صح" : `لو اختار «${choice.en ?? choice.text}»`));
       c.add(step.reteach, where("إعادة الشرح لو غلط"));
-      break;
-    case "vocab":
-      c.add(step.say, where());
-      for (const word of step.words) {
-        c.add(word.en, where("الكلمة"));
-        c.add(word.ar, where("معناها"));
-      }
       break;
     case "activity":
       c.add(step.say, where());
-      for (const item of step.items) c.add(item.text, where("اسم كارت"));
+      for (const item of step.items) {
+        c.add(item.en, where("اسم كارت"));
+        c.add(item.why, where(`ليه «${item.en}» هنا`));
+      }
       c.add(step.tryAtHome, where("جرّبها في البيت"));
       break;
     case "probe":
-      c.add(step.say, where(`«${step.title}»`));
+      c.add(step.say, where(`«${step.titleEn}»`));
       for (const item of step.items) {
-        c.add(item.text, where("اسم الحاجة"));
-        c.add(item.caption, where(`رد الفعل · ${item.text}`));
+        c.add(item.en, where("اسم الحاجة"));
+        c.add(item.caption, where(`رد الفعل · ${item.en}`));
       }
       c.add(step.conclusion, where("الاستنتاج"));
       break;
+    case "match":
+      c.add(step.say, where());
+      for (const pair of step.pairs) {
+        c.add(pair.left.en, where("الكارت الشمال"));
+        c.add(pair.right.en, where("الكارت اليمين"));
+      }
+      break;
+    case "build":
+      c.add(step.say, where());
+      c.add(step.sentence, where("الجملة كاملة"));
+      break;
+    case "sequence":
+      c.add(step.say, where(`«${step.titleEn}»`));
+      for (const item of step.items) c.add(item.en, where("مرحلة"));
+      c.add(step.conclusion, where("الاستنتاج"));
+      break;
     case "hunt":
-      c.add(step.say, where(`«${step.title}»`));
+      c.add(step.say, where(`«${step.titleEn}»`));
       c.add(step.guess.ask, where("سؤال التخمين"));
       for (const spot of step.spots) {
-        c.add(spot.caption, where(`لما يكشف «${spot.label}»`));
-        if (spot.find) c.add(`${spot.find.text}: ${spot.labelEn}`, where("سطر كراسة المستكشف"));
+        c.add(spot.caption, where(`لما يكشف «${spot.en}»`));
+        if (spot.find) c.add(`${spot.find.en}: ${spot.en}`, where("سطر كراسة المستكشف"));
       }
       c.add(step.tryAtHome, where("جرّبها في البيت"));
       break;
@@ -151,7 +198,7 @@ function collectStep(c: LineCollector, step: ScriptStep, place: string): void {
       break;
     case "summary":
       c.add(step.say, where());
-      step.points.forEach((p, i) => c.add(p, where(`نقطة ${i + 1}`)));
+      step.points.forEach((p, i) => c.add(p.en, where(`نقطة ${i + 1}`)));
       break;
   }
 }

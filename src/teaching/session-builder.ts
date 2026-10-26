@@ -1,14 +1,18 @@
 // بيجهّز "الحصة الجاية" للطفل من سيناريو الدرس وحالته:
-// - حصة عادية: الحصة رقم (اللي خلصه + 1)، وسؤالين استرجاع من اللي فات بيتختاروا من بنك الأسئلة.
+// - حصة عادية: الحصة رقم (اللي خلصه + 1)، وسؤالين استرجاع من اللي فات، وتذكرة خروج من أسئلة الحصة نفسها.
 // - حصة مراجعة علاجية: الشرح البديل للجزئيات اللي غلط فيها بس، ونصايح الامتحان بتاعتها، وخلاصة.
 import { generateQuiz, type QuizItem } from "../assessment/quiz";
 import type { StudentJourney } from "../journey/journey";
 import type { Question } from "../questions/types";
 import { hashString } from "../utils/random";
 import { PLAYER_PHRASES } from "./narration";
-import type { ExplainStep, LessonScript, RecallStep, ScriptStep, SummaryStep } from "./script-types";
+import type { ExitStep, ExplainStep, LessonScript, RecallStep, ScriptStep, SummaryStep } from "./script-types";
 
-export type PlayableStep = Exclude<ScriptStep, RecallStep> | { kind: "recall"; say: string; items: QuizItem[] };
+/** الخطوة زي ما بتوصل للطفل: الاسترجاع وتذكرة الخروج بيبقى فيهم أسئلة حقيقية من البنك */
+export type PlayableStep =
+  | Exclude<ScriptStep, RecallStep | ExitStep>
+  | { kind: "recall"; say: string; items: QuizItem[] }
+  | { kind: "exit"; say: string; items: QuizItem[]; badge?: number };
 
 export interface PlayableSession {
   lessonId: string;
@@ -41,7 +45,7 @@ export function buildLearningSession(
     ];
     for (const objectiveId of weak) {
       steps.push(...(script.alternatives[objectiveId] ?? []).map((s) => s as PlayableStep));
-      steps.push(...allSteps.filter((s): s is Exclude<ScriptStep, RecallStep> => s.kind === "exam_tip" && s.objectiveId === objectiveId));
+      steps.push(...allSteps.filter((s): s is Exclude<ScriptStep, RecallStep | ExitStep> => s.kind === "exam_tip" && s.objectiveId === objectiveId));
     }
     steps.push(remediationSummary(allSteps, weak));
     return { lessonId: script.lessonId, kind: "remediation", session: 1, sessions: 1, title: "مراجعة بطريقة تانية", steps };
@@ -51,12 +55,15 @@ export function buildLearningSession(
   if (!session) throw new Error(`Script ${script.lessonId} has no session ${action.session}`);
   const steps: PlayableStep[] = [];
   for (const step of session.steps) {
-    if (step.kind !== "recall") {
+    if (step.kind === "recall") {
+      const items = recallItems(journey, script, action.session, step.count, bank, seed);
+      if (items.length > 0) steps.push({ kind: "recall", say: step.say, items });
+    } else if (step.kind === "exit") {
+      const items = exitItems(script, action.session, step.count, bank, seed);
+      if (items.length > 0) steps.push({ kind: "exit", say: step.say, items, badge: step.badge });
+    } else {
       steps.push(step);
-      continue;
     }
-    const items = recallItems(journey, script, action.session, step.count, bank, seed);
-    if (items.length > 0) steps.push({ kind: "recall", say: step.say, items });
   }
   return { lessonId: script.lessonId, kind: "lesson", session: action.session, sessions: action.sessions, title: session.title, steps };
 }
@@ -86,6 +93,17 @@ function recallItems(
   return pick(bank.filter((q) => q.lessonId === previous), previous, count, seed);
 }
 
+/** تذكرة الخروج: أسئلة من اللي اتشرح في الدرس لحد الحصة دي */
+function exitItems(script: LessonScript, sessionNumber: number, count: number, bank: readonly Question[], seed: number): QuizItem[] {
+  const covered = new Set(
+    script.sessions
+      .slice(0, sessionNumber)
+      .flatMap((s) => s.steps)
+      .flatMap((s) => ("objectiveId" in s ? [s.objectiveId] : [])),
+  );
+  return pick(bank.filter((q) => covered.has(q.objectiveId)), script.lessonId, count, seed + 1);
+}
+
 function pick(pool: readonly Question[], lessonId: string, count: number, seed: number): QuizItem[] {
   const easy = pool.filter((q) => q.difficulty <= 2 && (q.type === "mcq" || q.type === "true_false"));
   if (easy.length === 0) return [];
@@ -95,6 +113,6 @@ function pick(pool: readonly Question[], lessonId: string, count: number, seed: 
 function remediationSummary(allSteps: ScriptStep[], weak: string[]): SummaryStep {
   const points = allSteps
     .filter((s): s is ExplainStep => s.kind === "explain" && weak.includes(s.objectiveId))
-    .map((s) => s.english.text);
+    .map((s) => ({ en: s.english.text, ar: s.english.ar ?? s.title }));
   return { kind: "summary", say: PLAYER_PHRASES.remediationSummary, points };
 }

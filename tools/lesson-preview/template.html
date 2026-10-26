@@ -268,6 +268,133 @@
   .credit img { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; flex: none; }
   .credit a { color: var(--sky); }
 
+  /* ===== الإنجليزي بطل والعربي تحته ===== */
+  .term { display: flex; flex-direction: column; align-items: center; text-align: center; line-height: 1.25; min-width: 0; }
+  .term .en { font-size: 20px; font-weight: 800; color: var(--ink); overflow-wrap: anywhere; }
+  .term .ar { font-size: 14px; color: var(--ink-2); font-weight: 500; }
+  .term-inline { display: flex; flex-direction: column; line-height: 1.35; min-width: 0; }
+  .term-inline bdi { font-weight: 800; font-size: 17px; text-align: left; }
+  .term-inline small { color: var(--ink-2); font-size: 14px; }
+  .step-head { text-align: center; margin: 8px 0 2px; }
+  .step-icon { font-size: 26px; display: block; line-height: 1.2; }
+  .en-title { font-size: 27px; line-height: 1.2; margin: 0; font-weight: 800; }
+  .ar-title { color: var(--ink-2); font-size: 15px; font-weight: 600; }
+  .en-ar { margin: -4px 0 10px !important; font-size: 15px !important; font-weight: 500 !important; color: var(--ink-2); text-align: right !important; direction: rtl; }
+  .emoji-visual { display: grid; place-items: center; font-size: 46px; line-height: 1.2; background: var(--surface-2); border-radius: 22px; aspect-ratio: 1; width: clamp(84px, 27vw, 124px); }
+  .sub-title { text-align: center; font-weight: 800; margin: 14px 0 6px; }
+  .progress-line { text-align: center; color: var(--ink-2); font-size: 15px; }
+  .reveal-caption { text-align: center; font-weight: 700; min-height: 1.7em; margin: 10px 4px 4px; }
+
+  /* المهمة والأوسمة */
+  .mission-badges { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 4px; }
+  .mission-badge { background: var(--surface); border: 2px dashed var(--sun); border-radius: 18px; padding: 8px 4px; text-align: center; }
+  .mission-badge .big { display: block; font-size: 34px; filter: grayscale(1); opacity: .55; }
+  .mission-badge .term .en { font-size: 15px; }
+  .badge-row { display: flex; justify-content: center; gap: 12px; margin-top: 6px; }
+  .badge-slot { font-size: 22px; filter: grayscale(1); opacity: .3; transition: opacity .3s, filter .3s; }
+  .badge-slot.earned { filter: none; opacity: 1; animation: pop .7s cubic-bezier(.3, 1.8, .5, 1); }
+  .badge-toast { cursor: pointer; position: fixed; z-index: 80; top: 28%; left: 50%; transform: translateX(-50%); background: var(--surface); border: 3px solid var(--sun); border-radius: 26px; padding: 14px 26px; text-align: center; box-shadow: 0 16px 40px rgba(0, 0, 0, .25); animation: pop .6s cubic-bezier(.3, 1.8, .5, 1); }
+  .badge-toast .big { font-size: 60px; line-height: 1.2; }
+
+  /* كروت المصطلحات */
+  .terms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-top: 8px; }
+  .term-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; background: var(--surface); border: 2px solid var(--line); border-radius: 20px; padding: 10px 6px; cursor: pointer; box-shadow: var(--shadow); }
+  .term-card .photo, .term-card .emoji-visual { width: 100%; max-width: 116px; }
+  .term-card.heard { border-color: var(--leaf); }
+  .term-card .tick { position: absolute; top: 6px; inset-inline-end: 8px; font-size: 15px; }
+  .term-card.heard .tick::after { content: " ✓"; color: var(--leaf); font-weight: 800; }
+
+  /* الكروت اللي بتتكشف */
+  .reveal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(98px, 1fr)); gap: 10px; margin-top: 10px; }
+  .reveal-card { position: relative; min-height: 184px; border: none; background: none; padding: 0; cursor: pointer; perspective: 900px; }
+  .reveal-card .front, .reveal-card .back { position: absolute; inset: 0; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; backface-visibility: hidden; -webkit-backface-visibility: hidden; transition: transform .55s ease; padding: 8px 4px; }
+  .reveal-card .front { background: linear-gradient(140deg, var(--sky), var(--leaf)); color: #fff; box-shadow: var(--shadow); }
+  .reveal-card .front .q { font-size: 52px; font-weight: 800; line-height: 1; }
+  .reveal-card .front .hint { font-size: 14px; font-weight: 700; color: #fff; }
+  .reveal-card .back { background: var(--surface); border: 2px solid var(--leaf); transform: rotateY(180deg); }
+  .reveal-card .back .photo, .reveal-card .back .emoji-visual { width: 82%; max-width: 104px; }
+  .reveal-card.open .front { transform: rotateY(180deg); }
+  .reveal-card.open .back { transform: rotateY(0deg); }
+
+  /* التوصيل */
+  .match-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 8px; }
+  .match-col { display: grid; gap: 8px; align-content: start; }
+  .m-card { position: relative; display: flex; align-items: center; gap: 8px; background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 6px 8px; min-height: 66px; cursor: pointer; text-align: start; }
+  .m-card .term { align-items: flex-start; text-align: left; }
+  .m-card .term .en { font-size: 17px; }
+  .m-card .thumb { width: 46px; height: 46px; border-radius: 12px; }
+  .m-card .m-emoji { font-size: 28px; }
+  .m-card.pic { justify-content: center; padding: 6px; }
+  .m-card .m-photo { width: 100%; max-width: 110px; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; display: block; }
+  .m-card .emoji-visual.m-photo { font-size: 38px; aspect-ratio: 4 / 3; }
+  .m-card[aria-pressed="true"] { border-color: var(--sky); background: var(--sky-soft); transform: translateY(-2px); }
+  .m-card.done { border-color: var(--pair); box-shadow: inset 0 0 0 2px var(--pair); cursor: default; }
+  .pair-n { position: absolute; top: -8px; inset-inline-end: -6px; width: 24px; height: 24px; border-radius: 50%; background: var(--pair); color: #fff; font-size: 13px; font-weight: 800; display: grid; place-items: center; }
+
+  /* ابني الجملة */
+  .build-line { display: flex; flex-wrap: wrap; gap: 6px; align-items: flex-end; background: var(--surface); border: 2px dashed var(--line); border-radius: 18px; padding: 12px; min-height: 64px; margin-top: 10px; }
+  .build-line .slot { min-width: 54px; min-height: 40px; border-bottom: 3px solid var(--sky); display: inline-flex; align-items: center; padding: 0 4px; font-weight: 800; font-size: 20px; }
+  .build-line .slot.filled { border-bottom-color: var(--leaf); animation: pop .35s ease; }
+  .build-line.complete { border-style: solid; border-color: var(--leaf); background: var(--leaf-soft); }
+  .build-ar { text-align: center; color: var(--ink-2); font-weight: 600; margin-top: 8px; }
+  .tile-tray { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
+  .tile { font-weight: 800; font-size: 19px; background: var(--sun-soft); border: 2px solid var(--sun); border-radius: 14px; padding: 6px 14px; min-height: 50px; cursor: pointer; box-shadow: 0 3px 0 rgba(0, 0, 0, .12); }
+  .tile:active { transform: translateY(2px); box-shadow: none; }
+
+  /* رتّب المراحل */
+  .seq-line { display: grid; grid-template-columns: repeat(auto-fit, minmax(76px, 1fr)); gap: 8px; margin-top: 10px; }
+  .seq-slot { position: relative; min-height: 120px; border: 2px dashed var(--line); border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 6px 2px; }
+  .seq-slot .n { position: absolute; top: 4px; inset-inline-start: 8px; font-weight: 800; color: var(--ink-2); }
+  .seq-slot.filled { border-style: solid; border-color: var(--leaf); background: var(--leaf-soft); }
+  .seq-tray { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
+  .seq-card { display: flex; flex-direction: column; align-items: center; gap: 4px; background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 6px; min-width: 92px; cursor: pointer; }
+  .thumb-lg { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; }
+  .emoji-visual.thumb-lg { font-size: 34px; }
+
+  /* لعبة الترتيب وصلّح تخمينك */
+  .token .term { align-items: flex-start; text-align: left; }
+  .token .term .en { font-size: 17px; }
+  .thumb-sm { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; vertical-align: middle; }
+  .placed { display: inline-flex; align-items: center; gap: 4px; }
+  .fixable { border: 2px solid transparent; cursor: pointer; font: inherit; color: inherit; }
+  .fixable.wrong { background: var(--coral-soft); border-color: var(--coral); animation: pulse 1.2s ease 2; }
+  .fixable.right { background: var(--leaf-soft); border-color: var(--leaf); }
+  .fixable.moved { animation: pop .5s ease; }
+
+  /* ردود فعل التجربة */
+  .probe-item { overflow: hidden; }
+  .probe-item .emoji-visual { width: 100%; max-width: 108px; }
+  .probe-item .term .en { font-size: 16px; }
+  .probe-item .photo { transition: transform .6s cubic-bezier(.3, 1.6, .5, 1), filter .6s ease; }
+  .probe-item.r-grow { border-color: var(--leaf); background: var(--leaf-soft); }
+  .probe-item.r-grow .photo { animation: munch .45s ease 2; transform: scale(1.12); }
+  .probe-item.r-still, .probe-item.r-shadow, .probe-item.r-move-near, .probe-item.r-soak-slow, .probe-item.r-cool { filter: saturate(.7); }
+  .probe-item.r-still { filter: grayscale(.45); }
+  .probe-item.r-glow { border-color: #ffc53d; box-shadow: 0 0 0 3px #ffd84d, 0 0 24px 6px rgba(255, 216, 77, .7); }
+  .probe-item.r-glow .photo { filter: brightness(1.3); }
+  .probe-item.r-shadow .photo { filter: brightness(.4); }
+  .probe-item.r-vibrate .photo { animation: vib .07s linear 14; }
+  @keyframes vib { 25% { transform: translateX(-3px) rotate(-1deg); } 75% { transform: translateX(3px) rotate(1deg); } }
+  .probe-item.r-move-far .photo { transform: translateX(-70%); transition-duration: 1.4s; }
+  .probe-item.r-move-near .photo { transform: translateX(-18%); transition-duration: 1.4s; }
+  .probe-item.r-soak::before, .probe-item.r-soak-slow::before { content: ""; position: absolute; inset: auto 0 0 0; height: 0; background: rgba(43, 123, 214, .32); animation: fillUp .9s ease forwards; pointer-events: none; }
+  .probe-item.r-soak-slow::before { animation-duration: 3.5s; }
+  @keyframes fillUp { to { height: 100%; } }
+  .probe-item.r-hot { border-color: var(--coral); }
+  .probe-item.r-hot .photo { filter: sepia(.5) saturate(2) hue-rotate(-15deg); box-shadow: 0 0 18px 4px rgba(255, 90, 40, .55); }
+  .probe-item.r-cool .photo { filter: hue-rotate(170deg) saturate(.7) brightness(1.05); }
+  .probe-item.r-zoom .photo { transform: scale(1.4); }
+
+  .points li { display: flex; gap: 10px; align-items: center; }
+  .chip-btn.mini { min-height: 36px; padding: 2px 10px; flex: none; }
+  .choice.has-en { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+  .choice.has-en .en { font-size: 20px; font-weight: 800; }
+  .choice.has-en .ar { font-size: 15px; color: var(--ink-2); }
+  .spot .label bdi { display: block; }
+  .spot .label small { display: block; font-size: 13px; font-weight: 600; opacity: .9; }
+  .notes .term-inline bdi { font-size: 16px; }
+  .session-card .t.en { font-size: 19px; }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
@@ -281,6 +408,7 @@
     <button class="icon-btn" id="soundBtn" aria-label="الصوت شغال">🔊</button>
   </header>
   <div class="progress" aria-hidden="true"><div id="progressBar"></div></div>
+  <div class="badge-row" id="badgeRow" aria-label="أوسمة المهمة" hidden></div>
   <div class="voice-warning" id="voiceWarning" role="status" hidden>
     <span>🔇 الجهاز ده مفيهوش صوت عربي، فكلام المعلم العربي مش هيتسمع. افتح الموقع من متصفح <b>Microsoft Edge</b> (فيه صوت مصري)، أو من الموبايل.</span>
     <button class="icon-btn" id="voiceWarningClose" type="button" aria-label="قفل التنبيه">✕</button>
@@ -468,10 +596,10 @@
     if (!state.sound) return;
     try {
       audioCtx ??= new (window.AudioContext || window.webkitAudioContext)();
-      const notes = kind === "good" ? [660, 880] : kind === "win" ? [523, 659, 784, 1047] : kind === "still" ? [294, 262] : [196];
+      const notes = kind === "good" ? [660, 880] : kind === "win" ? [523, 659, 784, 1047] : kind === "still" ? [294, 262] : kind === "vibrate" ? [180, 190, 180, 190] : [196];
       notes.forEach((f, i) => {
         const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-        o.type = kind === "bad" ? "triangle" : "sine";
+        o.type = kind === "bad" ? "triangle" : kind === "vibrate" ? "square" : "sine";
         o.frequency.value = f;
         const t = audioCtx.currentTime + i * 0.11;
         g.gain.setValueAtTime(0.0001, t);
@@ -515,14 +643,23 @@
   }
 
   // ---------- بناء الحصة ----------
+  /** الاسترجاع وتذكرة الخروج: كل سؤال شاشة لوحده، والوسام (لو فيه) بييجي مع آخر سؤال */
+  function quizSteps(quiz, say, pool, count, badge) {
+    const items = shuffle(pool || []).slice(0, count);
+    return items.map((item, k) => ({
+      kind: "quiz_q", quiz, item, k, of: items.length,
+      say: k === 0 ? say : quiz === "recall" ? P.recallMore : "",
+      ...(k === items.length - 1 && badge !== undefined ? { badge } : {}),
+    }));
+  }
 
   function sessionSteps(n) {
     const steps = [];
     for (const st of S.sessions[n - 1].steps) {
-      if (st.kind !== "recall") { steps.push(st); continue; }
       // زي المحرك: الحصة الأولى بتسترجع من الدرس اللي قبله، والباقي من حصص الدرس اللي خلصت (ولو مفيش، الخطوة بتتشال)
-      const items = shuffle((n === 1 ? DATA.recall.previous : DATA.recall.covered[n]) || []).slice(0, st.count);
-      items.forEach((item, k) => steps.push({ kind: "recall_q", say: k === 0 ? st.say : P.recallMore, item, k, of: items.length }));
+      if (st.kind === "recall") steps.push(...quizSteps("recall", st.say, n === 1 ? DATA.recall.previous : DATA.recall.covered[n], st.count));
+      else if (st.kind === "exit") steps.push(...quizSteps("exit", st.say, DATA.recall.exit[n], st.count, st.badge));
+      else steps.push(st);
     }
     return steps;
   }
@@ -538,7 +675,7 @@
     steps.push({
       kind: "summary",
       say: P.remediationSummary,
-      points: all.filter((s) => s.kind === "explain" && weak.includes(s.objectiveId) && s.english).map((s) => s.english.text),
+      points: all.filter((s) => s.kind === "explain" && weak.includes(s.objectiveId)).map((s) => ({ en: s.english.text, ar: s.english.ar || s.title })),
     });
     return steps;
   }
@@ -548,6 +685,16 @@
   const MEDIA = DATA.media || {};
   /** صورة من مكتبة الصور، أو "" لو مش موجودة (والمكان بيرجع للإيموجي) */
   const img = (key, cls = "photo") => (key && MEDIA[key] ? `<img class="${cls}" src="${esc(MEDIA[key].src)}" alt="" loading="lazy" draggable="false">` : "");
+  /** صورة المصطلح، أو الإيموجي بتاعه كبير لو مفيش صورة */
+  const visual = (t, cls = "photo") => img(t.photo, cls) || `<span class="emoji-visual ${cls}" aria-hidden="true">${esc(t.emoji || "")}</span>`;
+  /** الإنجليزي كبير والعربي ترجمة صغيرة تحته */
+  const heroTerm = (t) => `<span class="term"><bdi class="en" dir="ltr" lang="en">${esc(t.en)}</bdi>${t.ar ? `<span class="ar">${esc(t.ar)}</span>` : ""}</span>`;
+  /** عنوان الشاشة: إنجليزي كبير، وتحته العربي */
+  const stepHead = (en, ar, icon = "") => `<div class="step-head">${icon ? `<span class="step-icon" aria-hidden="true">${icon}</span>` : ""}<h2 class="en-title" dir="ltr" lang="en">${esc(en)}</h2>${ar ? `<div class="ar-title">${esc(ar)}</div>` : ""}</div>`;
+  const pulse = (el) => { el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse"); };
+  const shake = (el) => { el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); };
+  const nearest = (el) => el && el.scrollIntoView({ block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
+
   function illus(ill) {
     if (!ill) return "";
     const photos = (ill.photos || []).filter((k) => k === "|" || MEDIA[k]);
@@ -621,12 +768,40 @@
       setTimeout(() => c.remove(), 3600);
     }
   }
-  const englishBox = (line, label = "بالإنجليزي، زي ما هتكتبها في الامتحان") =>
-    `<div class="en-box"><div class="en-label">${label}</div><p dir="ltr" lang="en">${highlight(line.text, line.keywords)}</p><button class="chip-btn" data-say-en="${esc(line.text)}">🔊 اسمعها بالإنجليزي</button></div>`;
+
+  const englishBox = (line, label = "📝 جملة الامتحان") =>
+    `<div class="en-box"><div class="en-label">${label}</div><p dir="ltr" lang="en">${highlight(line.text, line.keywords)}</p>${line.ar ? `<p class="en-ar">${esc(line.ar)}</p>` : ""}<button class="chip-btn" data-say-en="${esc(line.text)}">🔊 اسمعها</button></div>`;
+
+  // ---------- الأوسمة ----------
+  function renderBadges() {
+    const row = $("#badgeRow");
+    if (!run || !run.badges.length) { row.hidden = true; return; }
+    row.hidden = false;
+    row.innerHTML = run.badges.map((b, i) => `<span class="badge-slot${run.earned.has(i) ? " earned" : ""}" title="${esc(b.en)}" aria-label="${esc(b.en)}">${esc(b.emoji)}</span>`).join("");
+  }
+  function earnBadge(i) {
+    if (!run || i === undefined || run.earned.has(i) || !run.badges[i]) return;
+    run.earned.add(i);
+    renderBadges();
+    const b = run.badges[i];
+    const toast = document.createElement("div");
+    toast.className = "badge-toast";
+    toast.setAttribute("role", "status");
+    toast.innerHTML = `<div class="big" aria-hidden="true">${esc(b.emoji)}</div><div class="muted">🏅 وسام جديد!</div>${heroTerm(b)}`;
+    toast.addEventListener("click", () => toast.remove());
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2200);
+    confetti();
+    tone("win");
+    award(`badge${i}`, 10);
+    speak(P.badgeEarned);
+    speak(b.en, { lang: "en" });
+  }
 
   const nextLabel = () => run.nextLabel || (run.i === run.steps.length - 1 ? "خلّصت ✅" : "التالي ←");
   function setReady(ready = true) {
     run.ready = ready;
+    if (ready) earnBadge(run.steps[run.i].badge);
     const b = $("#nextBtn");
     if (b) { b.disabled = !ready; b.textContent = nextLabel(); }
   }
@@ -636,7 +811,6 @@
     run.checks.total++;
     return true;
   }
-  const nearest = (el) => el.scrollIntoView({ block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
 
   /** "كمّل الجملة" بعد الشرح: الجملة الإنجليزي من غير الكلمة المهمة، والطفل يختارها. مايعديش غير لما يختار صح. */
   function startConfirm(root, st) {
@@ -666,44 +840,172 @@
         $(".blank", zone).outerHTML = `<mark>${esc(word)}</mark>`;
         btn.classList.add("right");
         $$(".token", zone).forEach((b) => (b.disabled = true));
-        fb.innerHTML = `<div class="fb good">برافو! 👏 فهمتها.</div>`;
+        fb.innerHTML = `<div class="fb good">برافو! 👏</div>`;
         award(`f${run.i}`, tries === 1 ? 5 : 2);
         tone("good");
         speak(P.confirmRight);
         speak(text, { lang: "en" });
         setReady(true);
       } else {
-        btn.classList.add("wrong", "shake");
+        btn.classList.add("wrong");
+        shake(btn);
         btn.disabled = true;
         tone("bad");
-        fb.innerHTML = `<div class="fb bad">مش دي 🤔 اقرا شرح المعلم تاني وجرّب.</div><button class="chip-btn" type="button" data-peek>👀 وريني الجملة تاني</button>`;
-        $("[data-peek]", fb).addEventListener("click", (e) => {
-          e.currentTarget.outerHTML = `<p class="peek" dir="ltr" lang="en">${esc(text)}</p>`;
-          speak(text, { lang: "en" });
-        });
+        fb.innerHTML = `<div class="fb bad">مش دي 🤔</div>`;
         speak(P.confirmWrong);
       }
       nearest(fb);
     }));
   }
 
+  /**
+   * لعبة التوصيل: يدوس على كارت من الشمال وبعدين على اللي يناسبه من اليمين (أو العكس).
+   * كل زوج صح بياخد لون ورقم. pictureOnly: الكارت اليمين صورة بس (كلمة ← صورة).
+   */
+  const PAIR_COLORS = ["#1f8a57", "#2370c9", "#e09b00", "#8e5bd6", "#cf4a35", "#138a8a"];
+  function mountMatch(zone, pairs, { pictureOnly = false, onDone, onMistake } = {}) {
+    const right = shuffle(pairs.map((p, i) => ({ t: p.right, i })));
+    const card = (t, side, i) => side === "r" && pictureOnly
+      ? `<button class="m-card pic" type="button" data-side="r" data-i="${i}" aria-label="${esc(t.en)}">${visual(t, "m-photo")}</button>`
+      : `<button class="m-card" type="button" data-side="${side}" data-i="${i}">${img(t.photo, "thumb") || (t.emoji ? `<span class="m-emoji" aria-hidden="true">${esc(t.emoji)}</span>` : "")}${heroTerm(t)}</button>`;
+    zone.innerHTML = `<div class="match-grid"><div class="match-col">${pairs.map((p, i) => card(pictureOnly ? { en: p.left.en, ar: p.left.ar } : p.left, "l", i)).join("")}</div>`
+      + `<div class="match-col">${right.map((r) => card(r.t, "r", r.i)).join("")}</div></div><div class="feedback"></div>`;
+    const fb = $(".feedback", zone);
+    let picked = null, done = 0;
+    $$(".m-card", zone).forEach((btn) => btn.addEventListener("click", () => {
+      if (btn.classList.contains("done")) return;
+      const side = btn.dataset.side, i = +btn.dataset.i;
+      const t = side === "l" ? pairs[i].left : pairs[i].right;
+      stopSpeech();
+      speak(t.en, { lang: "en" });
+      if (!picked || picked.dataset.side === side) {
+        picked?.setAttribute("aria-pressed", "false");
+        picked = btn;
+        btn.setAttribute("aria-pressed", "true");
+        return;
+      }
+      if (+picked.dataset.i === i) {
+        const color = PAIR_COLORS[done % PAIR_COLORS.length];
+        for (const b of [picked, btn]) {
+          b.classList.add("done");
+          b.setAttribute("aria-pressed", "false");
+          b.style.setProperty("--pair", color);
+          b.insertAdjacentHTML("beforeend", `<span class="pair-n" aria-hidden="true">${done + 1}</span>`);
+        }
+        picked = null;
+        done++;
+        fb.innerHTML = "";
+        tone("good");
+        if (done === pairs.length) {
+          tone("win");
+          speak(P.matchDone);
+          onDone?.();
+        }
+      } else {
+        shake(btn);
+        shake(picked);
+        picked.setAttribute("aria-pressed", "false");
+        picked = null;
+        tone("bad");
+        fb.innerHTML = `<div class="fb bad">${esc(P.matchWrong)}</div>`;
+        speak(P.matchWrong);
+        onMistake?.();
+      }
+    }));
+  }
+
+  /** ردود فعل التجربة: حركة + إيموجي + صوت لكل نوع */
+  const REACTIONS = {
+    grow: { badge: "😋", tone: "good" },
+    still: { badge: "😐", tone: "still" },
+    glow: { badge: "✨", tone: "good" },
+    shadow: { badge: "🌑", tone: "still" },
+    vibrate: { badge: "🔊", tone: "vibrate" },
+    "move-far": { badge: "💨", tone: "good" },
+    "move-near": { badge: "🐢", tone: "still" },
+    soak: { badge: "💧", tone: "good" },
+    "soak-slow": { badge: "⏳", tone: "still" },
+    hot: { badge: "🔥", tone: "good" },
+    cool: { badge: "❄️", tone: "still" },
+    zoom: { badge: "🔍", tone: "good" },
+  };
+
   const VIEWS = {
+    mission: (st) => ({
+      html: `<div class="mission">${stepHead(st.titleEn, st.title, "🎯")}${illus(st.illustration)}${teacher(st.say)}`
+        + `<div class="mission-badges">${st.badges.map((b) => `<div class="mission-badge"><span class="big" aria-hidden="true">${esc(b.emoji)}</span>${heroTerm(b)}</div>`).join("")}</div></div>`,
+      ready: true,
+      narrate: () => speak(st.say),
+      mount() { run.nextLabel = "🚀 يلا نبدأ المهمة"; },
+    }),
+
     hook: (st) => ({ html: illus(st.illustration) + teacher(st.say), ready: true, narrate: () => speak(st.say) }),
 
-    explain: (st) => ({
-      html: `<span class="step-tag">${esc(st.title)}</span>` + illus(st.illustration) + teacher(st.say) + `<div class="en-zone">${englishBox(st.english)}</div>`,
-      ready: true,
-      narrate: () => { speak(st.say); speak(st.english.text, { lang: "en" }); },
+    terms: (st) => ({
+      html: stepHead("Key words", "كلمات مهمة", "🔑") + teacher(st.say)
+        + `<div class="terms-grid">${st.terms.map((t, i) => `<button class="term-card" type="button" data-i="${i}">${visual(t)}${heroTerm(t)}<span class="tick" aria-hidden="true">🔊</span></button>`).join("")}</div>`
+        + `<div class="terms-match"></div>`,
+      ready: false,
+      narrate: () => speak(st.say),
       mount(root) {
-        // الزرار بيبقى "فهمت" وبيفتح "كمّل الجملة" بدل ما يعدّي على طول
-        run.nextLabel = "فهمت ✓ يلا نتأكد";
-        run.intercept = () => startConfirm(root, st);
+        const heard = new Set();
+        $$(".term-card", root).forEach((btn) => btn.addEventListener("click", () => {
+          const i = +btn.dataset.i, t = st.terms[i];
+          stopSpeech();
+          speak(t.en, { lang: "en" });
+          speak(t.ar, { lang: "ar" });
+          btn.classList.add("heard");
+          pulse(btn);
+          heard.add(i);
+          if (heard.size < st.terms.length || root.dataset.matching) return;
+          root.dataset.matching = "1";
+          if (!st.match) { setReady(true); return; }
+          const zone = $(".terms-match", root);
+          zone.innerHTML = `<div class="sub-title">🔗 ${esc(P.termsMatch)}</div><div class="zone-inner"></div>`;
+          mountMatch($(".zone-inner", zone), st.terms.map((t2) => ({ left: t2, right: t2 })), { pictureOnly: true, onDone: () => { award(`t${run.i}`, 5); setReady(true); } });
+          speak(P.termsMatch);
+          nearest(zone);
+        }));
+      },
+    }),
+
+    explain: (st) => ({
+      html: stepHead(st.titleEn, st.title, "💡") + illus(st.illustration) + teacher(st.say)
+        + `<div class="reveal-grid">${st.points.map((p, i) => `<button class="reveal-card" type="button" data-i="${i}" aria-label="اكشف الكارت ${i + 1}"><span class="front"><span class="q" aria-hidden="true">?</span><span class="hint">دوس واكشف</span></span><span class="back">${visual(p)}${heroTerm(p)}</span></button>`).join("")}</div>`
+        + `<div class="reveal-caption" aria-live="polite"></div><div class="progress-line"></div>`
+        + `<div class="en-zone" hidden>${englishBox(st.english)}</div>`,
+      ready: false,
+      narrate: () => speak(st.say),
+      mount(root) {
+        const opened = new Set();
+        const cap = $(".reveal-caption", root), prog = $(".progress-line", root);
+        const update = () => (prog.textContent = `كشفت ${opened.size} من ${st.points.length}`);
+        update();
+        $$(".reveal-card", root).forEach((card) => card.addEventListener("click", () => {
+          const i = +card.dataset.i, p = st.points[i];
+          stopSpeech();
+          card.classList.add("open");
+          cap.innerHTML = bidi(p.say);
+          speak(p.en, { lang: "en" });
+          speak(p.say);
+          if (!opened.has(i)) { opened.add(i); tone("good"); award(`x${run.i}-${i}`, 2); }
+          update();
+          if (opened.size < st.points.length || root.dataset.done) return;
+          root.dataset.done = "1";
+          const zone = $(".en-zone", root);
+          zone.hidden = false;
+          speak(P.examSentence);
+          speak(st.english.text, { lang: "en" });
+          nearest(zone);
+          if (st.confirm) { run.nextLabel = "فهمت ✓ يلا نتأكد"; run.intercept = () => startConfirm(root, st); }
+          setReady(true);
+        }));
       },
     }),
 
     check: (st) => ({
-      html: `<span class="step-tag">سؤال فهم 🤔</span>` + illus(st.illustration) + teacher(st.ask)
-        + `<div class="choices">${st.choices.map((c, i) => `<button class="choice" data-i="${i}">${bidi(c.text)}</button>`).join("")}</div>`
+      html: stepHead("Quick check", "سؤال فهم", "🤔") + illus(st.illustration) + teacher(st.ask)
+        + `<div class="choices">${st.choices.map((c, i) => `<button class="choice${c.en ? " has-en" : ""}" data-i="${i}">${c.en ? `<bdi class="en" dir="ltr" lang="en">${esc(c.en)}</bdi><span class="ar">${bidi(c.text)}</span>` : bidi(c.text)}</button>`).join("")}</div>`
         + `<div class="feedback"><div class="hint">اختار إجابة 👆</div></div>`,
       ready: false,
       narrate: () => speak(st.ask),
@@ -722,6 +1024,7 @@
             fb.innerHTML = `<div class="fb good">${bidi(c.feedback)}</div>`;
             award(`c${run.i}`, tries === 1 ? 10 : 5);
             tone("good");
+            if (c.en) speak(c.en, { lang: "en" });
             speak(c.feedback);
             setReady(true);
           } else {
@@ -739,11 +1042,12 @@
       },
     }),
 
-    recall_q: (st) => {
-      const it = st.item, tf = it.type === "true_false";
+    quiz_q: (st) => {
+      const it = st.item, tf = it.type === "true_false", exit = st.quiz === "exit";
       return {
-        html: (st.say ? teacher(st.say) : "")
-          + `<div class="exam-card"><div class="exam-badge">سؤال استرجاع ${st.k + 1} من ${st.of}</div><p class="exam-q" dir="ltr" lang="en">${esc(it.prompt)}</p><button class="chip-btn" data-say-en="${esc(it.prompt)}">🔊 اسمع السؤال</button></div>`
+        html: (exit ? stepHead("Exit ticket", "تذكرة الخروج", "🎟️") : stepHead("Warm-up", "نسخّن", "🔁"))
+          + (st.say ? teacher(st.say) : "")
+          + `<div class="exam-card"><div class="exam-badge">${exit ? "تذكرة الخروج" : "سؤال استرجاع"} ${st.k + 1} / ${st.of}</div><p class="exam-q" dir="ltr" lang="en">${esc(it.prompt)}</p><button class="chip-btn" data-say-en="${esc(it.prompt)}">🔊 اسمع السؤال</button></div>`
           + `<div class="choices${tf ? " tf" : ""}" dir="ltr">${it.choices.map((c, i) => `<button class="choice en" data-i="${i}" lang="en">${tf ? (c === "True" ? "✓ True" : "✗ False") : esc(c)}</button>`).join("")}</div>`
           + `<div class="feedback" dir="rtl"></div>`,
         ready: false,
@@ -758,11 +1062,13 @@
             $$(".choice", root).forEach((b) => { b.disabled = true; if (it.choices[+b.dataset.i] === it.answerKey) b.classList.add("right"); });
             if (!ok) btn.classList.add("wrong");
             if (ok && fresh) run.checks.first++;
+            // التصحيح بيشرح: الإجابة الصح + السبب
             const why = it.explanation ? `<p dir="auto">${bidi(it.explanation)}</p>` : "";
             fb.innerHTML = ok
-              ? `<div class="fb good">صح! 👏 لسه فاكر.</div>${why}`
+              ? `<div class="fb good">صح! 👏</div>${why}`
               : `<div class="fb bad">الإجابة الصح: <bdi dir="ltr" lang="en">${esc(it.answerKey)}</bdi></div>${why}`;
-            if (ok) { award(`r${run.i}`, 5); tone("good"); speak(P.recallRight); } else { tone("bad"); speak(P.recallWrong); speak(it.answerKey, { lang: "en" }); }
+            if (ok) { award(`q${run.i}`, 5); tone("good"); speak(P.recallRight); } else { tone("bad"); speak(P.recallWrong); speak(it.answerKey, { lang: "en" }); }
+            if (it.explanation) speak(it.explanation, { lang: /[؀-ۿ]/.test(it.explanation) ? undefined : "en" });
             setReady(true);
             nearest(fb);
           }));
@@ -770,86 +1076,133 @@
       };
     },
 
-    vocab: (st) => ({
-      html: `<span class="step-tag">كلمات الحصة 📒</span>` + teacher(st.say)
-        + `<div class="vocab-grid">${st.words.map((w) => `<button class="vocab" data-say-en="${esc(w.en)}"><span class="v-en" dir="ltr" lang="en">${esc(w.en)}</span><span class="v-ar">${esc(w.ar)}</span></button>`).join("")}</div>`
-        + `<button class="chip-btn wide" data-say-all>🔊 اسمع الكلمات كلها</button>`,
-      ready: true,
-      narrate: () => speak(st.say),
-      mount(root) {
-        $("[data-say-all]", root).addEventListener("click", () => {
-          if (!state.sound) setSound(true);
-          stopSpeech();
-          for (const w of st.words) { speak(w.en, { lang: "en" }); speak(w.ar, { lang: "ar" }); }
-        });
-      },
-    }),
+    activity: (st) => {
+      const predict = !!st.predictId;
+      return {
+        html: (predict ? stepHead("Guess first!", "خمّن الأول", "🤔") : stepHead("Sort it!", "رتّب", "🎯")) + teacher(st.say)
+          + `<div class="hint">اسحب كل كارت لمجموعته، أو دوس عليه وبعدين على المجموعة</div>`
+          + `<div class="tray">${shuffle(st.items.map((it, i) => ({ ...it, i }))).map((it) => `<button class="token" data-i="${it.i}" aria-pressed="false">${img(it.photo, "thumb") || `<span aria-hidden="true">${esc(it.emoji)}</span>`}${heroTerm(it)}</button>`).join("")}</div>`
+          + `<div class="zones">${st.groups.map((g, gi) => `<button class="zone" data-drop data-g="${gi}"><span class="zone-title" dir="ltr" lang="en">${esc(g)}</span>${st.groupsAr?.[gi] ? `<span class="zone-ar">${esc(st.groupsAr[gi])}</span>` : ""}<span class="zone-items"></span></button>`).join("")}</div>`
+          + `<div class="feedback"></div>`
+          + (st.tryAtHome ? `<div class="home-task" hidden><div class="who">🏡 جرّبها في البيت</div>${bidi(st.tryAtHome)}</div>` : ""),
+        ready: false,
+        narrate: () => speak(st.say),
+        mount(root) {
+          const fb = $(".feedback", root);
+          let selected = null, placed = 0, mistakes = 0;
+          const fresh = predict ? false : firstAttempt();
+          if (predict) run.predictions[st.predictId] = {};
+          const arm = (on) => $$(".zone", root).forEach((z) => z.classList.toggle("armed", on));
+          const select = (tok) => {
+            $$(".token", root).forEach((t) => t.setAttribute("aria-pressed", "false"));
+            if (selected === tok) { selected = null; arm(false); return; }
+            selected = tok;
+            tok.setAttribute("aria-pressed", "true");
+            arm(true);
+            speak(st.items[+tok.dataset.i].en, { lang: "en" });
+          };
+          const place = (tok, zone) => {
+            const i = +tok.dataset.i, item = st.items[i], g = +zone.dataset.g;
+            // في "خمّن" أي مكان مقبول، والتخمين بيتحفظ لخطوة "صلّح تخمينك"
+            if (!predict && st.groups[g] !== item.group) {
+              mistakes++;
+              tone("bad");
+              shake(tok);
+              fb.innerHTML = `<div class="fb bad">مش المجموعة دي 🤔 فكّر تاني وجرّب التانية.</div>`;
+              return;
+            }
+            if (predict) run.predictions[st.predictId][i] = g;
+            $(".zone-items", zone).insertAdjacentHTML("beforeend", `<span class="placed">${img(item.photo, "thumb-sm") || esc(item.emoji)} <bdi dir="ltr" lang="en">${esc(item.en)}</bdi></span>`);
+            tok.remove();
+            if (selected === tok) selected = null;
+            arm(false);
+            placed++;
+            fb.innerHTML = "";
+            if (placed < st.items.length) { tone(predict ? "still" : "good"); return; }
+            const home = $(".home-task", root);
+            if (home) home.hidden = false;
+            stopSpeech();
+            if (predict) {
+              fb.innerHTML = `<div class="fb good">🔬 ${esc(P.predictSaved)}</div>`;
+              tone("good");
+              speak(P.predictSaved);
+            } else {
+              if (fresh && mistakes === 0) run.checks.first++;
+              tone("win");
+              confetti();
+              award(`a${run.i}`, mistakes === 0 ? 15 : 10);
+              fb.innerHTML = `<div class="fb good">👏 برافو! رتّبتهم كلهم صح.</div>`;
+              speak(P.activityDone);
+            }
+            if (st.tryAtHome) speak(st.tryAtHome);
+            setReady(true);
+            nearest(home || fb);
+          };
+          $$(".token", root).forEach((tok) => enableDrag(tok, { onTap: () => select(tok), onDrop: (zone) => place(tok, zone) }));
+          $$(".zone", root).forEach((zone) => zone.addEventListener("click", () => {
+            if (!selected) { fb.innerHTML = `<div class="hint">اختار كارت من فوق الأول 👆</div>`; return; }
+            place(selected, zone);
+          }));
+        },
+      };
+    },
 
-    activity: (st) => ({
-      html: `<span class="step-tag">يلا نلعب 🎯</span>` + teacher(st.say)
-        + `<div class="hint">اسحب كل كارت لمجموعته، أو دوس عليه وبعدين على المجموعة</div>`
-        + `<div class="tray">${shuffle(st.items.map((it, i) => ({ ...it, i }))).map((it) => `<button class="token" data-i="${it.i}" aria-pressed="false">${img(it.photo, "thumb") || `<span aria-hidden="true">${esc(it.emoji)}</span>`}<bdi dir="ltr" lang="en">${esc(it.text)}</bdi></button>`).join("")}</div>`
-        + `<div class="zones">${st.groups.map((g, gi) => `<button class="zone" data-drop data-g="${gi}"><span class="zone-title" dir="ltr" lang="en">${esc(g)}</span>${st.groupsAr?.[gi] ? `<span class="zone-ar">${esc(st.groupsAr[gi])}</span>` : ""}<span class="zone-items"></span></button>`).join("")}</div>`
-        + `<div class="feedback"></div>`
-        + (st.tryAtHome ? `<div class="home-task" hidden><div class="who">🏡 جرّبها في البيت</div>${bidi(st.tryAtHome)}</div>` : ""),
-      ready: false,
-      narrate: () => speak(st.say),
-      mount(root) {
-        const fb = $(".feedback", root);
-        let selected = null, placed = 0, mistakes = 0;
-        const fresh = firstAttempt();
-        const arm = (on) => $$(".zone", root).forEach((z) => z.classList.toggle("armed", on));
-        const select = (tok) => {
-          $$(".token", root).forEach((t) => t.setAttribute("aria-pressed", "false"));
-          if (selected === tok) { selected = null; arm(false); return; }
-          selected = tok;
-          tok.setAttribute("aria-pressed", "true");
-          arm(true);
-          speak(st.items[+tok.dataset.i].text, { lang: "en" });
-        };
-        const place = (tok, zone) => {
-          const item = st.items[+tok.dataset.i];
-          if (st.groups[+zone.dataset.g] !== item.group) {
-            mistakes++;
-            tone("bad");
-            tok.classList.remove("shake");
-            void tok.offsetWidth;
-            tok.classList.add("shake");
-            fb.innerHTML = `<div class="fb bad">مش المجموعة دي 🤔 فكّر تاني وجرّب التانية.</div>`;
-            return;
+    revisit: (st) => {
+      // الطفل بيشوف تخمينه، واللي غلط فيه بيدوس عليه فيروح لمكانه الصح ومعاه السبب
+      const src = run.steps.find((s) => s.kind === "activity" && s.predictId === st.predictId);
+      const guess = run.predictions[st.predictId] || {};
+      const groupOf = (i) => (guess[i] !== undefined ? guess[i] : src.groups.indexOf(src.items[i].group));
+      const wrong = src.items.map((it, i) => src.groups[groupOf(i)] !== it.group);
+      const chip = (it, i) => `<button class="placed fixable ${wrong[i] ? "wrong" : "right"}" type="button" data-i="${i}">${img(it.photo, "thumb-sm") || esc(it.emoji)} <bdi dir="ltr" lang="en">${esc(it.en)}</bdi> <span aria-hidden="true">${wrong[i] ? "✗" : "✓"}</span></button>`;
+      return {
+        html: stepHead("Check your guess", "صلّح تخمينك", "🔍") + teacher(st.say)
+          + `<div class="zones">${src.groups.map((g, gi) => `<div class="zone" data-g="${gi}"><span class="zone-title" dir="ltr" lang="en">${esc(g)}</span>${src.groupsAr?.[gi] ? `<span class="zone-ar">${esc(src.groupsAr[gi])}</span>` : ""}<span class="zone-items">${src.items.map((it, i) => (groupOf(i) === gi ? chip(it, i) : "")).join("")}</span></div>`).join("")}</div>`
+          + `<div class="reveal-caption" aria-live="polite"></div><div class="feedback"></div>`,
+        ready: false,
+        narrate: () => speak(st.say),
+        mount(root) {
+          const cap = $(".reveal-caption", root), fb = $(".feedback", root);
+          let left = wrong.filter(Boolean).length;
+          const fresh = firstAttempt();
+          const finish = (allRight) => {
+            if (fresh && allRight) run.checks.first++;
+            award(`v${run.i}`, allRight ? 10 : 5);
+            const line = allRight ? P.revisitAllRight : P.revisitDone;
+            fb.innerHTML = `<div class="fb good">${esc(line)}</div>`;
+            tone("win");
+            speak(line);
+            setReady(true);
+          };
+          if (left === 0) {
+            fb.innerHTML = `<div class="fb good">🎯 ${esc(P.revisitAllRight)}</div>`;
+            finish(true);
+          } else {
+            fb.innerHTML = `<div class="hint">دوس على الكروت اللي عليها ✗ عشان تصلّحها</div>`;
           }
-          $(".zone-items", zone).insertAdjacentHTML("beforeend", `<span class="placed">${esc(item.emoji)} <bdi dir="ltr" lang="en">${esc(item.text)}</bdi></span>`);
-          tok.remove();
-          if (selected === tok) selected = null;
-          arm(false);
-          placed++;
-          fb.innerHTML = "";
-          if (placed < st.items.length) { tone("good"); return; }
-          if (fresh && mistakes === 0) run.checks.first++;
-          tone("win");
-          confetti();
-          award(`a${run.i}`, mistakes === 0 ? 15 : 10);
-          fb.innerHTML = `<div class="fb good">👏 برافو! رتّبتهم كلهم صح.</div>`;
-          const home = $(".home-task", root);
-          if (home) home.hidden = false;
-          stopSpeech();
-          speak(P.activityDone);
-          if (st.tryAtHome) speak(st.tryAtHome);
-          setReady(true);
-          nearest(home || fb);
-        };
-        $$(".token", root).forEach((tok) => enableDrag(tok, { onTap: () => select(tok), onDrop: (zone) => place(tok, zone) }));
-        $$(".zone", root).forEach((zone) => zone.addEventListener("click", () => {
-          if (!selected) { fb.innerHTML = `<div class="hint">اختار كارت من فوق الأول 👆</div>`; return; }
-          place(selected, zone);
-        }));
-      },
-    }),
+          $$(".fixable", root).forEach((btn) => btn.addEventListener("click", () => {
+            const i = +btn.dataset.i, it = src.items[i];
+            stopSpeech();
+            cap.innerHTML = bidi(it.why || "");
+            speak(it.en, { lang: "en" });
+            if (it.why) speak(it.why);
+            if (!btn.classList.contains("wrong")) return;
+            const target = $(`.zone[data-g="${src.groups.indexOf(it.group)}"] .zone-items`, root);
+            btn.classList.remove("wrong");
+            btn.classList.add("right", "moved");
+            btn.lastElementChild.textContent = "✓";
+            target.appendChild(btn);
+            run.predictions[st.predictId] = { ...run.predictions[st.predictId], [i]: src.groups.indexOf(it.group) };
+            tone("good");
+            if (--left === 0) finish(false);
+          }));
+        },
+      };
+    },
 
     probe: (st) => ({
-      html: `<span class="step-tag">🧪 ${esc(st.title)}</span>` + teacher(st.say)
-        + `<button class="tool" type="button">${img(st.tool.photo, "thumb") || `<span class="big" aria-hidden="true">${esc(st.tool.emoji)}</span>`}${esc(st.tool.label)}</button>`
-        + `<div class="probe-grid">${st.items.map((it, i) => `<button class="probe-item" type="button" data-drop data-i="${i}">${img(it.photo) || `<span class="blob">${esc(it.emoji)}</span>`}<span class="name" dir="ltr" lang="en">${esc(it.text)}</span><span class="badge" aria-hidden="true"></span></button>`).join("")}</div>`
+      html: stepHead(st.titleEn, st.title, "🧪") + teacher(st.say)
+        + `<button class="tool" type="button">${img(st.tool.photo, "thumb") || `<span class="big" aria-hidden="true">${esc(st.tool.emoji)}</span>`}${heroTerm(st.tool)}</button>`
+        + `<div class="probe-grid">${st.items.map((it, i) => `<button class="probe-item" type="button" data-drop data-i="${i}">${visual(it)}${heroTerm(it)}<span class="badge" aria-hidden="true"></span></button>`).join("")}</div>`
         + `<div class="caption" aria-live="polite"></div><div class="progress-line"></div><div class="conclusion"></div>`,
       ready: false,
       narrate: () => speak(st.say),
@@ -858,21 +1211,14 @@
         const tried = new Set();
         const update = () => (prog.textContent = `جرّبت ${tried.size} من ${st.items.length}`);
         update();
-        const feed = (el) => {
-          const i = +el.dataset.i, it = st.items[i];
+        const apply = (el) => {
+          const i = +el.dataset.i, it = st.items[i], r = REACTIONS[it.reaction] || REACTIONS.still;
           stopSpeech();
           if (tried.has(i)) { speak(it.caption); return; }
           tried.add(i);
-          if (it.reaction === "grow") {
-            el.classList.add("munch");
-            setTimeout(() => el.classList.add("grew"), 450);
-            $(".badge", el).textContent = "😋";
-            tone("good");
-          } else {
-            el.classList.add("still");
-            $(".badge", el).textContent = "😐";
-            tone("still");
-          }
+          el.classList.add("tried", `r-${it.reaction}`);
+          $(".badge", el).textContent = r.badge;
+          tone(r.tone);
           cap.innerHTML = bidi(it.caption);
           speak(it.caption);
           update();
@@ -886,22 +1232,126 @@
           nearest($(".conclusion", root));
         };
         enableDrag($(".tool", root), {
-          onDrop: (target) => feed(target),
-          onTap: () => { cap.textContent = `اسحب «${st.tool.label}» على أي حاجة، أو دوس عليها 👇`; },
+          onDrop: (target) => apply(target),
+          onTap: () => { cap.textContent = `اسحب «${st.tool.ar}» على أي حاجة، أو دوس عليها 👇`; },
         });
-        $$(".probe-item", root).forEach((el) => el.addEventListener("click", () => feed(el)));
+        $$(".probe-item", root).forEach((el) => el.addEventListener("click", () => apply(el)));
+      },
+    }),
+
+    match: (st) => ({
+      html: stepHead("Match", "وصّل", "🔗") + teacher(st.say) + `<div class="match-zone"></div>`,
+      ready: false,
+      narrate: () => speak(st.say),
+      mount(root) {
+        const fresh = firstAttempt();
+        let mistakes = 0;
+        mountMatch($(".match-zone", root), st.pairs, {
+          onMistake: () => mistakes++,
+          onDone: () => { if (fresh && mistakes === 0) run.checks.first++; award(`m${run.i}`, mistakes ? 5 : 10); setReady(true); },
+        });
+      },
+    }),
+
+    build: (st) => {
+      const tiles = shuffle([...st.tiles.map((t, i) => ({ t, i })), ...(st.distractors || []).map((t) => ({ t, i: -1 }))]);
+      return {
+        html: stepHead("Build the sentence", "ابني الجملة", "🧱") + teacher(st.say)
+          + `<div class="build-line" dir="ltr" lang="en">${st.tiles.map((_, i) => `<span class="slot" data-slot="${i}"></span>`).join("")}</div>`
+          + `<div class="build-ar" hidden>${esc(st.ar)}</div>`
+          + `<div class="tile-tray" dir="ltr">${tiles.map((x) => `<button class="tile" type="button" data-i="${x.i}" lang="en">${esc(x.t)}</button>`).join("")}</div>`
+          + `<div class="feedback"></div>`,
+        ready: false,
+        narrate: () => speak(st.say),
+        mount(root) {
+          let next = 0, mistakes = 0;
+          const fresh = firstAttempt();
+          const fb = $(".feedback", root);
+          $$(".tile", root).forEach((tile) => tile.addEventListener("click", () => {
+            stopSpeech();
+            if (+tile.dataset.i !== next) {
+              mistakes++;
+              tone("bad");
+              shake(tile);
+              fb.innerHTML = `<div class="fb bad">${esc(P.buildWrong)}</div>`;
+              speak(P.buildWrong);
+              // بعد غلطتين بنلمّح للكارت الصح
+              if (mistakes % 2 === 0) $$(".tile", root).filter((t) => +t.dataset.i === next).forEach(pulse);
+              return;
+            }
+            const slot = $(`.slot[data-slot="${next}"]`, root);
+            slot.textContent = st.tiles[next];
+            slot.classList.add("filled");
+            tile.remove();
+            next++;
+            fb.innerHTML = "";
+            tone("good");
+            speak(st.tiles[next - 1], { lang: "en" });
+            if (next < st.tiles.length) return;
+            $(".build-line", root).classList.add("complete");
+            $(".build-ar", root).hidden = false;
+            $$(".tile", root).forEach((t) => (t.disabled = true));
+            if (fresh && mistakes === 0) run.checks.first++;
+            award(`b${run.i}`, mistakes ? 5 : 10);
+            speak(P.buildDone);
+            speak(st.sentence, { lang: "en" });
+            setReady(true);
+          }));
+        },
+      };
+    },
+
+    sequence: (st) => ({
+      html: stepHead(st.titleEn, st.title, "🔢") + teacher(st.say)
+        + `<div class="seq-line">${st.items.map((_, i) => `<div class="seq-slot" data-slot="${i}"><span class="n">${i + 1}</span></div>`).join("")}</div>`
+        + `<div class="seq-tray">${shuffle(st.items.map((it, i) => ({ it, i }))).map(({ it, i }) => `<button class="seq-card" type="button" data-i="${i}">${visual(it, "thumb-lg")}${heroTerm(it)}</button>`).join("")}</div>`
+        + `<div class="feedback"></div><div class="conclusion"></div>`,
+      ready: false,
+      narrate: () => speak(st.say),
+      mount(root) {
+        let next = 0, mistakes = 0;
+        const fresh = firstAttempt();
+        const fb = $(".feedback", root);
+        $$(".seq-card", root).forEach((card) => card.addEventListener("click", () => {
+          stopSpeech();
+          if (+card.dataset.i !== next) {
+            mistakes++;
+            tone("bad");
+            shake(card);
+            fb.innerHTML = `<div class="fb bad">${esc(P.sequenceWrong)}</div>`;
+            speak(P.sequenceWrong);
+            return;
+          }
+          const it = st.items[next];
+          const slot = $(`.seq-slot[data-slot="${next}"]`, root);
+          slot.insertAdjacentHTML("beforeend", `${visual(it, "thumb-lg")}${heroTerm(it)}`);
+          slot.classList.add("filled");
+          card.remove();
+          next++;
+          fb.innerHTML = "";
+          tone("good");
+          speak(it.en, { lang: "en" });
+          if (next < st.items.length) return;
+          if (fresh && mistakes === 0) run.checks.first++;
+          award(`s${run.i}`, mistakes ? 5 : 10);
+          $(".conclusion", root).innerHTML = teacher(st.conclusion);
+          confetti();
+          tone("win");
+          speak(st.conclusion);
+          setReady(true);
+        }));
       },
     }),
 
     hunt: (st) => ({
-      html: `<span class="step-tag">🔍 ${esc(st.title)}</span>` + teacher(st.say)
+      html: stepHead(st.titleEn, st.title, "🔍") + teacher(st.say)
         + `<div class="phase"></div>`
         + `<div class="hunt-grid">${st.spots.map((sp, i) => `<button class="spot" type="button" data-i="${i}">`
           + (sp.find ? img(sp.find.photo, "found") || `<span class="found emoji-find">${esc(sp.find.emoji)}</span>` : "")
           + (img(sp.photo, "cover") || `<span class="cover emoji-find">${esc(sp.emoji)}</span>`)
-          + `<span class="label">${esc(sp.emoji)} ${esc(sp.label)}</span></button>`).join("")}</div>`
+          + `<span class="label"><bdi dir="ltr" lang="en">${esc(sp.en)}</bdi><small>${esc(sp.ar)}</small></span></button>`).join("")}</div>`
         + `<div class="caption" aria-live="polite"></div>`
-        + `<div class="notebook"><h4>📒 كراسة المستكشف</h4><ul class="notes"><li class="muted">لسه مالقيناش حاجة…</li></ul></div>`
+        + `<div class="notebook"><h4>📒 <bdi dir="ltr" lang="en">Explorer's notebook</bdi> · كراسة المستكشف</h4><ul class="notes"><li class="muted">لسه مالقيناش حاجة…</li></ul></div>`
         + (st.tryAtHome ? `<div class="home-task" hidden><div class="who">🏡 جرّبها في البيت</div>${bidi(st.tryAtHome)}</div>` : ""),
       ready: false,
       narrate: () => { speak(st.say); speak(st.guess.ask); },
@@ -919,10 +1369,10 @@
           const sp = st.spots[+btn.dataset.i];
           stopSpeech();
           if (guess === null) {
-            guess = sp.label;
+            guess = sp.en;
             btn.classList.add("guessed");
             setPhase();
-            cap.innerHTML = `تخمينك: <b>${esc(sp.label)}</b> 🤔 ${esc(P.huntSearch)}`;
+            cap.innerHTML = `تخمينك: <bdi dir="ltr" lang="en"><b>${esc(sp.en)}</b></bdi> 🤔 ${esc(P.huntSearch)}`;
             speak(P.huntSearch);
             return;
           }
@@ -934,10 +1384,10 @@
           found++;
           tone("good");
           if (found === 1) notes.innerHTML = "";
-          const line = `${sp.find.text}: ${sp.labelEn}`;
-          notes.insertAdjacentHTML("beforeend", `<li>${img(sp.find.photo, "thumb") || esc(sp.find.emoji)}<bdi dir="ltr" lang="en">${esc(line)}</bdi></li>`);
+          const line = `${sp.find.en}: ${sp.en}`;
+          notes.insertAdjacentHTML("beforeend", `<li>${img(sp.find.photo, "thumb") || esc(sp.find.emoji)}<span class="term-inline"><bdi dir="ltr" lang="en">${esc(line)}</bdi><small>${esc(sp.find.ar)} · ${esc(sp.ar)}</small></span></li>`);
           speak(line, { lang: "en" });
-          if (sp.label === guess && guess === st.guess.answer) {
+          if (sp.en === guess && guess === st.guess.answer) {
             award(`g${run.i}`, 5);
             cap.innerHTML += ` <b>🎯 ${esc(P.guessRight)}</b>`;
             speak(P.guessRight);
@@ -958,7 +1408,8 @@
     }),
 
     exam_tip: (st) => ({
-      html: `<div class="exam-card"><div class="exam-badge">📝 سؤال امتحان · ${esc(DATA.styleLabels[st.style] || "")}</div><p class="exam-q" dir="ltr" lang="en">${esc(st.question)}</p></div>`
+      html: stepHead("Exam question", `سؤال امتحان · ${DATA.styleLabels[st.style] || ""}`, "📝")
+        + `<div class="exam-card"><p class="exam-q" dir="ltr" lang="en">${esc(st.question)}</p></div>`
         + teacher(st.say)
         + `<button class="reveal">👀 فكّر في الإجابة… وبعدين اكشفها</button>`
         + `<div class="model" hidden>${englishBox(st.modelAnswer, "✍️ الإجابة النموذجية — اكتبها كده بالظبط")}</div>`,
@@ -979,15 +1430,19 @@
     }),
 
     summary: (st) => ({
-      html: `<div class="illus" aria-hidden="true"><span class="blob">🌟</span></div>` + teacher(st.say) + `<ul class="points">${st.points.map((p) => `<li>${bidi(p)}</li>`).join("")}</ul>`,
+      html: stepHead("Summary", "الخلاصة", "🌟") + teacher(st.say)
+        + `<ul class="points">${st.points.map((p) => `<li><button class="chip-btn mini" data-say-en="${esc(p.en)}" aria-label="اسمعها">🔊</button><span class="term-inline"><bdi dir="ltr" lang="en">${esc(p.en)}</bdi><small>${esc(p.ar)}</small></span></li>`).join("")}</ul>`,
       ready: true,
-      narrate: () => { speak(st.say); st.points.forEach((p) => speak(p)); },
+      narrate: () => { speak(st.say); st.points.forEach((p) => speak(p.en, { lang: "en" })); },
     }),
   };
 
   // ---------- الشاشات ----------
+  // عنوان إنجليزي جوه سطر عربي: بيتعزل عشان علامة الاستفهام ماتطيرش للناحية التانية
+  const isolate = (text) => `\u2068${text}\u2069`;
   function setHeader(title, sub) {
     $("#topTitle").textContent = title;
+    $("#topTitle").dir = "auto";
     $("#topSub").textContent = sub;
   }
   const setProgress = (ratio) => ($("#progressBar").style.width = `${Math.round(ratio * 100)}%`);
@@ -1007,6 +1462,7 @@
     run = null;
     stopSpeech();
     setProgress(0);
+    renderBadges();
     setHeader(DATA.subjectLine, DATA.unitTitle);
     const done = state.done;
     const count = S.sessions.length;
@@ -1021,7 +1477,7 @@
     const card = (n) => {
       const sess = S.sessions[n - 1];
       const mins = Math.max(8, Math.round(sess.steps.length * 0.75));
-      return `<button class="session-card" data-session="${n}"><span class="num">${n}</span><span><span class="t">${esc(sess.title)}</span><br><span class="muted">${done.includes(n) ? '<span class="done-badge">✓ خلصت</span> · ' : ""}حوالي ${mins} دقيقة</span></span></button>`;
+      return `<button class="session-card" data-session="${n}"><span class="num">${n}</span><span><bdi class="t en" dir="ltr" lang="en">${esc(sess.titleEn)}</bdi><br><span class="muted">${esc(sess.title)} · ${done.includes(n) ? '<span class="done-badge">✓ خلصت</span> · ' : ""}حوالي ${mins} دقيقة</span></span></button>`;
     };
     screen.innerHTML = `
       <section class="hero">
@@ -1073,14 +1529,17 @@
     const steps = mode === "lesson" ? sessionSteps(n) : remediationSteps(DATA.demoWeak);
     run = {
       mode, n, steps, i: 0, ready: false, xp: 0, narrate: null,
-      title: mode === "lesson" ? S.sessions[n - 1].title : "مراجعة بطريقة تانية",
+      title: mode === "lesson" ? S.sessions[n - 1].titleEn : "Review",
       checks: { total: 0, first: 0 }, awarded: new Set(), attempted: new Set(), intercept: null, nextLabel: null,
+      badges: steps.find((s) => s.kind === "mission")?.badges || [], earned: new Set(), predictions: {},
     };
+    renderBadges();
     showStep();
   }
 
   function showStep() {
     stopSpeech();
+    document.querySelectorAll(".badge-toast").forEach((t) => t.remove());
     const st = run.steps[run.i];
     const view = VIEWS[st.kind](st);
     screen.innerHTML = `<div class="step">${view.html}</div>`;
@@ -1091,7 +1550,7 @@
     run.nextLabel = null;
     view.mount?.(screen.firstElementChild);
     renderStepActions();
-    setHeader(run.title, `${run.mode === "lesson" ? `الحصة ${run.n} من ${S.sessions.length} · ` : ""}خطوة ${run.i + 1}/${run.steps.length}`);
+    setHeader(DATA.title, `${run.mode === "lesson" ? `الحصة ${run.n} من ${S.sessions.length}: ${isolate(run.title)}` : "مراجعة بطريقة تانية"} · ${run.i + 1}/${run.steps.length}`);
     setProgress((run.i + 1) / run.steps.length);
     run.narrate?.();
   }
@@ -1113,6 +1572,7 @@
 
   function finishRun() {
     stopSpeech();
+    document.querySelectorAll(".badge-toast").forEach((t) => t.remove());
     const { total, first } = run.checks;
     const ratio = total ? first / total : 1;
     const stars = ratio >= 0.9 ? 3 : ratio >= 0.6 ? 2 : 1;
@@ -1131,7 +1591,7 @@
       line = "دلوقتي الطفل بيرجع يحل الواجب تاني، والأسئلة بتركّز على الجزئيات اللي اتراجعت.";
     } else if (next) {
       headline = `عاش يا بطل! الحصة ${run.n} خلصت`;
-      line = `الحصة ${next} مستنياك: «${S.sessions[next - 1].title}»`;
+      line = `الحصة ${next} مستنياك: <bdi dir="ltr" lang="en">${esc(S.sessions[next - 1].titleEn)}</bdi> (${esc(S.sessions[next - 1].title)})`;
     } else {
       headline = "عاش! الدرس كله خلص 🎉";
       line = "كده الواجب اتفتح 📝 ولما يعدّي الاختبار الأساسي، الدرس الجاي يفتح.";
@@ -1140,13 +1600,14 @@
       <section class="finish">
         <div class="stars" aria-label="${stars} من 3 نجوم">${"⭐".repeat(stars)}${"☆".repeat(3 - stars)}</div>
         <h2>${esc(headline)}</h2>
-        <p>${esc(line)}</p>
+        <p>${line}</p>
         <div class="gain">+${run.xp} نقطة ⭐</div>
         <div class="sticker-new" aria-hidden="true">${stickerFor(run.mode, run.n)}</div>
         <p class="muted">${newSticker ? "🎁 لاصقة جديدة اتضافت لألبومك!" : "اللاصقة دي في ألبومك من قبل كده 😉"}</p>
+        ${run.badges.length ? `<div class="album">${run.badges.map((b, i) => `<span class="slot${run.earned.has(i) ? "" : " empty"}" title="${esc(b.en)}">${esc(b.emoji)}</span>`).join("")}</div>` : ""}
         ${total ? `<p class="muted">جاوب ${first} من ${total} صح من أول مرة</p>` : ""}
       </section>`;
-    setHeader(run.title, "خلصت ✅");
+    setHeader(DATA.title, `${isolate(run.title)} · خلصت ✅`);
     setProgress(1);
     actions.innerHTML = next
       ? `<button class="btn btn-ghost" id="goHome">🏠</button><button class="btn btn-primary" id="goNext">ابدأ الحصة ${next} ←</button>`

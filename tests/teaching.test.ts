@@ -68,19 +68,52 @@ describe("lesson scripts", () => {
   it("rejects an explanation whose fill-the-gap check does not fit its sentence", () => {
     const broken = structuredClone(script);
     const explains = broken.sessions[0]!.steps.filter((s) => s.kind === "explain");
-    explains[0]!.confirm.answer = "photosynthesis";
-    explains[1]!.confirm.distractors = ["Breathe", "fly"];
+    const [first, second] = explains;
+    if (first?.kind !== "explain" || second?.kind !== "explain") throw new Error("ch1-l1 should have two explanations");
+    first.confirm = { answer: "photosynthesis", distractors: ["eat", "sleep"] };
+    second.confirm = { answer: "habitat", distractors: ["Habitat", "home"] };
     const problems = validateScript(broken, findLesson(scienceG4Term1, "ch1-l1"));
     expect(problems).toHaveLength(2);
     expect(problems[0]).toMatch(/"photosynthesis" is not in/);
     expect(problems[1]).toMatch(/2\+ distractors that differ/);
   });
 
+  it("checks the games: sentence tiles, guess-then-revisit order, badges and Arabic translations", () => {
+    const lesson = findLesson(scienceG4Term1, "ch1-l1");
+    const broken = structuredClone(script);
+    const steps = broken.sessions[0]!.steps;
+    const build = steps.find((s) => s.kind === "build");
+    if (build?.kind === "build") build.tiles = build.tiles.slice(1);
+    const revisitAt = steps.findIndex((s) => s.kind === "revisit");
+    const predictAt = steps.findIndex((s) => s.kind === "activity" && !!s.predictId);
+    const [revisit] = steps.splice(revisitAt, 1);
+    steps.splice(predictAt, 0, revisit!);
+    const exit = steps.find((s) => s.kind === "exit");
+    if (exit?.kind === "exit") exit.badge = 7;
+    const terms = steps.find((s) => s.kind === "terms");
+    if (terms?.kind === "terms") terms.terms[0]!.ar = "";
+    const problems = validateScript(broken, lesson);
+    expect(problems).toEqual([
+      expect.stringMatching(/needs an Arabic translation/),
+      expect.stringMatching(/revisit "alive" must come after a predict/),
+      expect.stringMatching(/build tiles must join into/),
+      expect.stringMatching(/gives badge 7 but the session mission has 3 badges/),
+    ]);
+  });
+
+  it("wants every session to open with its mission and close with a summary", () => {
+    const broken = structuredClone(script);
+    broken.sessions[1]!.steps.reverse();
+    const problems = validateScript(broken, findLesson(scienceG4Term1, "ch1-l1"));
+    expect(problems).toContain("Script ch1-l1: session 2 should start with a mission");
+    expect(problems).toContain("Script ch1-l1: session 2 should end with a summary");
+  });
+
   it("serves the lesson session by session, with recall questions from the earlier session", () => {
     const j = start();
     const first = buildLearningSession(j, script, scienceG4Term1Bank);
     expect(first).toMatchObject({ kind: "lesson", session: 1, sessions: 2 });
-    expect(first.steps[0]!.kind).toBe("hook");
+    expect(first.steps[0]!.kind).toBe("mission");
     expect(first.steps.some((s) => s.kind === "recall")).toBe(false); // أول درس في الترم: مفيش حاجة قبله
 
     j.completeLearning("ch1-l1", DAY);
@@ -193,7 +226,8 @@ describe("narration for human recording", () => {
 
   it("lists every spoken line of the lesson once, in lesson order", () => {
     const texts = lines.map((l) => l.text);
-    expect(texts[0]).toMatch(/^أهلًا يا بطل! أنا أستاذ نبيه، بص على الصور دي/);
+    const mission = script.sessions[0]!.steps[0]!;
+    expect(texts[0]).toBe(spokenText(mission.kind === "mission" ? mission.say : ""));
     for (const step of script.sessions.flatMap((s) => s.steps)) {
       if (step.kind === "explain") expect(texts).toContain(spokenText(step.english.text));
       if (step.kind === "check") expect(texts).toContain(spokenText(step.reteach));
@@ -211,8 +245,9 @@ describe("narration for human recording", () => {
   it("marks English and mixed lines so the narrator pronounces the English words in English", () => {
     const byText = new Map(lines.map((l) => [l.text, l.lang]));
     expect(byText.get("Living organisms feed, grow and breathe.")).toBe("en");
-    expect(byText.get("قبل ما نبدأ، سؤالين سريعين من اللي فات:")).toBe("ar");
-    expect(lines.find((l) => l.text.includes("اسمهم living organisms"))?.lang).toBe("mixed");
+    expect(byText.get("Life Detective")).toBe("en");
+    expect(byText.get("سؤالين سريعين من اللي فات:")).toBe("ar");
+    expect(lines.find((l) => l.text.includes("اسمه habitat"))?.lang).toBe("mixed");
   });
 
   it("records the fixed phrases once, and the remediation session speaks exactly those", () => {

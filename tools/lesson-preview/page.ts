@@ -54,6 +54,12 @@ export function buildLessonPage(options: LessonPageOptions) {
 
   // زي المحرك: الحصة الأولى بتسترجع من الدرس اللي قبله، والحصص اللي بعدها من حصص نفس الدرس اللي خلصت
   const previous = lessons[index - 1];
+  // تذكرة الخروج: أسئلة الحصة n من كل اللي اتشرح في الدرس لحد آخرها
+  const exit: Record<number, ReturnType<typeof recallPool>> = {};
+  script.sessions.forEach((_, i) => {
+    const objectives = new Set(script.sessions.slice(0, i + 1).flatMap((s) => s.steps).flatMap((s) => ("objectiveId" in s ? [s.objectiveId] : [])));
+    exit[i + 1] = recallPool(scienceG4Term1Bank.filter((q) => objectives.has(q.objectiveId)), lessonId);
+  });
   const covered: Record<number, ReturnType<typeof recallPool>> = {};
   script.sessions.forEach((_, i) => {
     if (i === 0) return;
@@ -106,7 +112,7 @@ export function buildLessonPage(options: LessonPageOptions) {
     lessonLabel: `الفصل ${unitNumber}، الدرس ${lessonNumber}`,
     subjectLine: "العلوم — رابعة ابتدائي",
     script,
-    recall: { previous: previous ? recallPool(scienceG4Term1Bank.filter((q) => q.lessonId === previous.id), previous.id) : [], covered },
+    recall: { previous: previous ? recallPool(scienceG4Term1Bank.filter((q) => q.lessonId === previous.id), previous.id) : [], covered, exit },
     styleLabels: EXAM_STYLE_LABELS_AR,
     // مثال المراجعة العلاجية: جزئيتين من الدرس كأن الطفل غلط فيهم
     demoWeak: [objectiveIds[0], objectiveIds[2] ?? objectiveIds[1]].filter((id): id is string => !!id),
