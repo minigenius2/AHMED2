@@ -62,6 +62,8 @@
   .icon-btn { flex: none; width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); font-size: 20px; cursor: pointer; display: grid; place-items: center; }
   .icon-btn:disabled { opacity: .4; cursor: default; }
   .xp { flex: none; background: var(--sun-soft); border-radius: 999px; padding: 4px 12px; font-weight: 800; font-size: 16px; white-space: nowrap; }
+  .voice-warning { display: flex; gap: 8px; align-items: center; margin: 8px 0 0; padding: 8px 12px; border-radius: 16px; background: var(--coral-soft); font-size: 15px; line-height: 1.5; }
+  .voice-warning .icon-btn { width: 36px; height: 36px; font-size: 16px; }
   .progress { height: 8px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
   .progress > div { height: 100%; width: 0; background: var(--leaf); border-radius: 999px; transition: width .3s ease; }
 
@@ -279,6 +281,10 @@
     <button class="icon-btn" id="soundBtn" aria-label="الصوت شغال">🔊</button>
   </header>
   <div class="progress" aria-hidden="true"><div id="progressBar"></div></div>
+  <div class="voice-warning" id="voiceWarning" role="status" hidden>
+    <span>🔇 الجهاز ده مفيهوش صوت عربي، فكلام المعلم العربي مش هيتسمع. افتح الموقع من متصفح <b>Microsoft Edge</b> (فيه صوت مصري)، أو من الموبايل.</span>
+    <button class="icon-btn" id="voiceWarningClose" type="button" aria-label="قفل التنبيه">✕</button>
+  </div>
   <main id="screen" aria-live="polite"></main>
   <footer class="actions" id="actions"></footer>
   <button class="ask-fab" id="askBtn" hidden>🦉 اسأل المعلم</button>
@@ -372,9 +378,14 @@
   function pickVoices() {
     const vs = speechSynthesis.getVoices();
     voice.count = vs.length;
-    voice.ar = vs.find((v) => /^ar[-_]EG/i.test(v.lang)) || vs.find((v) => /^ar/i.test(v.lang)) || null;
-    voice.en = vs.find((v) => /^en[-_]US/i.test(v.lang) && /google|samantha|natural|aria|jenny/i.test(v.name))
-      || vs.find((v) => /^en[-_]US/i.test(v.lang)) || vs.find((v) => /^en/i.test(v.lang)) || null;
+    // الأحسن: صوت مصري راجل (زي أستاذ نبيه)، وبعده أي صوت مصري، وبعده أي صوت عربي.
+    // متصفح Edge فيه أصوات مصري طبيعية (شاكر وسلمى)، وChrome على الكمبيوتر مفيهوش أي صوت عربي.
+    const natural = (v) => /natural|online|neural|premium|enhanced/i.test(v.name);
+    const eg = vs.filter((v) => /^ar[-_]EG/i.test(v.lang));
+    const ar = vs.filter((v) => /^ar/i.test(v.lang));
+    voice.ar = eg.find((v) => /shakir|شاكر/i.test(v.name)) || eg.find(natural) || eg[0] || ar.find(natural) || ar[0] || null;
+    const us = vs.filter((v) => /^en[-_]US/i.test(v.lang));
+    voice.en = us.find(natural) || us.find((v) => /google|samantha|aria|jenny/i.test(v.name)) || us[0] || vs.find((v) => /^en/i.test(v.lang)) || null;
     if (!run) updateVoiceLine();
   }
   if (hasTTS) { pickVoices(); speechSynthesis.addEventListener?.("voiceschanged", pickVoices); }
@@ -1049,7 +1060,16 @@
     $("#goHome").addEventListener("click", renderHome);
   }
 
+  /** لو العربي هيتقري بصوت الموبايل والجهاز مفيهوش صوت عربي، بنقول كده بوضوح مرة واحدة */
+  let voiceWarningClosed = false;
+  function checkArabicVoice() {
+    const allRecorded = DATA.audioStats.recorded === DATA.audioStats.total;
+    const missing = !allRecorded && (!hasTTS || (voice.count > 0 && !voice.ar));
+    $("#voiceWarning").hidden = voiceWarningClosed || !missing;
+  }
+
   function startRun(mode, n = 1) {
+    checkArabicVoice();
     const steps = mode === "lesson" ? sessionSteps(n) : remediationSteps(DATA.demoWeak);
     run = {
       mode, n, steps, i: 0, ready: false, xp: 0, narrate: null,
@@ -1307,6 +1327,7 @@
     b.classList.add("pulse");
   });
   $("#homeBtn").addEventListener("click", renderHome);
+  $("#voiceWarningClose").addEventListener("click", () => { voiceWarningClosed = true; $("#voiceWarning").hidden = true; });
   $("#soundBtn").addEventListener("click", () => setSound(!state.sound));
 
   setSound(state.sound);
