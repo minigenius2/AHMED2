@@ -12,6 +12,7 @@ export const PLAYER_PHRASES = {
   confirmPrompt: "كمّل الجملة: اختار الكلمة الناقصة.",
   confirmRight: "برافو!",
   confirmWrong: "مش دي. فكّر تاني.",
+  sortWrong: "مش المجموعة دي. فكّر تاني.",
   activityDone: "برافو! رتّبتهم كلهم صح.",
   huntSearch: "يلا نشوف! دوس على الأماكن ودوّر.",
   guessRight: "تخمينك كان صح!",
@@ -22,10 +23,7 @@ export const PLAYER_PHRASES = {
   buildWrong: "مش دي. فكّر في الكلمة اللي بعدها.",
   buildDone: "برافو! بنيت الجملة كلها بنفسك.",
   sequenceWrong: "لأ، فكّر إيه اللي بييجي بعد كده.",
-  revisitAllRight: "تخمينك كان صح كله! برافو عليك.",
-  revisitDone: "عاش! صلّحت تخمينك بنفسك.",
   examSentence: "ودي جملة الامتحان. اسمعها كويس:",
-  predictSaved: "تمام! يلا نختبر تخمينك.",
   badgeEarned: "كسبت وسام جديد!",
   remediationIntro: "تعالى نراجع سوا الحتت اللي كانت صعبة شوية، بس المرة دي هشرحهالك بطريقة تانية خالص 💪",
   remediationSummary: "دي أهم حاجات لازم تفتكرها. يلا نجرب الواجب تاني 🚀",
@@ -105,7 +103,6 @@ const STEP_NAMES: Record<ScriptStep["kind"], string> = {
   explain: "شرح",
   check: "سؤال فهم",
   activity: "لعبة ترتيب",
-  revisit: "صلّح تخمينك",
   probe: "تجربة",
   match: "وصّل",
   build: "ابني الجملة",
@@ -129,7 +126,6 @@ function collectStep(c: LineCollector, step: ScriptStep, place: string): void {
       break;
     case "hook":
     case "recall":
-    case "revisit":
     case "exit":
       c.add(step.say, where());
       break;
@@ -154,7 +150,7 @@ function collectStep(c: LineCollector, step: ScriptStep, place: string): void {
       c.add(step.say, where());
       for (const item of step.items) {
         c.add(item.en, where("اسم كارت"));
-        c.add(item.why, where(`ليه «${item.en}» هنا`));
+        c.add(item.why, where(`لو حط «${item.en}» في المجموعة الغلط`));
       }
       c.add(step.tryAtHome, where("جرّبها في البيت"));
       break;

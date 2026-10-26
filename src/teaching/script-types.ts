@@ -1,6 +1,6 @@
 // شكل "الحصة التفاعلية": سيناريو مكتوب مرة واحدة لكل درس، والتطبيق بيعرضه شاشات الطفل بيعمل في كل واحدة حاجة بإيده.
-// القواعد (docs/07-learning-design.md): خمّن ← جرّب ← فسّر، والإنجليزي هو البطل والعربي ترجمة تحته،
-// وكلام المعلم المكتوب سطر أو اتنين بس (الباقي بيتسمع)، ومفيش شاشة "اقرا ودوس التالي".
+// القواعد (docs/07-learning-design.md): نشرح الأول وبعدين الطفل يطبّق بإيده، والإنجليزي هو البطل والعربي ترجمة تحته
+// (المصطلح زي ما مكتوب في الكتاب بالظبط)، وكلام المعلم المكتوب سطر أو اتنين بس، ومفيش شاشة "اقرا ودوس التالي".
 import type { ExamStyle } from "../questions/types";
 
 /** صورة حقيقية من مصدر برخصة مفتوحة، ومعاها بيانات صاحبها ورخصتها عشان صفحة حقوق الصور */
@@ -19,7 +19,10 @@ export interface MediaItem {
 /** مكتبة صور المادة: اسم الصورة ← بياناتها */
 export type MediaLibrary = Record<string, MediaItem>;
 
-/** مصطلح أو حاجة بتظهر للطفل: الإنجليزي كبير، والعربي ترجمة صغيرة تحته، وصورة (أو إيموجي لو مفيش صورة) */
+/**
+ * مصطلح أو حاجة بتظهر للطفل: الإنجليزي كبير، والعربي ترجمة صغيرة تحته، وصورة (أو إيموجي لو مفيش صورة).
+ * لو المصطلح في قاموس الدرس (Lesson.vocabulary)، بيتكتب زي الكتاب بالظبط وبنفس ترجمته.
+ */
 export interface Term {
   en: string;
   ar: string;
@@ -68,7 +71,7 @@ export interface HookStep {
   illustration: Illustration;
 }
 
-/** سؤالين سريعين من الدرس اللي فات — المحرك بيختارهم من بنك الأسئلة وقت الحصة */
+/** سؤالين سريعين من الدرس اللي فات — المحرك بيختارهم من بنك الأسئلة وقت الحصة. بييجوا بعد شرح الحصة، مش في أولها */
 export interface RecallStep {
   kind: "recall";
   say: string;
@@ -76,8 +79,8 @@ export interface RecallStep {
 }
 
 /**
- * المصطلحات قبل الشرح (Pre-training): كروت يدوس عليها ويسمع كل كلمة،
- * ولو match = true بعدها لعبة توصيل سريعة (كلمة ← صورة).
+ * كروت المصطلحات: يدوس على كل كارت ويسمع الكلمة ومعناها،
+ * ولو match = true بعدها لعبة توصيل سريعة (كلمة ← صورة) على الكلمات اللي لسه سامعها.
  */
 export interface TermsStep {
   kind: "terms";
@@ -136,16 +139,13 @@ export interface CheckStep {
   illustration?: Illustration;
 }
 
-/** حاجة في لعبة الترتيب. why: ليه مكانها هنا — بيظهر لما الطفل يصلّح تخمينه */
+/** حاجة في لعبة الترتيب. why: ليه مكانها هنا — بيظهر لو الطفل حطها في المجموعة الغلط */
 export interface SortItem extends Term {
   group: string;
   why?: string;
 }
 
-/**
- * لعبة ترتيب: يسحب كل حاجة لمجموعتها. لو فيها predictId، دي "خمّن": مفيش صح ولا غلط دلوقتي،
- * وتخمينه بيتحفظ، وبعد الشرح خطوة revisit بترجّعه يصلّحه بنفسه.
- */
+/** لعبة ترتيب بعد الشرح: يسحب كل حاجة لمجموعتها، ولو غلط بيشوف السبب ويجرّب تاني */
 export interface SortActivityStep extends Rewarding {
   kind: "activity";
   objectiveId: string;
@@ -154,17 +154,8 @@ export interface SortActivityStep extends Rewarding {
   /** معنى أسماء المجموعات بالعربي، بنفس الترتيب */
   groupsAr?: string[];
   items: SortItem[];
-  predictId?: string;
   /** تجربة آمنة يعملها في البيت مع حد كبير */
   tryAtHome?: string;
-}
-
-/** "صلّح تخمينك": بيوريه ترتيبه في خطوة الـ predict، واللي غلط فيه يرجّعه لمكانه الصح ومعاه السبب */
-export interface RevisitStep {
-  kind: "revisit";
-  objectiveId: string;
-  predictId: string;
-  say: string;
 }
 
 /** رد فعل الحاجة في التجربة — كل نوع ليه حركة جاهزة في الواجهة */
@@ -183,7 +174,7 @@ export type ProbeReaction =
   | "zoom"; // بيبان أكبر (العدسة المكبرة)
 
 /**
- * تجربة يكتشف فيها الطفل الفكرة بنفسه: يسحب أداة (أكل، مية، كشاف نور…) على كل حاجة ويشوف رد فعلها،
+ * تجربة بعد الشرح يشوف فيها الطفل الكلام بعينه: يسحب أداة (أكل، مية، كشاف نور…) على كل حاجة ويشوف رد فعلها،
  * وبعدين المعلم يقول الاستنتاج.
  */
 export interface ProbeStep extends Rewarding {
@@ -290,7 +281,6 @@ export type ScriptStep =
   | ExplainStep
   | CheckStep
   | SortActivityStep
-  | RevisitStep
   | ProbeStep
   | MatchStep
   | BuildStep
