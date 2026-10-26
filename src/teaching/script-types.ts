@@ -49,6 +49,17 @@ export interface RecallStep {
   count: number;
 }
 
+/**
+ * "كمّل الجملة" في آخر كل شرح: كلمة بتستخبى من الجملة الإنجليزي والطفل يختارها،
+ * والخطوة مابتخلصش غير لما يختار صح — عشان مايعديش الشرح من غير ما يفهمه.
+ */
+export interface ConfirmBlank {
+  /** كلمة (أو كلمتين) موجودة في الجملة الإنجليزي بالظبط */
+  answer: string;
+  /** اختيارين غلط أو أكتر: غلط بوضوح بس قريبين في المعنى (dry قصاد damp، hot قصاد cool) */
+  distractors: string[];
+}
+
 export interface ExplainStep {
   kind: "explain";
   objectiveId: string;
@@ -56,7 +67,8 @@ export interface ExplainStep {
   /** كلام المعلم بالعامية */
   say: string;
   /** الجملة الإنجليزي اللي لازم يعرفها (تعريف، قاعدة، مثال) */
-  english?: EnglishLine;
+  english: EnglishLine;
+  confirm: ConfirmBlank;
   illustration: Illustration;
 }
 

@@ -30,6 +30,7 @@ export const ch1l1Script: LessonScript = {
           title: "حي ولا مش حي؟",
           say: "كل حاجة حوالينا يا إما كائن حي، يا إما شيء غير حي. الإنسان والحيوان والنبات دول كائنات حية، وبالإنجليزي اسمهم living organisms. أما الهوا والمية والصخور فدي أشياء غير حية، اسمها non-living things.",
           english: { text: "Humans, animals and plants are living organisms. Air, water and rocks are non-living things.", keywords: ["living organisms", "non-living things"] },
+          confirm: { answer: "living organisms", distractors: ["non-living things", "habitats"] },
           illustration: { emoji: "🧒🐸🌻 | 💨💧🪨", prompt: "Two groups: a child, a frog and a sunflower on one side; wind, water and rocks on the other" },
         },
         {
@@ -38,6 +39,7 @@ export const ch1l1Script: LessonScript = {
           title: "إزاي أعرف إن الحاجة حية؟",
           say: "الكائن الحي بيعمل تلات حاجات: بياكل، وبيكبر، وبيتنفس. إنت بتفطر الصبح، وطولك بيزيد كل سنة، وبتتنفس دلوقتي وإنت بتسمعني. يبقى إنت كائن حي! الحجر بقى لا بياكل ولا بيكبر ولا بيتنفس.",
           english: { text: "Living organisms feed, grow and breathe.", keywords: ["feed", "grow", "breathe"] },
+          confirm: { answer: "breathe", distractors: ["fly", "swim"] },
           illustration: { emoji: "🥕🌱😮‍💨", prompt: "Three icons: a rabbit eating a carrot (feeding), a seedling growing (growth), a boy breathing (breathing)" },
         },
         {
@@ -57,6 +59,7 @@ export const ch1l1Script: LessonScript = {
           title: "التعريف اللي هيجيلك في الامتحان",
           say: "خلي بالك من الجملة دي، لأنها بتيجي في الامتحان كتير. قولها معايا بالإنجليزي:",
           english: { text: "Living organisms: everything that can feed, grow and breathe, such as humans, animals and plants.", keywords: ["feed", "grow", "breathe"] },
+          confirm: { answer: "plants", distractors: ["rocks", "water"] },
           illustration: { emoji: "📝", prompt: "A notebook page with a highlighted definition" },
         },
         {
@@ -81,6 +84,7 @@ export const ch1l1Script: LessonScript = {
           title: "كل كائن حي ليه بيت",
           say: "الكائنات الحية مش عايشة كلها في نفس المكان. كل كائن بيدور على مكان فيه اللي هو محتاجه. المكان اللي الكائن الحي بيعيش فيه اسمه habitat، يعني الموطن.",
           english: { text: "Habitat: the place where the living organism lives.", keywords: ["Habitat"] },
+          confirm: { answer: "Habitat", distractors: ["Food", "Air"] },
           illustration: { emoji: "🐜🪨", prompt: "Ants walking into the cool shade under a big stone" },
         },
         {
@@ -103,6 +107,7 @@ export const ch1l1Script: LessonScript = {
             text: "The kinds of living organisms differ from one habitat to another because they live in habitats that meet their needs, such as water, food and shelter.",
             keywords: ["water", "food", "shelter"],
           },
+          confirm: { answer: "needs", distractors: ["colours", "names"] },
           illustration: { emoji: "🐟💧 | 🏜️", prompt: "A fish happy in water next to an empty dry desert" },
         },
         {
@@ -179,6 +184,7 @@ export const ch1l1Script: LessonScript = {
           title: "جنب الحشائش والشجر",
           say: "في كائنات بتحب تعيش جنب الحشائش والشجر، زي العصافير والجراد. ليه؟ عشان هناك الأكل موجود، وكمان سهل يستخبوا في الحشيش وبين الورق.",
           english: { text: "Near grass or trees: places with food and places easy to hide in, such as sparrows and grasshoppers.", keywords: ["food", "hide"] },
+          confirm: { answer: "food", distractors: ["snow", "sand"] },
           illustration: { emoji: "🌳🐦🦗", prompt: "A sparrow on a tree branch and a grasshopper hiding in green grass" },
         },
         {
@@ -199,6 +205,7 @@ export const ch1l1Script: LessonScript = {
           title: "تحت الحجارة وفي ظل الصخور",
           say: "وفي كائنات تانية زي النمل بتحب تعيش تحت الحجارة، أو في ظل الصخور، أو تحت الأرض. ليه؟ عشان الأماكن دي رطبة وفيها مية، وكمان باردة وبعيدة عن الشمس.",
           english: { text: "Under stones, in the shade of rocks or under the ground: damp places with water and cool places away from the sun, such as ants.", keywords: ["damp", "cool"] },
+          confirm: { answer: "cool", distractors: ["hot", "dry"] },
           illustration: { emoji: "🪨🐜💧", prompt: "Cross-section of the ground under a big stone with ants in damp cool soil" },
         },
         {
@@ -219,6 +226,7 @@ export const ch1l1Script: LessonScript = {
           title: "وفي الصحرا؟",
           say: "في الصحرا الشمس جامدة جدًا في النهار. عشان كده كائنات زي السحلية بتعيش في ظل الصخور أو تحت الأرض، عشان تبعد عن حرارة الشمس الشديدة.",
           english: { text: "Some living organisms live in the shade of rocks or under the ground to avoid the intense heat of the Sun in the desert during the day.", keywords: ["avoid", "intense heat"] },
+          confirm: { answer: "heat", distractors: ["rain", "snow"] },
           illustration: { emoji: "🏜️🦎🪨", prompt: "A lizard resting in the shade of a rock in a hot desert" },
         },
         {
@@ -227,6 +235,7 @@ export const ch1l1Script: LessonScript = {
           title: "إزاي تستكشف زي العلماء",
           say: "عشان تعرف الكائنات الحية بتعيش فين، امشي على تلات خطوات: أولًا خمّن الأماكن (Guess)، ثانيًا دوّر فيها بهدوء (Search)، ثالثًا سجّل اسم الكائن ونوع المكان اللي لقيته فيه (Record). وأهم حاجة: ماتلمسش أي كائن غير ومعاك المدرس أو حد كبير.",
           english: { text: "Steps for exploring habitats: 1) Guess 2) Search 3) Record.", keywords: ["Guess", "Search", "Record"] },
+          confirm: { answer: "Search", distractors: ["Touch", "Sleep"] },
           illustration: { emoji: "🤔➡️🔍➡️📝", prompt: "Three steps: a child thinking, a child searching with a magnifying glass, a child writing on a clipboard" },
         },
         {
@@ -305,6 +314,7 @@ export const ch1l1Script: LessonScript = {
         title: "تجربة البذرة والحصوة",
         say: "تعالى نعمل تجربة في خيالنا: معانا بذرة فول، ومعانا حصوة صغيرة شبهها. حطينا الاتنين في طين وسقيناهم كام يوم. البذرة طلّعت نبتة خضرا وكبرت، والحصوة فضلت زي ما هي. البذرة حية لأنها بتكبر وبتتغذى وبتتنفس، والحصوة مش حية.",
         english: { text: "Living organisms feed, grow and breathe.", keywords: ["feed", "grow", "breathe"] },
+        confirm: { answer: "grow", distractors: ["fly", "swim"] },
         illustration: { emoji: "🌱 | 🪨", prompt: "A bean seed sprouting in soil next to a pebble that stays the same" },
       },
       {
@@ -326,6 +336,7 @@ export const ch1l1Script: LessonScript = {
         title: "زي بيتك بالظبط",
         say: "إنت ليك بيت: فيه أكل في التلاجة، ومية في الحنفية، وسرير تنام عليه ويحميك. الكائنات الحية كمان ليها \"بيت\" فيه الأكل والمية والمأوى. البيت ده اسمه habitat. وعشان كل كائن محتاج حاجات مختلفة، كل بيت فيه كائنات مختلفة.",
         english: { text: "Habitat: the place where the living organism lives.", keywords: ["Habitat"] },
+        confirm: { answer: "place", distractors: ["food", "colour"] },
         illustration: { emoji: "🏠 = 🐜🪨", prompt: "A child's house compared to an ant's home under a stone" },
       },
       {
@@ -348,6 +359,7 @@ export const ch1l1Script: LessonScript = {
         title: "يوم صيف حر",
         say: "في يوم صيف حر جدًا، لما الشمس تبقى نار، إنت بتقف فين؟ في الضل طبعًا! النمل والسحالي نفس الكلام: بيحبوا تحت الحجارة وفي ظل الصخور عشان المكان بارد ورطب. أما العصافير والجراد فبيحبوا الحشائش والشجر عشان الأكل والاستخباء.",
         english: { text: "Under stones and in the shade of rocks: damp and cool places. Near grass or trees: food and places to hide.", keywords: ["damp", "cool", "food", "hide"] },
+        confirm: { answer: "damp", distractors: ["dry", "hot"] },
         illustration: { emoji: "🌞➡️🌳😎", prompt: "A child escaping the summer sun into the shade of a tree, next to a lizard in the shade of a rock" },
       },
       {
@@ -369,6 +381,7 @@ export const ch1l1Script: LessonScript = {
         title: "زي المحقق",
         say: "المحقق لما يدور على حاجة ضايعة بيعمل إيه؟ الأول بيفكر ممكن تكون فين (Guess). بعدين بيروح يدور في الأماكن دي بهدوء (Search). ولما يلاقيها بيكتب هو لقاها فين (Record). وإحنا كمان كده مع الكائنات الحية، ومن غير ما نلمسها.",
         english: { text: "Steps for exploring habitats: 1) Guess 2) Search 3) Record.", keywords: ["Guess", "Search", "Record"] },
+        confirm: { answer: "Record", distractors: ["Touch", "Run"] },
         illustration: { emoji: "🕵️🔍📝", prompt: "A child detective thinking, searching and writing notes" },
       },
       {

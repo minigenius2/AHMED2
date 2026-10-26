@@ -93,7 +93,7 @@ function pick(pool: readonly Question[], lessonId: string, count: number, seed: 
 
 function remediationSummary(allSteps: ScriptStep[], weak: string[]): SummaryStep {
   const points = allSteps
-    .filter((s): s is ExplainStep => s.kind === "explain" && weak.includes(s.objectiveId) && s.english !== undefined)
-    .map((s) => s.english!.text);
+    .filter((s): s is ExplainStep => s.kind === "explain" && weak.includes(s.objectiveId))
+    .map((s) => s.english.text);
   return { kind: "summary", say: "دي أهم حاجات لازم تفتكرها. يلا نجرب الواجب تاني 🚀", points };
 }

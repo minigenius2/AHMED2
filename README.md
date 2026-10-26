@@ -35,7 +35,7 @@
 
 ```bash
 npm install
-npm test                                  # 53 اختبار آلي
+npm test                                  # 54 اختبار آلي
 npm run preview:lesson -- ch1-l1          # نسخة تجريبية للحصة تتفتح على الموبايل (preview/ch1-l1.html)
 npm run simulate                          # محاكاة ترم كامل لطالب افتراضي
 npm run simulate -- --ability=950         # طالب ضعيف: هتشوف المراجعة العلاجية وتنبيهات ولي الأمر

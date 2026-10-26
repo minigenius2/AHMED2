@@ -37,6 +37,17 @@ describe("lesson scripts", () => {
     }
   });
 
+  it("rejects an explanation whose fill-the-gap check does not fit its sentence", () => {
+    const broken = structuredClone(script);
+    const explains = broken.sessions[0]!.steps.filter((s) => s.kind === "explain");
+    explains[0]!.confirm.answer = "photosynthesis";
+    explains[1]!.confirm.distractors = ["Breathe", "fly"];
+    const problems = validateScript(broken, findLesson(scienceG4Term1, "ch1-l1"));
+    expect(problems).toHaveLength(2);
+    expect(problems[0]).toMatch(/"photosynthesis" is not in/);
+    expect(problems[1]).toMatch(/2\+ distractors that differ/);
+  });
+
   it("serves the lesson session by session, with recall questions from the earlier session", () => {
     const j = start();
     const first = buildLearningSession(j, script, scienceG4Term1Bank);

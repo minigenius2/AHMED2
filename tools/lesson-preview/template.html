@@ -128,6 +128,15 @@
   @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
   .home-task { background: var(--sky-soft); border-radius: var(--radius); padding: 10px 16px 12px; margin-top: 12px; }
 
+  /* كمّل الجملة */
+  .en-box.confirm { border-color: var(--sky); }
+  .en-box.confirm .en-label { color: var(--sky); }
+  .blank { display: inline-block; min-width: 4.5em; height: 1.1em; vertical-align: -0.15em; border-bottom: 3px solid var(--sky); margin: 0 3px; }
+  .word-bank { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 6px; }
+  .token.right { border-color: var(--leaf); background: var(--leaf-soft); }
+  .token.wrong { border-color: var(--coral); background: var(--coral-soft); opacity: .7; text-decoration: line-through; text-decoration-color: var(--coral); }
+  .peek { margin: 8px 0 0; font-weight: 600; text-align: left; }
+
   /* سؤال الامتحان */
   .exam-card { background: var(--surface); border: 1px solid var(--line); border-top: 6px solid var(--sky); border-radius: var(--radius); padding: 10px 16px 12px; margin: 12px 0; box-shadow: var(--shadow); }
   .exam-badge { font-size: 14px; font-weight: 800; color: var(--sky); }
@@ -433,10 +442,11 @@
   const englishBox = (line, label = "بالإنجليزي، زي ما هتكتبها في الامتحان") =>
     `<div class="en-box"><div class="en-label">${label}</div><p dir="ltr" lang="en">${highlight(line.text, line.keywords)}</p><button class="chip-btn" data-say-en="${esc(line.text)}">🔊 اسمعها بالإنجليزي</button></div>`;
 
+  const nextLabel = () => run.nextLabel || (run.i === run.steps.length - 1 ? "خلّصت ✅" : "التالي ←");
   function setReady(ready = true) {
     run.ready = ready;
     const b = $("#nextBtn");
-    if (b) b.disabled = !ready;
+    if (b) { b.disabled = !ready; b.textContent = nextLabel(); }
   }
   function firstAttempt() {
     if (run.attempted.has(run.i)) return false;
@@ -446,13 +456,67 @@
   }
   const nearest = (el) => el.scrollIntoView({ block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
 
+  /** "كمّل الجملة" بعد الشرح: الجملة الإنجليزي من غير الكلمة المهمة، والطفل يختارها. مايعديش غير لما يختار صح. */
+  function startConfirm(root, st) {
+    const { answer, distractors } = st.confirm;
+    const text = st.english.text;
+    const m = new RegExp(`\\b${answer.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").exec(text);
+    const word = m[0], before = text.slice(0, m.index), after = text.slice(m.index + word.length);
+    const zone = $(".en-zone", root);
+    zone.innerHTML = `<div class="en-box confirm"><div class="en-label">✍️ كمّل الجملة: اختار الكلمة الناقصة</div>`
+      + `<p dir="ltr" lang="en">${esc(before)}<span class="blank"></span>${esc(after)}</p>`
+      + `<div class="word-bank" dir="ltr">${shuffle([answer, ...distractors]).map((o) => `<button class="token" data-w="${esc(o)}" lang="en">${esc(o)}</button>`).join("")}</div>`
+      + `<div class="feedback"></div></div>`;
+    run.intercept = null;
+    run.nextLabel = null;
+    setReady(false);
+    stopSpeech();
+    speak("كمّل الجملة: اختار الكلمة الناقصة.");
+    nearest(zone);
+    const fb = $(".feedback", zone);
+    let tries = 0, fresh = false;
+    $$(".token", zone).forEach((btn) => btn.addEventListener("click", () => {
+      if (tries === 0) fresh = firstAttempt();
+      tries++;
+      stopSpeech();
+      if (btn.dataset.w === answer) {
+        if (tries === 1 && fresh) run.checks.first++;
+        $(".blank", zone).outerHTML = `<mark>${esc(word)}</mark>`;
+        btn.classList.add("right");
+        $$(".token", zone).forEach((b) => (b.disabled = true));
+        fb.innerHTML = `<div class="fb good">برافو! 👏 فهمتها.</div>`;
+        award(`f${run.i}`, tries === 1 ? 5 : 2);
+        tone("good");
+        speak("برافو!");
+        speak(text, { lang: "en" });
+        setReady(true);
+      } else {
+        btn.classList.add("wrong", "shake");
+        btn.disabled = true;
+        tone("bad");
+        fb.innerHTML = `<div class="fb bad">مش دي 🤔 اقرا شرح المعلم تاني وجرّب.</div><button class="chip-btn" type="button" data-peek>👀 وريني الجملة تاني</button>`;
+        $("[data-peek]", fb).addEventListener("click", (e) => {
+          e.currentTarget.outerHTML = `<p class="peek" dir="ltr" lang="en">${esc(text)}</p>`;
+          speak(text, { lang: "en" });
+        });
+        speak("مش دي. فكّر تاني.");
+      }
+      nearest(fb);
+    }));
+  }
+
   const VIEWS = {
     hook: (st) => ({ html: illus(st.illustration) + teacher(st.say), ready: true, narrate: () => speak(st.say) }),
 
     explain: (st) => ({
-      html: `<span class="step-tag">${esc(st.title)}</span>` + illus(st.illustration) + teacher(st.say) + (st.english ? englishBox(st.english) : ""),
+      html: `<span class="step-tag">${esc(st.title)}</span>` + illus(st.illustration) + teacher(st.say) + `<div class="en-zone">${englishBox(st.english)}</div>`,
       ready: true,
-      narrate: () => { speak(st.say); if (st.english) speak(st.english.text, { lang: "en" }); },
+      narrate: () => { speak(st.say); speak(st.english.text, { lang: "en" }); },
+      mount(root) {
+        // الزرار بيبقى "فهمت" وبيفتح "كمّل الجملة" بدل ما يعدّي على طول
+        run.nextLabel = "فهمت ✓ يلا نتأكد";
+        run.intercept = () => startConfirm(root, st);
+      },
     }),
 
     check: (st) => ({
@@ -690,7 +754,7 @@
     run = {
       mode, n, steps, i: 0, ready: false, xp: 0, narrate: null,
       title: mode === "lesson" ? S.sessions[n - 1].title : "مراجعة بطريقة تانية",
-      checks: { total: 0, first: 0 }, awarded: new Set(), attempted: new Set(),
+      checks: { total: 0, first: 0 }, awarded: new Set(), attempted: new Set(), intercept: null, nextLabel: null,
     };
     showStep();
   }
@@ -703,6 +767,8 @@
     window.scrollTo({ top: 0 });
     run.ready = !!view.ready;
     run.narrate = view.narrate;
+    run.intercept = null;
+    run.nextLabel = null;
     view.mount?.(screen.firstElementChild);
     renderStepActions();
     setHeader(run.title, `${run.mode === "lesson" ? `الحصة ${run.n} من ${S.sessions.length} · ` : ""}خطوة ${run.i + 1}/${run.steps.length}`);
@@ -711,16 +777,16 @@
   }
 
   function renderStepActions() {
-    const last = run.i === run.steps.length - 1;
     actions.innerHTML = `
       <button class="icon-btn" id="backBtn" aria-label="الخطوة اللي فاتت" ${run.i === 0 ? "disabled" : ""}>→</button>
       <button class="btn btn-ghost" id="replayBtn" aria-label="اسمع تاني">🔁 اسمع</button>
-      <button class="btn btn-primary" id="nextBtn" ${run.ready ? "" : "disabled"}>${last ? "خلّصت ✅" : "التالي ←"}</button>`;
+      <button class="btn btn-primary" id="nextBtn" ${run.ready ? "" : "disabled"}>${nextLabel()}</button>`;
     $("#backBtn").addEventListener("click", () => { if (run.i > 0) { run.i--; showStep(); } });
     $("#replayBtn").addEventListener("click", () => { if (!state.sound) setSound(true); stopSpeech(); run.narrate?.(); });
     $("#nextBtn").addEventListener("click", () => {
       if (!run.ready) return;
-      if (last) finishRun();
+      if (run.intercept) run.intercept();
+      else if (run.i === run.steps.length - 1) finishRun();
       else { run.i++; showStep(); }
     });
   }

@@ -22,6 +22,14 @@ export function validateScript(script: LessonScript, lesson: LessonRef): string[
         if (correct !== 1) problems.push(`${tag}: check "${step.ask}" must have exactly one correct choice (has ${correct})`);
         if (step.choices.length < 2) problems.push(`${tag}: check "${step.ask}" needs at least 2 choices`);
       }
+      if (step.kind === "explain") {
+        const { answer, distractors } = step.confirm;
+        if (!containsWord(step.english.text, answer)) problems.push(`${tag}: confirm answer "${answer}" is not in "${step.english.text}"`);
+        const options = [answer, ...distractors].map((o) => o.toLowerCase());
+        if (distractors.length < 2 || new Set(options).size !== options.length) {
+          problems.push(`${tag}: confirm for "${step.title}" needs 2+ distractors that differ from the answer and each other`);
+        }
+      }
       if (step.kind === "activity" && step.items.some((i) => !step.groups.includes(i.group))) {
         problems.push(`${tag}: activity item assigned to an unknown group`);
       }
@@ -50,4 +58,9 @@ export function validateScript(script: LessonScript, lesson: LessonRef): string[
     if (session.steps[session.steps.length - 1]?.kind !== "summary") problems.push(`${tag}: session ${i + 1} should end with a summary`);
   }
   return problems;
+}
+
+/** الكلمة موجودة ككلمة كاملة (مش جزء من كلمة أطول) — نفس اللي الواجهة بتعمله لما تخبي الكلمة */
+export function containsWord(text: string, word: string): boolean {
+  return new RegExp(`\\b${word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(text);
 }
