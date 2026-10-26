@@ -71,33 +71,52 @@ describe("lesson scripts", () => {
     const [first, second] = explains;
     if (first?.kind !== "explain" || second?.kind !== "explain") throw new Error("ch1-l1 should have two explanations");
     first.confirm = { answer: "photosynthesis", distractors: ["eat", "sleep"] };
-    second.confirm = { answer: "habitat", distractors: ["Habitat", "home"] };
+    second.confirm = { answer: "feed", distractors: ["Feed", "eat"] };
     const problems = validateScript(broken, findLesson(scienceG4Term1, "ch1-l1"));
     expect(problems).toHaveLength(2);
     expect(problems[0]).toMatch(/"photosynthesis" is not in/);
     expect(problems[1]).toMatch(/2\+ distractors that differ/);
   });
 
-  it("checks the games: sentence tiles, guess-then-revisit order, badges and Arabic translations", () => {
-    const lesson = findLesson(scienceG4Term1, "ch1-l1");
+  it("checks the games: sentence tiles, badges and Arabic translations", () => {
     const broken = structuredClone(script);
     const steps = broken.sessions[0]!.steps;
+    const sort = steps.find((s) => s.kind === "activity");
+    if (sort?.kind === "activity") sort.items[0]!.ar = "";
     const build = steps.find((s) => s.kind === "build");
     if (build?.kind === "build") build.tiles = build.tiles.slice(1);
-    const revisitAt = steps.findIndex((s) => s.kind === "revisit");
-    const predictAt = steps.findIndex((s) => s.kind === "activity" && !!s.predictId);
-    const [revisit] = steps.splice(revisitAt, 1);
-    steps.splice(predictAt, 0, revisit!);
     const exit = steps.find((s) => s.kind === "exit");
     if (exit?.kind === "exit") exit.badge = 7;
-    const terms = steps.find((s) => s.kind === "terms");
-    if (terms?.kind === "terms") terms.terms[0]!.ar = "";
-    const problems = validateScript(broken, lesson);
-    expect(problems).toEqual([
-      expect.stringMatching(/needs an Arabic translation/),
-      expect.stringMatching(/revisit "alive" must come after a predict/),
+    expect(validateScript(broken, findLesson(scienceG4Term1, "ch1-l1"))).toEqual([
+      expect.stringMatching(/sort item "Frog" needs an Arabic translation/),
       expect.stringMatching(/build tiles must join into/),
       expect.stringMatching(/gives badge 7 but the session mission has 3 badges/),
+    ]);
+  });
+
+  it("teaches first: no game, question or recall before the idea is explained", () => {
+    const broken = structuredClone(script);
+    const steps = broken.sessions[0]!.steps;
+    const sortAt = steps.findIndex((s) => s.kind === "activity");
+    const [sort] = steps.splice(sortAt, 1);
+    const recallAt = steps.findIndex((s) => s.kind === "recall");
+    const [recall] = steps.splice(recallAt, 1);
+    steps.splice(1, 0, recall!, sort!);
+    expect(validateScript(broken, findLesson(scienceG4Term1, "ch1-l1"))).toEqual([
+      "Script ch1-l1: session 1 asks recall questions before explaining anything",
+      'Script ch1-l1: step "activity" practices ch1-l1-o1 before it is explained',
+    ]);
+  });
+
+  it("writes the lesson's terms exactly like the book's glossary", () => {
+    const broken = structuredClone(script);
+    const explain = broken.sessions[0]!.steps.find((s) => s.kind === "explain");
+    if (explain?.kind !== "explain") throw new Error("session 1 should explain something");
+    explain.points[0]!.ar = "كائنات حية";
+    explain.points[1]!.en = "Non-living thing";
+    expect(validateScript(broken, findLesson(scienceG4Term1, "ch1-l1"))).toEqual([
+      'Script ch1-l1: card "Living organisms" should be translated "الكائنات الحية" like the book',
+      'Script ch1-l1: card "Non-living thing" should be written "non-living things" like the book',
     ]);
   });
 
@@ -246,7 +265,7 @@ describe("narration for human recording", () => {
     const byText = new Map(lines.map((l) => [l.text, l.lang]));
     expect(byText.get("Living organisms feed, grow and breathe.")).toBe("en");
     expect(byText.get("Life Detective")).toBe("en");
-    expect(byText.get("سؤالين سريعين من اللي فات:")).toBe("ar");
+    expect(byText.get("قبل ما نتدرب على الامتحان، سؤالين من اللي فات:")).toBe("ar");
     expect(lines.find((l) => l.text.includes("اسمه habitat"))?.lang).toBe("mixed");
   });
 

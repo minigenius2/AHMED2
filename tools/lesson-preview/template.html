@@ -175,6 +175,8 @@
   .finish .gain { display: inline-block; margin-top: 10px; background: var(--sun-soft); border-radius: 999px; padding: 4px 16px; font-weight: 800; }
 
   /* الأزرار تحت */
+  /* شريط الزراير ثابت تحت: أي حاجة بتنزل لها الصفحة (سبب الغلط، جملة الامتحان) لازم تبان فوقه */
+  html { scroll-padding-bottom: 130px; }
   .actions { position: sticky; bottom: 0; z-index: 10; display: flex; gap: 8px; align-items: center; background: linear-gradient(to top, var(--bg) 75%, transparent); padding: 14px 0 max(12px, env(safe-area-inset-bottom)); }
   .btn { border: none; border-radius: 18px; min-height: 56px; padding: 0 16px; font-weight: 800; font-size: 18px; cursor: pointer; white-space: nowrap; }
   .btn-primary { flex: 1; background: var(--leaf); color: var(--leaf-ink); box-shadow: 0 4px 0 rgba(0, 0, 0, .18); }
@@ -315,6 +317,12 @@
   .reveal-card .back .photo, .reveal-card .back .emoji-visual { width: 82%; max-width: 104px; }
   .reveal-card.open .front { transform: rotateY(180deg); }
   .reveal-card.open .back { transform: rotateY(0deg); }
+  /* كروت فيها جملة طويلة (Damp places that contain water): كارت بعرض الشاشة، الصورة جنب الكلام */
+  .reveal-grid.wide { grid-template-columns: 1fr; }
+  .reveal-grid.wide .reveal-card { min-height: 116px; }
+  .reveal-grid.wide .back { flex-direction: row; justify-content: flex-start; gap: 14px; padding: 10px 16px; }
+  .reveal-grid.wide .back .photo, .reveal-grid.wide .back .emoji-visual { width: 92px; flex: none; }
+  .reveal-grid.wide .back .term { align-items: flex-start; text-align: start; }
 
   /* التوصيل */
   .match-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 8px; }
@@ -356,10 +364,6 @@
   .token .term .en { font-size: 17px; }
   .thumb-sm { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; vertical-align: middle; }
   .placed { display: inline-flex; align-items: center; gap: 4px; }
-  .fixable { border: 2px solid transparent; cursor: pointer; font: inherit; color: inherit; }
-  .fixable.wrong { background: var(--coral-soft); border-color: var(--coral); animation: pulse 1.2s ease 2; }
-  .fixable.right { background: var(--leaf-soft); border-color: var(--leaf); }
-  .fixable.moved { animation: pop .5s ease; }
 
   /* ردود فعل التجربة */
   .probe-item { overflow: hidden; }
@@ -971,7 +975,7 @@
 
     explain: (st) => ({
       html: stepHead(st.titleEn, st.title, "💡") + illus(st.illustration) + teacher(st.say)
-        + `<div class="reveal-grid">${st.points.map((p, i) => `<button class="reveal-card" type="button" data-i="${i}" aria-label="اكشف الكارت ${i + 1}"><span class="front"><span class="q" aria-hidden="true">?</span><span class="hint">دوس واكشف</span></span><span class="back">${visual(p)}${heroTerm(p)}</span></button>`).join("")}</div>`
+        + `<div class="reveal-grid${st.points.some((p) => p.en.length > 16) ? " wide" : ""}">${st.points.map((p, i) => `<button class="reveal-card" type="button" data-i="${i}" aria-label="اكشف الكارت ${i + 1}"><span class="front"><span class="q" aria-hidden="true">?</span><span class="hint">دوس واكشف</span></span><span class="back">${visual(p)}${heroTerm(p)}</span></button>`).join("")}</div>`
         + `<div class="reveal-caption" aria-live="polite"></div><div class="progress-line"></div>`
         + `<div class="en-zone" hidden>${englishBox(st.english)}</div>`,
       ready: false,
@@ -1076,128 +1080,69 @@
       };
     },
 
-    activity: (st) => {
-      const predict = !!st.predictId;
-      return {
-        html: (predict ? stepHead("Guess first!", "خمّن الأول", "🤔") : stepHead("Sort it!", "رتّب", "🎯")) + teacher(st.say)
-          + `<div class="hint">اسحب كل كارت لمجموعته، أو دوس عليه وبعدين على المجموعة</div>`
-          + `<div class="tray">${shuffle(st.items.map((it, i) => ({ ...it, i }))).map((it) => `<button class="token" data-i="${it.i}" aria-pressed="false">${img(it.photo, "thumb") || `<span aria-hidden="true">${esc(it.emoji)}</span>`}${heroTerm(it)}</button>`).join("")}</div>`
-          + `<div class="zones">${st.groups.map((g, gi) => `<button class="zone" data-drop data-g="${gi}"><span class="zone-title" dir="ltr" lang="en">${esc(g)}</span>${st.groupsAr?.[gi] ? `<span class="zone-ar">${esc(st.groupsAr[gi])}</span>` : ""}<span class="zone-items"></span></button>`).join("")}</div>`
-          + `<div class="feedback"></div>`
-          + (st.tryAtHome ? `<div class="home-task" hidden><div class="who">🏡 جرّبها في البيت</div>${bidi(st.tryAtHome)}</div>` : ""),
-        ready: false,
-        narrate: () => speak(st.say),
-        mount(root) {
-          const fb = $(".feedback", root);
-          let selected = null, placed = 0, mistakes = 0;
-          const fresh = predict ? false : firstAttempt();
-          if (predict) run.predictions[st.predictId] = {};
-          const arm = (on) => $$(".zone", root).forEach((z) => z.classList.toggle("armed", on));
-          const select = (tok) => {
-            $$(".token", root).forEach((t) => t.setAttribute("aria-pressed", "false"));
-            if (selected === tok) { selected = null; arm(false); return; }
-            selected = tok;
-            tok.setAttribute("aria-pressed", "true");
-            arm(true);
-            speak(st.items[+tok.dataset.i].en, { lang: "en" });
-          };
-          const place = (tok, zone) => {
-            const i = +tok.dataset.i, item = st.items[i], g = +zone.dataset.g;
-            // في "خمّن" أي مكان مقبول، والتخمين بيتحفظ لخطوة "صلّح تخمينك"
-            if (!predict && st.groups[g] !== item.group) {
-              mistakes++;
-              tone("bad");
-              shake(tok);
-              fb.innerHTML = `<div class="fb bad">مش المجموعة دي 🤔 فكّر تاني وجرّب التانية.</div>`;
-              return;
-            }
-            if (predict) run.predictions[st.predictId][i] = g;
-            $(".zone-items", zone).insertAdjacentHTML("beforeend", `<span class="placed">${img(item.photo, "thumb-sm") || esc(item.emoji)} <bdi dir="ltr" lang="en">${esc(item.en)}</bdi></span>`);
-            tok.remove();
-            if (selected === tok) selected = null;
-            arm(false);
-            placed++;
-            fb.innerHTML = "";
-            if (placed < st.items.length) { tone(predict ? "still" : "good"); return; }
-            const home = $(".home-task", root);
-            if (home) home.hidden = false;
+    activity: (st) => ({
+      html: stepHead("Sort it!", "رتّب", "🎯") + teacher(st.say)
+        + `<div class="hint">اسحب كل كارت لمجموعته، أو دوس عليه وبعدين على المجموعة</div>`
+        + `<div class="tray">${shuffle(st.items.map((it, i) => ({ ...it, i }))).map((it) => `<button class="token" data-i="${it.i}" aria-pressed="false">${img(it.photo, "thumb") || `<span aria-hidden="true">${esc(it.emoji)}</span>`}${heroTerm(it)}</button>`).join("")}</div>`
+        + `<div class="zones">${st.groups.map((g, gi) => `<button class="zone" data-drop data-g="${gi}"><span class="zone-title" dir="ltr" lang="en">${esc(g)}</span>${st.groupsAr?.[gi] ? `<span class="zone-ar">${esc(st.groupsAr[gi])}</span>` : ""}<span class="zone-items"></span></button>`).join("")}</div>`
+        + `<div class="feedback"></div>`
+        + (st.tryAtHome ? `<div class="home-task" hidden><div class="who">🏡 جرّبها في البيت</div>${bidi(st.tryAtHome)}</div>` : ""),
+      ready: false,
+      narrate: () => speak(st.say),
+      mount(root) {
+        const fb = $(".feedback", root);
+        let selected = null, placed = 0, mistakes = 0;
+        const fresh = firstAttempt();
+        const arm = (on) => $$(".zone", root).forEach((z) => z.classList.toggle("armed", on));
+        const select = (tok) => {
+          $$(".token", root).forEach((t) => t.setAttribute("aria-pressed", "false"));
+          if (selected === tok) { selected = null; arm(false); return; }
+          selected = tok;
+          tok.setAttribute("aria-pressed", "true");
+          arm(true);
+          speak(st.items[+tok.dataset.i].en, { lang: "en" });
+        };
+        const place = (tok, zone) => {
+          const i = +tok.dataset.i, item = st.items[i], g = +zone.dataset.g;
+          if (st.groups[g] !== item.group) {
+            // الغلط بيشرح: السبب اللي في السيناريو، وبعدين يجرّب تاني
+            mistakes++;
+            tone("bad");
+            shake(tok);
             stopSpeech();
-            if (predict) {
-              fb.innerHTML = `<div class="fb good">🔬 ${esc(P.predictSaved)}</div>`;
-              tone("good");
-              speak(P.predictSaved);
-            } else {
-              if (fresh && mistakes === 0) run.checks.first++;
-              tone("win");
-              confetti();
-              award(`a${run.i}`, mistakes === 0 ? 15 : 10);
-              fb.innerHTML = `<div class="fb good">👏 برافو! رتّبتهم كلهم صح.</div>`;
-              speak(P.activityDone);
-            }
-            if (st.tryAtHome) speak(st.tryAtHome);
-            setReady(true);
-            nearest(home || fb);
-          };
-          $$(".token", root).forEach((tok) => enableDrag(tok, { onTap: () => select(tok), onDrop: (zone) => place(tok, zone) }));
-          $$(".zone", root).forEach((zone) => zone.addEventListener("click", () => {
-            if (!selected) { fb.innerHTML = `<div class="hint">اختار كارت من فوق الأول 👆</div>`; return; }
-            place(selected, zone);
-          }));
-        },
-      };
-    },
-
-    revisit: (st) => {
-      // الطفل بيشوف تخمينه، واللي غلط فيه بيدوس عليه فيروح لمكانه الصح ومعاه السبب
-      const src = run.steps.find((s) => s.kind === "activity" && s.predictId === st.predictId);
-      const guess = run.predictions[st.predictId] || {};
-      const groupOf = (i) => (guess[i] !== undefined ? guess[i] : src.groups.indexOf(src.items[i].group));
-      const wrong = src.items.map((it, i) => src.groups[groupOf(i)] !== it.group);
-      const chip = (it, i) => `<button class="placed fixable ${wrong[i] ? "wrong" : "right"}" type="button" data-i="${i}">${img(it.photo, "thumb-sm") || esc(it.emoji)} <bdi dir="ltr" lang="en">${esc(it.en)}</bdi> <span aria-hidden="true">${wrong[i] ? "✗" : "✓"}</span></button>`;
-      return {
-        html: stepHead("Check your guess", "صلّح تخمينك", "🔍") + teacher(st.say)
-          + `<div class="zones">${src.groups.map((g, gi) => `<div class="zone" data-g="${gi}"><span class="zone-title" dir="ltr" lang="en">${esc(g)}</span>${src.groupsAr?.[gi] ? `<span class="zone-ar">${esc(src.groupsAr[gi])}</span>` : ""}<span class="zone-items">${src.items.map((it, i) => (groupOf(i) === gi ? chip(it, i) : "")).join("")}</span></div>`).join("")}</div>`
-          + `<div class="reveal-caption" aria-live="polite"></div><div class="feedback"></div>`,
-        ready: false,
-        narrate: () => speak(st.say),
-        mount(root) {
-          const cap = $(".reveal-caption", root), fb = $(".feedback", root);
-          let left = wrong.filter(Boolean).length;
-          const fresh = firstAttempt();
-          const finish = (allRight) => {
-            if (fresh && allRight) run.checks.first++;
-            award(`v${run.i}`, allRight ? 10 : 5);
-            const line = allRight ? P.revisitAllRight : P.revisitDone;
-            fb.innerHTML = `<div class="fb good">${esc(line)}</div>`;
-            tone("win");
-            speak(line);
-            setReady(true);
-          };
-          if (left === 0) {
-            fb.innerHTML = `<div class="fb good">🎯 ${esc(P.revisitAllRight)}</div>`;
-            finish(true);
-          } else {
-            fb.innerHTML = `<div class="hint">دوس على الكروت اللي عليها ✗ عشان تصلّحها</div>`;
+            fb.innerHTML = `<div class="fb bad">${esc(P.sortWrong)}</div>${item.why ? `<div class="reteach"><p>${bidi(item.why)}</p></div>` : ""}`;
+            speak(P.sortWrong);
+            if (item.why) speak(item.why);
+            nearest(fb);
+            return;
           }
-          $$(".fixable", root).forEach((btn) => btn.addEventListener("click", () => {
-            const i = +btn.dataset.i, it = src.items[i];
-            stopSpeech();
-            cap.innerHTML = bidi(it.why || "");
-            speak(it.en, { lang: "en" });
-            if (it.why) speak(it.why);
-            if (!btn.classList.contains("wrong")) return;
-            const target = $(`.zone[data-g="${src.groups.indexOf(it.group)}"] .zone-items`, root);
-            btn.classList.remove("wrong");
-            btn.classList.add("right", "moved");
-            btn.lastElementChild.textContent = "✓";
-            target.appendChild(btn);
-            run.predictions[st.predictId] = { ...run.predictions[st.predictId], [i]: src.groups.indexOf(it.group) };
-            tone("good");
-            if (--left === 0) finish(false);
-          }));
-        },
-      };
-    },
+          $(".zone-items", zone).insertAdjacentHTML("beforeend", `<span class="placed">${img(item.photo, "thumb-sm") || esc(item.emoji)} <bdi dir="ltr" lang="en">${esc(item.en)}</bdi></span>`);
+          tok.remove();
+          if (selected === tok) selected = null;
+          arm(false);
+          placed++;
+          fb.innerHTML = "";
+          if (placed < st.items.length) { tone("good"); return; }
+          const home = $(".home-task", root);
+          if (home) home.hidden = false;
+          stopSpeech();
+          if (fresh && mistakes === 0) run.checks.first++;
+          tone("win");
+          confetti();
+          award(`a${run.i}`, mistakes === 0 ? 15 : 10);
+          fb.innerHTML = `<div class="fb good">👏 ${esc(P.activityDone)}</div>`;
+          speak(P.activityDone);
+          if (st.tryAtHome) speak(st.tryAtHome);
+          setReady(true);
+          nearest(home || fb);
+        };
+        $$(".token", root).forEach((tok) => enableDrag(tok, { onTap: () => select(tok), onDrop: (zone) => place(tok, zone) }));
+        $$(".zone", root).forEach((zone) => zone.addEventListener("click", () => {
+          if (!selected) { fb.innerHTML = `<div class="hint">اختار كارت من فوق الأول 👆</div>`; return; }
+          place(selected, zone);
+        }));
+      },
+    }),
 
     probe: (st) => ({
       html: stepHead(st.titleEn, st.title, "🧪") + teacher(st.say)
@@ -1531,7 +1476,7 @@
       mode, n, steps, i: 0, ready: false, xp: 0, narrate: null,
       title: mode === "lesson" ? S.sessions[n - 1].titleEn : "Review",
       checks: { total: 0, first: 0 }, awarded: new Set(), attempted: new Set(), intercept: null, nextLabel: null,
-      badges: steps.find((s) => s.kind === "mission")?.badges || [], earned: new Set(), predictions: {},
+      badges: steps.find((s) => s.kind === "mission")?.badges || [], earned: new Set(),
     };
     renderBadges();
     showStep();
