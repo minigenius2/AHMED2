@@ -1396,8 +1396,9 @@
   function updateVoiceLine() {
     const el = $("#voiceLine");
     if (!el) return;
-    const { recorded, total } = DATA.audioStats;
+    const { recorded, total, arabic } = DATA.audioStats;
     if (recorded === total) { el.textContent = "🎙️ الحصة كلها متسجلة بصوت المعلم."; return; }
+    if (arabic.recorded === arabic.total) { el.textContent = "🎙️ كلام المعلم بالعربي متسجل كله، والكلمات والجمل الإنجليزي بصوت الموبايل (ببطء عشان تتعلم نطقها)."; return; }
     const prefix = recorded ? `🎙️ ${recorded} من ${total} جملة متسجلة بصوت المعلم، والباقي مؤقتًا بصوت الموبايل. ` : "🎙️ لسه مفيش تسجيلات بصوت المعلم، فالصوت مؤقتًا صوت الموبايل. ";
     if (!hasTTS) el.textContent = prefix + "⚠️ والمتصفح ده مابيقراش بالصوت، فاللي ماتسجلش هيفضل مكتوب.";
     else if (voice.ar || !voice.count) el.textContent = prefix;
@@ -1465,8 +1466,8 @@
   /** لو العربي هيتقري بصوت الموبايل والجهاز مفيهوش صوت عربي، بنقول كده بوضوح مرة واحدة */
   let voiceWarningClosed = false;
   function checkArabicVoice() {
-    const allRecorded = DATA.audioStats.recorded === DATA.audioStats.total;
-    const missing = !allRecorded && (!hasTTS || (voice.count > 0 && !voice.ar));
+    const { arabic } = DATA.audioStats;
+    const missing = arabic.recorded < arabic.total && (!hasTTS || (voice.count > 0 && !voice.ar));
     $("#voiceWarning").hidden = voiceWarningClosed || !missing;
   }
 
