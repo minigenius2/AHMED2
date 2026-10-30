@@ -1,0 +1,9 @@
+{
+ "about": "الصوت المولّد لكلام المعلم بالعربي (لحد ما التسجيل البشري يوصل). النص اللي اتبعت لكل جملة في <الدرس>.tts.json: من غير تشكيل، والضمة بس على أول الكلمات اللي بتبدأ بضمة (مُحقق، كُل، الصُّخور)، والأرقام بالحروف.",
+ "provider": "ElevenLabs",
+ "voice": "Samy - Storyteller",
+ "voiceId": "HB30Rk1hky9f5uvxWktR",
+ "model": "eleven_v3",
+ "prefix": "[strong Egyptian accent] [warmly] ",
+ "format": "mp3, mono, 48 kbps"
+}

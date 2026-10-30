@@ -67,15 +67,21 @@ export function buildLessonPage(options: LessonPageOptions) {
     covered[i + 1] = recallPool(scienceG4Term1Bank.filter((q) => objectives.has(q.objectiveId)), lessonId);
   });
 
-  // التسجيلات البشرية: recordings/<الدرس>/ و recordings/common/ (أو --audio=فولدر للدرس).
-  // الجملة اللي ليها تسجيل بتشتغل بيه، واللي لسه ماتسجلتش بتتقري بصوت الموبايل.
+  // الصوت: التسجيل البشري الأول (recordings/<الدرس>/ و recordings/common/، أو --audio=فولدر للدرس)،
+  // وبعده الصوت المولّد من ElevenLabs (src/content/.../voice/). واللي مالوش ده ولا ده بيتقري بصوت الموبايل.
   const recordingsRoot = join(here, "../../recordings");
-  const audioDirs = [options.audioDir ?? join(recordingsRoot, lessonId), join(recordingsRoot, "common")].filter((d) => existsSync(d));
+  const generatedRoot = join(here, "../../src/content/science-g4-term1/voice");
+  const audioDirs = [
+    options.audioDir ?? join(recordingsRoot, lessonId),
+    join(recordingsRoot, "common"),
+    join(generatedRoot, lessonId),
+    join(generatedRoot, "common"),
+  ].filter((d) => existsSync(d));
   const recorded = new Map<string, { dir: string; file: string }>();
   for (const dir of audioDirs) {
     for (const file of readdirSync(dir)) {
       const id = file.match(/^(n[0-9a-z]+)\.(mp3|m4a|ogg|wav)$/i)?.[1];
-      if (id) recorded.set(id, { dir, file });
+      if (id && !recorded.has(id)) recorded.set(id, { dir, file });
     }
   }
   const narration = [...lessonNarration(script), ...commonNarration()];
@@ -88,6 +94,9 @@ export function buildLessonPage(options: LessonPageOptions) {
     for (const source of line.sources) audio[source] = `audio/${found.file}`;
   }
   const recordedCount = narration.filter((l) => recorded.has(l.id)).length;
+  // الإنجليزي بيفضل بصوت الموبايل عادي، فاللي يهمنا إن كل العربي (والعربي اللي فيه كلمات إنجليزي) يبقى ليه صوت
+  const arabic = narration.filter((l) => l.lang !== "en");
+  const arabicRecorded = arabic.filter((l) => recorded.has(l.id)).length;
 
   // الصور الحقيقية اللي الدرس بيستخدمها بتتنسخ جنب الصفحة في media/، ومعاها بيانات الحقوق
   const mediaDir = join(here, "../../src/content/science-g4-term1/media");
@@ -121,7 +130,7 @@ export function buildLessonPage(options: LessonPageOptions) {
     phrases: PLAYER_PHRASES,
     media,
     audio,
-    audioStats: { recorded: recordedCount, total: narration.length },
+    audioStats: { recorded: recordedCount, total: narration.length, arabic: { recorded: arabicRecorded, total: arabic.length } },
     tutorEndpoint: options.tutorEndpoint ?? null,
   };
 
