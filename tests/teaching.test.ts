@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type Anthropic from "@anthropic-ai/sdk";
@@ -283,5 +283,32 @@ describe("narration for human recording", () => {
     expect(remediation.kind).toBe("remediation");
     expect(remediation.steps[0]).toMatchObject({ kind: "hook", say: PLAYER_PHRASES.remediationIntro });
     expect(remediation.steps.at(-1)).toMatchObject({ kind: "summary", say: PLAYER_PHRASES.remediationSummary });
+  });
+});
+
+describe("generated narration (ElevenLabs)", () => {
+  const voiceDir = join(dirname(fileURLToPath(import.meta.url)), "../src/content/science-g4-term1/voice");
+  const groups = [
+    ...Object.values(scienceG4Term1Scripts).map((s) => ({ name: s.lessonId, lines: lessonNarration(s) })),
+    { name: "common", lines: commonNarration() },
+  ];
+
+  it("has the text sent for every Arabic line, and nothing for lines that no longer exist", () => {
+    for (const { name, lines } of groups) {
+      const file = join(voiceDir, `${name}.tts.json`);
+      if (!existsSync(file)) continue;
+      const tts = JSON.parse(readFileSync(file, "utf8")) as Record<string, string>;
+      const arabic = lines.filter((l) => l.lang !== "en").map((l) => l.text.trim());
+      expect(Object.keys(tts).sort(), name).toEqual([...new Set(arabic)].sort());
+    }
+  });
+
+  it("only keeps audio files that belong to a current line of their lesson", () => {
+    for (const { name, lines } of groups) {
+      const dir = join(voiceDir, name);
+      if (!existsSync(dir)) continue;
+      const ids = new Set(lines.map((l) => l.id));
+      for (const file of readdirSync(dir)) expect(ids.has(file.replace(/\.mp3$/, "")), `${name}/${file}`).toBe(true);
+    }
   });
 });

@@ -10,6 +10,7 @@
     "simulate": "tsx examples/simulate-term.ts",
     "preview:lesson": "tsx tools/lesson-preview/build.ts",
     "voice:sheet": "tsx tools/voice/sheet.ts",
+    "voice:import": "tsx tools/voice/import-generated.ts",
     "build:web": "tsx tools/web/build.ts"
   },
   "devDependencies": {
