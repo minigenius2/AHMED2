@@ -1,12 +1,15 @@
 // بيبني الموقع اللي بيترفع على Vercel (npm run build:web) بصيغة Vercel الجاهزة (Build Output API):
 //   .vercel/output/static/index.html                 ← صفحة الدروس
 //   .vercel/output/static/lessons/<الدرس>/           ← كل درس ليه سيناريو (+ صوره وتسجيلاته)
+//   .vercel/output/static/solve/index.html           ← «حل معايا»: رياضيات إعدادي
 //   .vercel/output/functions/api/ask.func/           ← "اسأل المعلم" على السيرفر
+//   .vercel/output/functions/api/{solve,stt,tts}.func/ ← «حل معايا» والفويسات
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
 import { buildLessonPage } from "../lesson-preview/page";
+import { buildSolvePage } from "./solve-page";
 import { scienceG4Term1, scienceG4Term1Scripts } from "../../src/content/science-g4-term1";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -68,24 +71,36 @@ writeFileSync(
   .soon { opacity: .6; }
 </style></head><body><main>
 <section class="hero"><div class="owl" aria-hidden="true">🦉</div><h1>مساعد العلوم</h1><p>رابعة ابتدائي — الترم الأول · مع أستاذ نبيه</p></section>
+<a class="lesson solve" href="/solve/"><span class="n">🧮</span><span class="t"><b>حل معايا</b><small>رياضيات إعدادي: صوّر المسألة أو قول رقمها، وأستاذ نبيه يوصّلك للحل بنفسك</small></span><span class="go">▶️</span></a>
 ${units}
 </main></body></html>
 `,
 );
 
-// 3) "اسأل المعلم": الكود كله ومكتبة Anthropic في ملف واحد
-const func = join(output, "functions/api/ask.func");
-await build({
-  entryPoints: [join(root, "tools/web/ask-entry.ts")],
-  outfile: join(func, "index.mjs"),
-  bundle: true,
-  platform: "node",
-  format: "esm",
-  target: "node22",
-  // بعض المكتبات بتستخدم require جوه ملف ESM
-  banner: { js: "import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);" },
-  logLevel: "warning",
-});
-writeFileSync(join(func, ".vc-config.json"), JSON.stringify({ runtime: "nodejs22.x", handler: "index.mjs", launcherType: "Nodejs", shouldAddHelpers: false }, null, 2));
+// 3) «حل معايا»
+mkdirSync(join(staticDir, "solve"), { recursive: true });
+writeFileSync(join(staticDir, "solve", "index.html"), buildSolvePage());
+
+// 4) دوال السيرفر: كل دالة بالكود كله ومكتبة Anthropic في ملف واحد
+async function serverFunction(name: string, entry: string, maxDuration: number): Promise<void> {
+  const func = join(output, `functions/api/${name}.func`);
+  await build({
+    entryPoints: [join(root, entry)],
+    outfile: join(func, "index.mjs"),
+    bundle: true,
+    platform: "node",
+    format: "esm",
+    target: "node22",
+    // بعض المكتبات بتستخدم require جوه ملف ESM
+    banner: { js: "import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);" },
+    logLevel: "warning",
+  });
+  writeFileSync(join(func, ".vc-config.json"), JSON.stringify({ runtime: "nodejs22.x", handler: "index.mjs", launcherType: "Nodejs", shouldAddHelpers: false, maxDuration }, null, 2));
+}
+await serverFunction("ask", "tools/web/ask-entry.ts", 60);
+// قراءة المسألة وحلّها بمجهود تفكير عالي ممكن تاخد دقيقة أو اتنين
+await serverFunction("solve", "tools/web/solve-entry.ts", 300);
+await serverFunction("stt", "tools/web/stt-entry.ts", 60);
+await serverFunction("tts", "tools/web/tts-entry.ts", 60);
 writeFileSync(join(output, "config.json"), JSON.stringify({ version: 3 }, null, 2));
 console.log(`site → ${output}`);

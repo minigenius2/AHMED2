@@ -90,3 +90,49 @@ export const DEFAULT_CONFIG: AssistantConfig = {
   finalMock: { questionCount: 25, passThreshold: 0.65, difficulty: { min: 1, max: 5 } },
   askTeacher: { dailyLimit: 10, maxQuestionChars: 300 },
 };
+
+/** «حل معايا» (docs/08-solve-with-me.md) */
+export interface SolveConfig {
+  /** أقصى عدد مسائل في اليوم لكل طالب (في التجربة) */
+  dailyProblems: number;
+  /** أقصى عدد رسايل من الطالب في المسألة الواحدة */
+  maxStudentTurns: number;
+  /** أقصى طول لرسالة الطالب */
+  maxMessageChars: number;
+  /** أقصى حجم للصورة بعد ما تتصغّر على الموبايل */
+  maxImageBytes: number;
+  /** أطول مقاس للصورة: أكبر من كده بيزوّد التكلفة من غير فايدة لمسألة مكتوبة */
+  imageMaxEdgePx: number;
+  /** أقصى مدة للفويس الواحد */
+  maxVoiceNoteSeconds: number;
+  /** أقصى طول لرد المساعد اللي بيتحول لصوت */
+  maxSpeechChars: number;
+}
+
+export const SOLVE_CONFIG: SolveConfig = {
+  dailyProblems: 10,
+  maxStudentTurns: 30,
+  maxMessageChars: 500,
+  maxImageBytes: 2_500_000,
+  imageMaxEdgePx: 1568,
+  maxVoiceNoteSeconds: 60,
+  maxSpeechChars: 600,
+};
+
+/** أسعار Anthropic بالدولار لكل مليون توكن (cache write هنا للـ 5 دقايق = 1.25 × سعر الداخل) */
+export interface ModelPrice {
+  input: number;
+  output: number;
+  cacheWrite: number;
+  cacheRead: number;
+}
+
+export const MODEL_PRICES: Record<string, ModelPrice> = {
+  "claude-opus-5-5": { input: 4, output: 20, cacheWrite: 5, cacheRead: 0.2 },
+  "claude-sonnet-5-5": { input: 2, output: 10, cacheWrite: 2.5, cacheRead: 0.2 },
+  // سعر قراءة الـ cache لـ Haiku 5.5 تقديري (عُشر سعر الداخل)
+  "claude-haiku-5-5": { input: 0.1, output: 0.5, cacheWrite: 0.125, cacheRead: 0.01 },
+};
+
+/** سعر الدولار بالجنيه (أول نوفمبر 2026). بيتغيّر، فبيتراجع قبل أي قرار تسعير */
+export const EGP_PER_USD = 56;

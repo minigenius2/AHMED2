@@ -9,7 +9,7 @@ import { TutorUnavailableError, type TutorModel } from "./ask-teacher";
 export const DEFAULT_TUTOR_MODEL = "claude-opus-5-5";
 
 /** موديلات Haiku مابتقبلش الموديل البديل من السيرفر (الطلب بيرجع 400)، فمابنبعتهوش ليها */
-function supportsServerFallback(model: string): boolean {
+export function supportsServerFallback(model: string): boolean {
   return !model.startsWith("claude-haiku");
 }
 

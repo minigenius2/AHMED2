@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1f8a57">
+<title>حل معايا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbf7ef; --surface: #ffffff; --surface-2: #f2ecdf; --ink: #1f2a37; --ink-2: #5d6774; --line: #e5ddcb;
+    --leaf: #1f8a57; --leaf-ink: #ffffff; --leaf-soft: #dcf1e5;
+    --sun: #e09b00; --sun-soft: #fff0c7;
+    --coral: #cf4a35; --coral-soft: #fde2dc;
+    --sky: #2370c9; --sky-soft: #e0ecfa;
+    --shadow: 0 6px 18px rgba(70, 52, 12, .08);
+    --font: "Baloo Bhaijaan 2", "Segoe UI", Tahoma, system-ui, sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10151c; --surface: #19212b; --surface-2: #222c38; --ink: #eef2f6; --ink-2: #a7b1be; --line: #2d3947;
+      --leaf: #3cc483; --leaf-ink: #04261a; --leaf-soft: #17392a;
+      --sun: #ffc53d; --sun-soft: #3a3014;
+      --coral: #ff7f69; --coral-soft: #3f201a;
+      --sky: #6aabff; --sky-soft: #1a2d45;
+      --shadow: 0 6px 18px rgba(0, 0, 0, .25);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10151c; --surface: #19212b; --surface-2: #222c38; --ink: #eef2f6; --ink-2: #a7b1be; --line: #2d3947;
+    --leaf: #3cc483; --leaf-ink: #04261a; --leaf-soft: #17392a;
+    --sun: #ffc53d; --sun-soft: #3a3014;
+    --coral: #ff7f69; --coral-soft: #3f201a;
+    --sky: #6aabff; --sky-soft: #1a2d45;
+    --shadow: 0 6px 18px rgba(0, 0, 0, .25);
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.6; }
+  body { min-height: 100dvh; }
+  button, input, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  [hidden] { display: none !important; }
+  main { max-width: 640px; margin: 0 auto; padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 120px max(16px, env(safe-area-inset-left)); }
+
+  .top { display: flex; align-items: center; gap: 10px; padding: 4px 0 10px; }
+  .owl { flex: none; width: 48px; height: 48px; border-radius: 50%; background: var(--sun-soft); display: grid; place-items: center; font-size: 28px; }
+  .top .t { flex: 1; min-width: 0; line-height: 1.3; }
+  .top h1 { margin: 0; font-size: 22px; }
+  .top small { color: var(--ink-2); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .icon-btn { flex: none; min-width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); font-size: 18px; padding: 0 10px; }
+  .icon-btn[aria-pressed="true"] { background: var(--leaf-soft); border-color: var(--leaf); }
+
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 16px; box-shadow: var(--shadow); margin: 10px 0; }
+  .card h2 { margin: 0 0 6px; font-size: 19px; }
+  .muted { color: var(--ink-2); font-size: 15px; }
+  fieldset { border: 0; margin: 0 0 14px; padding: 0; }
+  legend { font-weight: 700; margin-bottom: 6px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { border: 1px solid var(--line); background: var(--surface-2); border-radius: 999px; padding: 6px 14px; min-height: 40px; }
+  .chip[aria-pressed="true"] { background: var(--leaf); color: var(--leaf-ink); border-color: var(--leaf); font-weight: 700; }
+  .book { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border: 1px solid var(--line); border-radius: 14px; margin: 6px 0; background: var(--surface-2); }
+  .book input { width: 20px; height: 20px; margin-top: 4px; flex: none; accent-color: var(--leaf); }
+  .book small { display: block; color: var(--ink-2); }
+  .primary { width: 100%; min-height: 50px; border: 0; border-radius: 16px; background: var(--leaf); color: var(--leaf-ink); font-weight: 800; font-size: 18px; }
+  .primary:disabled { opacity: .5; }
+
+  .start { text-align: center; }
+  .start .big { width: 100%; min-height: 64px; border-radius: 18px; border: 2px dashed var(--leaf); background: var(--leaf-soft); font-size: 19px; font-weight: 800; margin: 10px 0 4px; }
+  .start .or { margin: 6px 0 0; color: var(--ink-2); }
+  .left { color: var(--ink-2); font-size: 14px; margin-top: 6px; }
+
+  .problem { background: var(--sky-soft); border: 1px solid var(--sky); border-radius: 18px; padding: 10px 14px; margin: 8px 0; }
+  .problem b { display: block; font-size: 14px; color: var(--sky); }
+  .problem .text { font-size: 18px; font-weight: 700; white-space: pre-wrap; unicode-bidi: plaintext; }
+  .steps { display: flex; gap: 6px; margin-top: 6px; align-items: center; font-size: 13px; color: var(--ink-2); }
+  .dot { width: 22px; height: 8px; border-radius: 99px; background: var(--line); }
+  .dot.on { background: var(--leaf); }
+
+  .log { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
+  .log > * { scroll-margin-bottom: 110px; }
+  .nowrap { white-space: nowrap; }
+  .msg { max-width: 88%; padding: 10px 14px; border-radius: 18px; white-space: pre-wrap; unicode-bidi: plaintext; overflow-wrap: anywhere; font-size: 17px; }
+  .msg.tutor { align-self: flex-start; background: var(--surface); border: 1px solid var(--line); border-start-start-radius: 6px; }
+  .msg.student { align-self: flex-end; background: var(--leaf-soft); border-start-end-radius: 6px; }
+  .msg img { display: block; max-width: 100%; max-height: 220px; border-radius: 12px; }
+  .msg .say { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; border: 1px solid var(--line); background: var(--surface-2); border-radius: 999px; padding: 2px 12px; font-size: 14px; min-height: 34px; }
+  .options { display: flex; flex-direction: column; gap: 6px; align-self: stretch; }
+  .options button { text-align: start; border: 1px solid var(--leaf); background: var(--surface); border-radius: 14px; padding: 8px 12px; min-height: 44px; }
+  .typing { align-self: flex-start; color: var(--ink-2); font-size: 15px; padding: 4px 10px; }
+  .solved { text-align: center; font-size: 40px; }
+  .debug { font-size: 13px; color: var(--ink-2); text-align: center; }
+
+  .composer { position: fixed; inset-inline: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); padding: 8px max(12px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
+  .composer .row { max-width: 640px; margin: 0 auto; display: flex; gap: 8px; align-items: flex-end; }
+  .composer textarea { flex: 1; min-width: 0; resize: none; border: 1px solid var(--line); border-radius: 16px; padding: 10px 12px; background: var(--bg); max-height: 120px; font-size: 17px; unicode-bidi: plaintext; }
+  .composer .icon-btn { height: 46px; min-width: 46px; border-radius: 16px; }
+  #send { background: var(--leaf); color: var(--leaf-ink); border-color: var(--leaf); font-weight: 800; }
+  #mic.rec { background: var(--coral); color: #fff; border-color: var(--coral); }
+  .pulse { animation: pulse 1.2s ease-in-out 3; }
+  @keyframes pulse { 50% { transform: scale(1.12); box-shadow: 0 0 0 6px var(--leaf-soft); } }
+  @media (prefers-reduced-motion: reduce) { .pulse { animation: none; } }
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <div class="owl" aria-hidden="true">🦉</div>
+    <div class="t"><h1>حل معايا</h1><small id="profile-line">مع أستاذ نبيه</small></div>
+    <button class="icon-btn" id="voice-toggle" aria-pressed="false" title="ردود المساعد بالصوت" aria-label="ردود المساعد بالصوت">🔊</button>
+    <button class="icon-btn" id="new" title="مسألة جديدة" aria-label="مسألة جديدة" hidden>＋</button>
+    <button class="icon-btn" id="settings" title="الإعدادات" aria-label="الإعدادات">⚙️</button>
+  </header>
+
+  <section id="setup" class="card" hidden>
+    <h2>أهلًا! عرّفني بنفسك مرة واحدة بس 👋</h2>
+    <p class="muted">عشان لما تقولّي «صفحة 45 سؤال 3» أعرف أنهي كتاب على طول.</p>
+    <fieldset><legend>إنت في سنة كام؟</legend><div class="chips" id="grades"></div></fieldset>
+    <fieldset><legend>مدرستك</legend><div class="chips" id="schools"></div></fieldset>
+    <fieldset><legend>الترم</legend><div class="chips" id="terms"></div></fieldset>
+    <fieldset><legend>بتذاكر رياضيات من أنهي كتب؟</legend><div id="books"></div></fieldset>
+    <button class="primary" id="save">يلا بينا</button>
+  </section>
+
+  <section id="solve" hidden>
+    <div id="problem" class="problem" hidden><b>المسألة</b><div class="text" id="problem-text"></div><div class="steps" id="steps"></div></div>
+    <div id="start" class="card start">
+      <h2>إيه المسألة اللي واقفة معاك؟</h2>
+      <button class="big" id="cam-big">📸 صوّرها</button>
+      <p class="or">أو اكتب تحت رقمها، أو قوله بالفويس 🎤: <span class="nowrap">«صفحة 45 سؤال 3»</span></p>
+      <p class="left" id="left"></p>
+    </div>
+    <div class="log" id="log" aria-live="polite"></div>
+    <p class="debug" id="debug" hidden></p>
+  </section>
+</main>
+
+<footer class="composer" id="composer" hidden>
+  <div class="row">
+    <button class="icon-btn" id="cam" title="صوّر المسألة" aria-label="صوّر المسألة">📸</button>
+    <textarea id="input" rows="1" placeholder="صفحة كام وسؤال كام؟" aria-label="رسالتك"></textarea>
+    <button class="icon-btn" id="mic" title="سجّل فويس" aria-label="سجّل فويس">🎤</button>
+    <button class="icon-btn" id="send" title="ابعت" aria-label="ابعت">➤</button>
+  </div>
+</footer>
+<input type="file" id="file" accept="image/*" capture="environment" hidden>
+
+<script type="application/json" id="solve-data">__DATA__</script>
+<script>
+(() => {
+  const DATA = JSON.parse(document.getElementById("solve-data").textContent);
+  const $ = (id) => document.getElementById(id);
+  const DEBUG = /[?&]debug=1/.test(location.search);
+  const store = {
+    get(key, fallback) { try { const v = localStorage.getItem(`solve:${key}`); return v == null ? fallback : JSON.parse(v); } catch { return fallback; } },
+    set(key, value) { try { localStorage.setItem(`solve:${key}`, JSON.stringify(value)); } catch {} },
+    del(key) { try { localStorage.removeItem(`solve:${key}`); } catch {} },
+  };
+  const today = () => new Date().toISOString().slice(0, 10);
+
+  let profile = store.get("profile", null);
+  // المحادثة كلها (قبل ما المسألة تتحدد وبعدها) عشان لو الصفحة اتقفلت ترجع زي ما هي
+  let chat = store.get("chat", { log: [], pending: null, need: null, session: null });
+  let pendingImage = null;
+  let busy = false;
+  let awaitingCode = false;
+  let lastRequest = null;
+  let voiceReplies = store.get("voiceReplies", false);
+
+  // ===== الإعدادات (مرة واحدة) =====
+  const draft = { grade: profile?.grade ?? "prep1", schoolType: profile?.schoolType ?? "arabic", term: profile?.term ?? 1, bookIds: profile?.bookIds ?? null };
+  function chips(el, items, key) {
+    el.innerHTML = "";
+    for (const [value, label] of items) {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "chip"; b.textContent = label;
+      b.setAttribute("aria-pressed", String(draft[key] === value));
+      b.onclick = () => { draft[key] = value; draft.bookIds = null; renderSetup(); };
+      el.appendChild(b);
+    }
+  }
+  function booksForDraft() {
+    return DATA.books.filter((b) => b.kind === "demo" || (b.grade === draft.grade && b.term === draft.term && b.schoolType === draft.schoolType));
+  }
+  function renderSetup() {
+    chips($("grades"), Object.entries(DATA.grades), "grade");
+    chips($("schools"), [["arabic", "عربي"], ["languages", "لغات"]], "schoolType");
+    chips($("terms"), [[1, "الترم الأول"], [2, "الترم التاني"]], "term");
+    const books = booksForDraft();
+    if (!draft.bookIds) draft.bookIds = books.filter((b) => b.kind === "ministry").map((b) => b.id);
+    const el = $("books");
+    el.innerHTML = "";
+    for (const b of books) {
+      const row = document.createElement("label");
+      row.className = "book";
+      const box = document.createElement("input");
+      box.type = "checkbox"; box.checked = draft.bookIds.includes(b.id);
+      box.onchange = () => { draft.bookIds = box.checked ? [...new Set([...draft.bookIds, b.id])] : draft.bookIds.filter((id) => id !== b.id); };
+      const text = document.createElement("span");
+      text.textContent = b.title;
+      const note = document.createElement("small");
+      note.textContent = b.kind === "demo" ? "للتجربة: فيه «صفحة 1 سؤال 1 و 2» و«صفحة 2 سؤال 1»" : `طبعة ${b.edition}/${b.edition + 1}`;
+      text.appendChild(note);
+      row.append(box, text);
+      el.appendChild(row);
+    }
+  }
+  $("save").onclick = () => {
+    profile = { grade: draft.grade, schoolType: draft.schoolType, term: draft.term, bookIds: draft.bookIds ?? [] };
+    store.set("profile", profile);
+    show();
+  };
+  $("settings").onclick = () => { $("setup").hidden = !$("setup").hidden; if (!$("setup").hidden) renderSetup(); };
+
+  // ===== المحادثة =====
+  function save() { store.set("chat", chat); }
+  function daily() { const d = store.get("daily", null); return d && d.date === today() ? d.count : 0; }
+  function renderLeft() {
+    const left = Math.max(0, DATA.limits.dailyProblems - daily());
+    const count = left === 1 ? "مسألة واحدة" : left === 2 ? "مسألتين" : left <= 10 ? `${left} مسائل` : `${left} مسألة`;
+    $("left").textContent = left > 0 ? `فاضل لك ${count} النهارده` : "خلصت مسائلك النهارده 🌟";
+  }
+
+  function addBubble(entry) {
+    const div = document.createElement("div");
+    div.className = `msg ${entry.role}`;
+    if (entry.image) {
+      const img = document.createElement("img");
+      img.src = entry.image; img.alt = "صورة المسألة";
+      div.appendChild(img);
+    }
+    if (entry.text) {
+      const p = document.createElement("div");
+      p.textContent = (entry.voice ? "🎤 " : "") + entry.text;
+      div.appendChild(p);
+    }
+    if (entry.role === "tutor" && entry.text) {
+      const say = document.createElement("button");
+      say.className = "say"; say.type = "button"; say.textContent = "🔊 اسمع";
+      say.onclick = () => speak(entry.text, say);
+      div.appendChild(say);
+    }
+    $("log").appendChild(div);
+    return div;
+  }
+  function addOptions(options) {
+    if (!options?.length) return;
+    const wrap = document.createElement("div");
+    wrap.className = "options";
+    for (const o of options) {
+      const b = document.createElement("button");
+      b.type = "button"; b.textContent = o.label;
+      b.onclick = () => { wrap.remove(); push({ role: "student", text: o.label }); startProblem({ text: "", pending: o.pending }); };
+      wrap.appendChild(b);
+    }
+    $("log").appendChild(wrap);
+  }
+  function push(entry) {
+    // الصور مابتتحفظش في الذاكرة (كبيرة)، بس بتبان في المحادثة
+    chat.log.push(entry.image ? { ...entry, image: undefined, text: entry.text || "📸 (صورة)" } : entry);
+    save();
+    const el = addBubble(entry);
+    el.scrollIntoView({ behavior: "smooth", block: "end" });
+    return el;
+  }
+  function render() {
+    $("log").innerHTML = "";
+    for (const e of chat.log) addBubble(e);
+    const s = chat.session;
+    $("start").hidden = Boolean(s) || chat.log.length > 0;
+    $("new").hidden = !s && !chat.log.length;
+    $("problem").hidden = !s;
+    if (s) {
+      $("problem-text").textContent = s.problemText;
+      const steps = $("steps");
+      steps.innerHTML = "";
+      for (let i = 0; i < s.steps; i++) {
+        const d = document.createElement("span");
+        d.className = `dot${s.progress.solved || i < s.progress.stepIndex ? " on" : ""}`;
+        steps.appendChild(d);
+      }
+      const label = document.createElement("span");
+      label.textContent = s.progress.solved ? "حليتها 🎉" : `الخطوة ${Math.min(s.progress.stepIndex + 1, s.steps)} من ${s.steps}`;
+      steps.appendChild(label);
+      if (s.progress.solved) {
+        const done = document.createElement("div");
+        done.className = "solved"; done.textContent = "🎉";
+        $("log").appendChild(done);
+      }
+    }
+    $("input").placeholder = s ? (s.progress.solved ? "جرّب المسألة الشبيهة…" : "اكتب خطوتك…") : "صفحة كام وسؤال كام؟";
+    $("debug").hidden = !DEBUG || !s;
+    if (DEBUG && s) $("debug").textContent = `تكلفة المسألة لحد دلوقتي: ${(s.progress.costUsd).toFixed(4)}$ ≈ ${(s.progress.costUsd * DATA.egpPerUsd).toFixed(2)} جنيه`;
+    renderLeft();
+  }
+
+  let typingEl = null;
+  function typing(on) {
+    busy = on;
+    $("send").disabled = on;
+    if (on && !typingEl) { typingEl = document.createElement("div"); typingEl.className = "typing"; typingEl.textContent = "أستاذ نبيه بيفكّر… ✍️"; $("log").appendChild(typingEl); typingEl.scrollIntoView({ behavior: "smooth", block: "end" }); }
+    if (!on && typingEl) { typingEl.remove(); typingEl = null; }
+  }
+
+  function tutorSays(text, options) {
+    push({ role: "tutor", text });
+    addOptions(options);
+    if (voiceReplies) speak(text);
+  }
+
+  async function post(payload) {
+    lastRequest = payload;
+    const res = await fetch(DATA.endpoints.solve, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ ...payload, code: store.get("pilotCode", ""), student: profile }),
+    });
+    let body = {};
+    try { body = await res.json(); } catch {}
+    if (res.status === 401) { awaitingCode = true; store.set("pilotCode", ""); tutorSays("اكتبلي كود التجربة اللي خدته 🔑"); return null; }
+    if (!res.ok) { tutorSays(body.message || "المساعد مشغول ثانية… جرّب تاني كمان شوية 🙏"); return null; }
+    return body;
+  }
+
+  async function startProblem({ text = "", image = null, pending = chat.pending }) {
+    if (daily() >= DATA.limits.dailyProblems) { tutorSays("خلصت مسائلك النهارده يا بطل 🌟 كمّل بكرة."); return; }
+    typing(true);
+    try {
+      const img = image ?? (chat.need === "reference" ? pendingImage : null);
+      const body = await post({ action: "start", text, pending, ...(img ? { image: { data: img.data, mediaType: img.mediaType } } : {}) });
+      if (!body) return;
+      if (body.status === "ask") {
+        chat.pending = body.pending; chat.need = body.need;
+        if (img && body.need === "reference") pendingImage = img; else if (body.need !== "reference") pendingImage = null;
+        save();
+        tutorSays(body.message, body.options);
+        if (body.need === "photo" || body.need === "retake") ["cam", "cam-big"].forEach((id) => $(id).classList.add("pulse"));
+        return;
+      }
+      pendingImage = null;
+      chat.pending = null; chat.need = null;
+      chat.session = { token: body.token, problemText: body.problemText, turns: body.turns, progress: body.progress, steps: body.steps };
+      store.set("daily", { date: today(), count: daily() + 1 });
+      save();
+      render();
+      tutorSays(body.reply);
+    } catch (e) {
+      tutorSays("النت فيه مشكلة 🙈 جرّب تاني.");
+    } finally { typing(false); }
+  }
+
+  async function turn(message) {
+    const s = chat.session;
+    typing(true);
+    try {
+      const body = await post({ action: "turn", token: s.token, turns: s.turns, progress: s.progress, message });
+      if (!body) return;
+      s.turns = body.turns; s.progress = body.progress;
+      save();
+      if (body.status === "wrong_problem") {
+        chat.session = null; save(); render();
+        tutorSays(body.reply);
+        ["cam", "cam-big"].forEach((id) => $(id).classList.add("pulse"));
+        return;
+      }
+      render();
+      tutorSays(body.reply);
+    } catch (e) {
+      tutorSays("النت فيه مشكلة 🙈 جرّب تاني.");
+    } finally { typing(false); }
+  }
+
+  async function send(text, { voice = false } = {}) {
+    text = (text ?? "").trim();
+    if (!text || busy) return;
+    if (awaitingCode) {
+      awaitingCode = false;
+      store.set("pilotCode", text);
+      push({ role: "student", text: "🔑 ••••" });
+      if (lastRequest) {
+        const again = lastRequest;
+        if (again.action === "turn") return turn(again.message);
+        return startProblem({ text: again.text, pending: again.pending, image: again.image ?? null });
+      }
+      return;
+    }
+    push({ role: "student", text, voice });
+    $("start").hidden = true; $("new").hidden = false;
+    if (chat.session) return turn(text);
+    return startProblem({ text });
+  }
+
+  $("send").onclick = () => { const t = $("input").value; $("input").value = ""; grow(); send(t); };
+  $("input").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); $("send").click(); } });
+  const grow = () => { const t = $("input"); t.style.height = "auto"; t.style.height = `${Math.min(120, t.scrollHeight)}px`; };
+  $("input").addEventListener("input", grow);
+  $("new").onclick = () => { chat = { log: [], pending: null, need: null, session: null }; pendingImage = null; save(); render(); };
+  $("voice-toggle").setAttribute("aria-pressed", String(voiceReplies));
+  $("voice-toggle").onclick = () => { voiceReplies = !voiceReplies; store.set("voiceReplies", voiceReplies); $("voice-toggle").setAttribute("aria-pressed", String(voiceReplies)); };
+
+  // ===== الصورة: بتتصغّر على الموبايل قبل ما تترفع =====
+  const openCamera = () => { ["cam", "cam-big"].forEach((id) => $(id).classList.remove("pulse")); $("file").value = ""; $("file").click(); };
+  $("cam").onclick = openCamera;
+  $("cam-big").onclick = openCamera;
+  $("file").onchange = async () => {
+    const file = $("file").files?.[0];
+    if (!file || busy) return;
+    try {
+      const img = await prepareImage(file);
+      push({ role: "student", image: img.preview, text: "" });
+      $("start").hidden = true; $("new").hidden = false;
+      if (chat.session) { chat.session = null; save(); render(); }
+      await startProblem({ image: img });
+    } catch {
+      tutorSays("مش قادر أفتح الصورة دي 🙈 جرّب تصوّر تاني.");
+    }
+  };
+  async function prepareImage(file) {
+    let source;
+    try { source = await createImageBitmap(file, { imageOrientation: "from-image" }); }
+    catch { source = await new Promise((ok, fail) => { const i = new Image(); i.onload = () => ok(i); i.onerror = fail; i.src = URL.createObjectURL(file); }); }
+    const w = source.width, h = source.height;
+    const scale = Math.min(1, DATA.limits.imageMaxEdgePx / Math.max(w, h));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(w * scale); canvas.height = Math.round(h * scale);
+    canvas.getContext("2d").drawImage(source, 0, 0, canvas.width, canvas.height);
+    let quality = 0.85;
+    let url = canvas.toDataURL("image/jpeg", quality);
+    while (url.length * 0.75 > DATA.limits.maxImageBytes && quality > 0.4) { quality -= 0.15; url = canvas.toDataURL("image/jpeg", quality); }
+    return { data: url.split(",")[1], mediaType: "image/jpeg", preview: url };
+  }
+
+  // ===== الفويس =====
+  let recorder = null, stopTimer = null;
+  function pickType() {
+    for (const t of ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"]) if (window.MediaRecorder?.isTypeSupported?.(t)) return t;
+    return "";
+  }
+  $("mic").onclick = async () => {
+    if (recorder) { recorder.stop(); return; }
+    if (busy) return;
+    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) { tutorSays("الموبايل ده مش بيسجّل فويس من الصفحة 🙈 اكتبلي بدل الفويس."); return; }
+    let stream;
+    try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+    catch { tutorSays("محتاج إذن الميكروفون عشان أسمعك 🎤 اسمح بيه من إعدادات المتصفح، أو اكتبلي."); return; }
+    const type = pickType();
+    const chunks = [];
+    recorder = new MediaRecorder(stream, type ? { mimeType: type } : undefined);
+    recorder.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+    recorder.onstop = async () => {
+      clearTimeout(stopTimer);
+      stream.getTracks().forEach((t) => t.stop());
+      const blob = new Blob(chunks, { type: recorder.mimeType || type || "audio/webm" });
+      recorder = null;
+      $("mic").classList.remove("rec"); $("mic").textContent = "🎤";
+      await sendVoice(blob);
+    };
+    recorder.start();
+    $("mic").classList.add("rec"); $("mic").textContent = "⏹";
+    stopTimer = setTimeout(() => recorder?.stop(), DATA.limits.maxVoiceNoteSeconds * 1000);
+  };
+  async function sendVoice(blob) {
+    if (blob.size < 1000) return;
+    typing(true);
+    let text = "";
+    try {
+      const res = await fetch(DATA.endpoints.stt, { method: "POST", headers: { "content-type": blob.type || "audio/webm", "x-pilot-code": store.get("pilotCode", "") }, body: blob });
+      const body = await res.json().catch(() => ({}));
+      if (res.status === 401) { awaitingCode = true; typing(false); tutorSays("اكتبلي كود التجربة اللي خدته 🔑 وبعدين ابعت الفويس تاني."); return; }
+      if (!res.ok || !body.text) { typing(false); tutorSays(body.message || "الصوت مش شغال دلوقتي 🙏 اكتبلي بدل الفويس."); return; }
+      text = body.text;
+    } catch {
+      typing(false); tutorSays("النت فيه مشكلة 🙈 جرّب تاني."); return;
+    }
+    typing(false);
+    await send(text, { voice: true });
+  }
+
+  // ===== سماع رد المساعد =====
+  const audioCache = new Map();
+  let playing = null;
+  async function speak(text, btn) {
+    try {
+      if (playing) { playing.pause(); playing = null; }
+      let url = audioCache.get(text);
+      if (!url) {
+        if (btn) btn.textContent = "⏳";
+        const res = await fetch(DATA.endpoints.tts, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ code: store.get("pilotCode", ""), text }) });
+        if (!res.ok) { if (btn) btn.textContent = "🔇 الصوت مش متاح"; return; }
+        url = URL.createObjectURL(await res.blob());
+        audioCache.set(text, url);
+      }
+      playing = new Audio(url);
+      if (btn) { btn.textContent = "🔊 بيتقري…"; playing.onended = () => (btn.textContent = "🔊 اسمع تاني"); }
+      await playing.play();
+    } catch {
+      if (btn) btn.textContent = "🔊 اسمع";
+    }
+  }
+
+  function show() {
+    const ready = Boolean(profile && profile.bookIds);
+    $("setup").hidden = ready;
+    $("solve").hidden = !ready;
+    $("composer").hidden = !ready;
+    if (!ready) renderSetup();
+    if (profile) {
+      const school = profile.schoolType === "languages" ? "لغات" : "عربي";
+      $("profile-line").textContent = `${DATA.grades[profile.grade]} · ${school} · ${profile.term === 2 ? "الترم التاني" : "الترم الأول"}`;
+    }
+    render();
+  }
+  show();
+})();
+</script>
+</body>
+</html>
