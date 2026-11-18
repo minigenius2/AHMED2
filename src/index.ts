@@ -23,3 +23,5 @@ export * from "./teaching/narration";
 export * from "./teaching/ask-teacher";
 export { anthropicTutor, DEFAULT_TUTOR_MODEL } from "./teaching/anthropic-tutor";
 export * from "./content/science-g4-term1";
+export * from "./solving";
+export * from "./content/prep-math";

@@ -14,6 +14,8 @@
    | `ANTHROPIC_API_KEY` | مفتاح من [console.anthropic.com](https://console.anthropic.com) ← API Keys | أيوه، عشان "اسأل المعلم" |
    | `PILOT_CODE` | كود قصير بتديه للطلاب، زي `nabih2026` | مقترح جدًا |
    | `TUTOR_MODEL` | موديل تاني، زي `claude-haiku-5-5` (أرخص بكتير) | لأ |
+   | `ELEVENLABS_API_KEY` | مفتاح من [elevenlabs.io](https://elevenlabs.io) ← API Keys | للفويسات في «حل معايا» |
+   | `PLAN_MODEL` و `SOLVE_TUTOR_MODEL` | موديلات «حل معايا» ([التفاصيل](08-solve-with-me.md)) | لأ |
 
 5. دوس **Deploy**. بعد دقيقة هيطلعلك رابط زي `ahmed2.vercel.app`.
 
